@@ -46,7 +46,7 @@ export const validateForm = (
     newErrors.email = "Invalid Email Address";
   }
 
-  if (!/^\d{10}$/.test(formData.mobileNumber)) {
+  if (!/^\d{11}$/.test(formData.mobileNumber)) {
     newErrors.mobileNumber = "Invalid Mobile Number";
   }
 

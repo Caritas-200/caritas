@@ -5,6 +5,7 @@ import { auth, db } from "@/app/services/firebaseConfig";
 interface SignUpData {
   email: string;
   password: string;
+  confirmPassword: string;
   firstName: string;
   middleName?: string;
   lastName: string;
@@ -39,9 +40,12 @@ export const signup = async (data: SignUpData): Promise<SignUpResponse> => {
     // Use user.uid as the docId
     const userDocRef = doc(db, "users", user.uid);
 
+    // Exclude the password and confirmPassword fields from the data
+    const { password, confirmPassword, ...userData } = data;
+
     // Set the data in the document
     await setDoc(userDocRef, {
-      ...data,
+      ...userData,
       userId: user.uid,
       dateCreated,
     });
