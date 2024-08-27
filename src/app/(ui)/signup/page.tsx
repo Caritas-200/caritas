@@ -113,7 +113,6 @@ const SignUp: React.FC = () => {
       label: "Mobile Number",
       name: "mobileNumber",
       type: "tel",
-      pattern: "\\d{10}",
     },
     { label: "Position", name: "position", type: "text", pattern: "[A-Za-z]+" },
     { label: "Address", name: "address", type: "text" },
