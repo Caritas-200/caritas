@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { signup } from "@/app/lib/api/auth/signup";
 import { validateForm } from "@/app/util/formValidation";
+import { showLoading, hideLoading } from "@/app/components/loading";
 
 interface FormData {
   firstName: string;
@@ -54,17 +55,17 @@ const SignUp: React.FC = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    showLoading();
 
     if (!validateForm(formData, setErrors)) {
       return;
     }
 
-    // Mock API Call
+    //API Call
     const response = await signup(formData);
-    console.log(response);
+    hideLoading();
 
     if (!response.error) {
-      console.log(response);
       Swal.fire({
         title: "Registration Successful!",
         text: "You have successfully registered.",
@@ -76,7 +77,7 @@ const SignUp: React.FC = () => {
     } else {
       Swal.fire({
         title: "Error",
-        text: "Something went wrong!",
+        text: response.message,
         icon: "error",
         confirmButtonText: "Try Again",
       });
@@ -242,7 +243,7 @@ const SignUp: React.FC = () => {
 
         <div className="text-center">
           <span className="text-gray-700">Already have an account? Login </span>
-          <Link href="/login">
+          <Link href="/">
             <button className="text-blue-500 hover:underline">Here</button>
           </Link>
         </div>
