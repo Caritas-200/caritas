@@ -2,6 +2,7 @@ import React from "react";
 import Header from "@/app/components/Header";
 import LeftNav from "@/app/components/Nav";
 import Calendar from "@/app/components/Calendar";
+import BigCalendar from "@/app/components/BigCalendar";
 
 const HomeDashboard: React.FC = () => {
   return (
@@ -9,7 +10,7 @@ const HomeDashboard: React.FC = () => {
       <Header />
       <div className="flex flex-row flex-1">
         <LeftNav />
-        <Calendar />
+        <BigCalendar />
       </div>
     </div>
   );
