@@ -2,7 +2,7 @@
 
 import React, { useState, ChangeEvent } from "react";
 import Link from "next/link";
-import { login } from "./lib/api/auth/login";
+import { login } from "@/app/actions/auth/login";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
@@ -29,7 +29,7 @@ const Login: React.FC = () => {
     } else {
       Swal.fire({
         title: "Login Failed",
-        text: "Invalid email or password.",
+        text: response.message || "Invalid email or password.",
         icon: "error",
         confirmButtonText: "Try Again",
       });
