@@ -13,7 +13,7 @@ const Hero: React.FC = () => {
   return (
     <div className="flex-1 p-8 bg-gray-700">
       <h2 className="text-3xl font-bold mb-4 text-white">Activity Calendar</h2>
-      <div className="bg-black shadow-md rounded-lg p-6">
+      <div className="bg-gray-800 shadow-md rounded-lg p-6">
         <Calendar
           onChange={onChange}
           value={value}

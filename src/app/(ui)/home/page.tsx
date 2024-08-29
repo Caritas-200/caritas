@@ -8,9 +8,10 @@ const HomeDashboard: React.FC = () => {
   return (
     <div className="h-screen">
       <Header />
-      <div className="flex flex-row flex-1">
+      <div className="flex flex-row flex-1 bg-gray-100">
         <LeftNav />
-        <BigCalendar />
+        <Calendar />
+        {/* <BigCalendar /> */}
       </div>
     </div>
   );
