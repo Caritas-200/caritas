@@ -1,6 +1,9 @@
+"use client";
+
 import React from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { useRouter } from "next/navigation";
 
 interface FolderProps {
   name: string;
@@ -10,6 +13,8 @@ interface FolderProps {
 const MySwal = withReactContent(Swal);
 
 const Folder: React.FC<FolderProps> = ({ name, onDelete }) => {
+  const router = useRouter();
+
   const handleDelete = () => {
     MySwal.fire({
       title: "Are you sure?",
@@ -27,11 +32,22 @@ const Folder: React.FC<FolderProps> = ({ name, onDelete }) => {
     });
   };
 
+  const handleNavigate = () => {
+    // Navigate to the recipient page for the clicked barangay
+    router.push(`/barangay/${name}/recipients`);
+  };
+
   return (
-    <div className="relative bg-gray-500 p-4 rounded-lg shadow-md">
+    <div
+      className="relative bg-gray-500 p-4 rounded-lg shadow-md cursor-pointer"
+      onClick={handleNavigate}
+    >
       <h3 className="text-lg font-semibold">{name.toUpperCase()}</h3>
       <button
-        onClick={handleDelete}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleDelete();
+        }}
         className="absolute top-2 right-2 text-red-500"
       >
         ✖

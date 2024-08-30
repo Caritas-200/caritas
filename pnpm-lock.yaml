@@ -44,6 +44,9 @@ importers:
       react-calendar:
         specifier: ^5.0.0
         version: 5.0.0(@types/react@18.3.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-csv:
+        specifier: ^2.2.2
+        version: 2.2.2
       react-dom:
         specifier: ^18
         version: 18.3.1(react@18.3.1)
@@ -1675,6 +1678,9 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  react-csv@2.2.2:
+    resolution: {integrity: sha512-RG5hOcZKZFigIGE8LxIEV/OgS1vigFQT4EkaHeKgyuCbUAu9Nbd/1RYq++bJcJJ9VOqO/n9TZRADsXNDR4VEpw==}
 
   react-dom@18.3.1:
     resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
@@ -3997,6 +4003,8 @@ snapshots:
       warning: 4.0.3
     optionalDependencies:
       '@types/react': 18.3.4
+
+  react-csv@2.2.2: {}
 
   react-dom@18.3.1(react@18.3.1):
     dependencies:
