@@ -1,12 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Folder from "@/app/components/Barangay";
 import Header from "@/app/components/Header";
 import LeftNav from "@/app/components/Nav";
+import { showLoading, hideLoading } from "@/app/components/loading";
+import {
+  addBarangay,
+  getAllBarangays,
+  deleteBarangay,
+} from "@/app/lib/api/barangay/data";
 
 interface Folder {
-  id: number;
+  id: string;
   name: string;
 }
 
@@ -15,19 +21,38 @@ const BarangayList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [newFolderName, setNewFolderName] = useState<string>("");
 
-  const handleAddFolder = () => {
+  //fetch barangays stored in db
+  useEffect(() => {
+    const fetchBarangays = async () => {
+      showLoading();
+      const barangays = await getAllBarangays();
+      setFolders(barangays);
+      hideLoading();
+    };
+
+    fetchBarangays();
+  }, []);
+
+  //handle adding new barangay folder
+  const handleAddFolder = async () => {
     if (newFolderName.trim() === "") return;
 
     const newFolder: Folder = {
-      id: folders.length + 1,
-      name: newFolderName,
+      id: (folders.length + 1).toString(),
+      name: newFolderName.toLowerCase(),
     };
+
+    //add barangay here to db
+    await addBarangay(newFolder.name, {
+      name: newFolder.name,
+    });
 
     setFolders([...folders, newFolder]);
     setNewFolderName(""); // Clear the input after adding
   };
 
-  const handleDeleteFolder = (id: number) => {
+  const handleDeleteFolder = async (id: string) => {
+    await deleteBarangay(id);
     setFolders(folders.filter((folder) => folder.id !== id));
   };
 
