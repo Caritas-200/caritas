@@ -89,19 +89,16 @@ const SignUp: React.FC = () => {
       label: "First Name",
       name: "firstName",
       type: "text",
-      pattern: "[A-Za-z]+",
     },
     {
       label: "Middle Name",
       name: "middleName",
       type: "text",
-      pattern: "[A-Za-z]*",
     },
     {
       label: "Last Name",
       name: "lastName",
       type: "text",
-      pattern: "[A-Za-z]+",
     },
     {
       label: "Email",
