@@ -1,21 +1,21 @@
 "use client";
 
 import React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Table from "@/app/components/barangay/Table";
 import beneficiaries from "@/app/json/benificiaries.json";
 
+// Define the type for the params object returned by useParams
+interface Params {
+  barangayName: string;
+}
+
 const Recipient: React.FC = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  // Handle the case when searchParams might be null
-  const barangayName = searchParams
-    ? searchParams.get("barangayName") || "Unknown"
-    : "Unknown";
+  const params = useParams() as unknown as Params;
+  const { barangayName } = params;
 
   // Dummy data for the table
-
   const handlePrint = () => {
     window.print();
   };
@@ -29,25 +29,25 @@ const Recipient: React.FC = () => {
         >
           Back
         </button>
-        <button
-          className="bg-green-500 text-white py-2 px-4 rounded-lg"
-          onClick={handlePrint}
-        >
-          Print
-        </button>
+        <div className="flex mt-4 gap-4">
+          <button
+            className="bg-blue-500 text-white py-2 px-4 rounded-lg"
+            // Add functionality to open modal or navigate to another page for adding beneficiaries
+          >
+            Add New Beneficiary
+          </button>
+          <button
+            className="bg-green-500 text-white py-2 px-4 rounded-lg"
+            onClick={handlePrint}
+          >
+            Print
+          </button>
+        </div>
       </div>
       <h2 className="text-2xl font-bold mb-4">
-        List of Beneficiaries in Barangay {barangayName}
+        List of Beneficiaries in Barangay {barangayName.toUpperCase()}
       </h2>
       <Table data={beneficiaries} />
-      <div className="mt-4">
-        <button
-          className="bg-blue-500 text-white py-2 px-4 rounded-lg"
-          // Add functionality to open modal or navigate to another page for adding beneficiaries
-        >
-          Add New Beneficiary
-        </button>
-      </div>
     </div>
   );
 };

@@ -49,9 +49,9 @@ const Table: React.FC<TableProps> = ({ data }) => {
       <table className="min-w-full bg-gray-800 border border-gray-300 rounded-lg">
         <thead>
           <tr>
+            <th className="border-b py-2 px-4 text-left">Last Name</th>
             <th className="border-b py-2 px-4 text-left">First Name</th>
             <th className="border-b py-2 px-4 text-left">Middle Name</th>
-            <th className="border-b py-2 px-4 text-left">Last Name</th>
             <th className="border-b py-2 px-4 text-left">Status</th>
             <th className="border-b py-2 px-4 text-left">Action</th>
           </tr>
@@ -59,9 +59,9 @@ const Table: React.FC<TableProps> = ({ data }) => {
         <tbody>
           {currentItems.map((beneficiary, index) => (
             <tr key={index} className="hover:bg-gray-700 transition-colors">
+              <td className="border-b py-2 px-4">{beneficiary.lastName}</td>
               <td className="border-b py-2 px-4">{beneficiary.firstName}</td>
               <td className="border-b py-2 px-4">{beneficiary.middleName}</td>
-              <td className="border-b py-2 px-4">{beneficiary.lastName}</td>
               <td
                 className={classNames(
                   "border-b py-2 px-4 font-semibold",
