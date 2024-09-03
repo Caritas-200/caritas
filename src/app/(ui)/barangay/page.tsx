@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Folder from "@/app/components/Barangay";
+import Folder from "@/app/components/barangay/Barangay";
 import Header from "@/app/components/Header";
 import LeftNav from "@/app/components/Nav";
 import { showLoading, hideLoading } from "@/app/components/loading";

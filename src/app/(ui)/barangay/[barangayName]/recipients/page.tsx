@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Table from "@/app/components/Table";
+import Table from "@/app/components/barangay/Table";
 import beneficiaries from "@/app/json/benificiaries.json";
 
 const Recipient: React.FC = () => {
