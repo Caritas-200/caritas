@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Table from "@/app/components/barangay/Table";
 import BeneficiaryModal from "@/app/components/barangay/BeneficiaryFormModal";
-import beneficiaries from "@/app/json/beneficiaries.json";
+import beneficiaries from "@/json/beneficiaries.json";
 
 // Define the type for the params object returned by useParams
 interface Params {
@@ -49,9 +49,9 @@ const Recipient: React.FC = () => {
   };
 
   const handleSubmit = (data: BeneficiaryForm) => {
-    // Handle form submission here
-    console.log("Submitted data:", data);
-    // You can also update the state or make API calls here
+    // // Handle form submission here
+    // console.log("Submitted data:", data);
+    // // You can also update the state or make API calls here
   };
 
   return (
@@ -85,7 +85,11 @@ const Recipient: React.FC = () => {
 
       {/* Render the modal conditionally */}
       {isModalOpen && (
-        <BeneficiaryModal onClose={handleCloseModal} onSubmit={handleSubmit} />
+        <BeneficiaryModal
+          onClose={handleCloseModal}
+          onSubmit={handleSubmit}
+          brgyName={barangayName}
+        />
       )}
     </div>
   );

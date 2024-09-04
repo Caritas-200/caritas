@@ -6,9 +6,14 @@ import CheckboxGroupModal from "./CheckBoxGroupModal";
 interface ModalProps {
   onClose: () => void;
   onSubmit: (data: BeneficiaryForm) => void;
+  brgyName: string;
 }
 
-const BeneficiaryModal: React.FC<ModalProps> = ({ onClose, onSubmit }) => {
+const BeneficiaryModal: React.FC<ModalProps> = ({
+  onClose,
+  onSubmit,
+  brgyName,
+}) => {
   const [formData, setFormData] = useState<BeneficiaryForm>({
     firstName: "",
     middleName: "",
@@ -167,7 +172,8 @@ const BeneficiaryModal: React.FC<ModalProps> = ({ onClose, onSubmit }) => {
           onChange={setFormData}
           onSubmit={handleFinalSubmit}
           onClose={onClose}
-          onBack={handleBack} // Pass the handleBack function as the onBack prop
+          onBack={handleBack}
+          brgyName={brgyName}
         />
       )}
     </>

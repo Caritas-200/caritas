@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import { BeneficiaryForm } from "@/app/lib/definitions";
+import { addBeneficiary } from "@/app/lib/api/beneficiary/data";
+import { showLoading, hideLoading } from "../loading";
+import { checkboxGroup, radioGroups } from "@/app/config/formConfig";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 interface CheckboxGroupModalProps {
   formData: BeneficiaryForm;
@@ -7,6 +11,7 @@ interface CheckboxGroupModalProps {
   onSubmit: (data: BeneficiaryForm) => void;
   onClose: () => void;
   onBack: () => void;
+  brgyName: string;
 }
 
 const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
@@ -15,6 +20,7 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
   onSubmit,
   onClose,
   onBack,
+  brgyName,
 }) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -25,7 +31,7 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
       ...formData,
       [key]: [value],
     });
-    setErrors({ ...errors, [name]: "" }); // Clear error when the field is updated
+    setErrors({ ...errors, [name]: "" });
   };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +54,7 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
           : (formData[key] as string[]).filter((item) => item !== value),
       });
     }
-    setErrors({ ...errors, [name]: "" }); // Clear error when the field is updated
+    setErrors({ ...errors, [name]: "" });
   };
 
   const validateForm = () => {
@@ -71,60 +77,47 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Form is valid if there are no errors
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      onSubmit(formData);
-      console.log(formData);
+      Swal.fire({
+        title: "Saving...",
+        text: "Please wait while we save the beneficiary data.",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      try {
+        await addBeneficiary(formData, brgyName);
+        Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "Beneficiary added successfully.",
+        }).then(() => {
+          onClose(); // Close the modal after the success message
+        });
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          Swal.fire({
+            icon: "error",
+            title: "Duplicate Found",
+            text: error.message,
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "An unknown error occurred while adding the beneficiary.",
+          });
+        }
+      }
     }
   };
-
-  const checkboxGroup = {
-    label: "Casualty",
-    name: "casualty" as keyof BeneficiaryForm,
-    options: ["None", "Dead", "Injured", "Missing"],
-  };
-
-  const radioGroups = [
-    {
-      label: "Housing Condition",
-      name: "housingCondition" as keyof BeneficiaryForm,
-      options: ["Partially Damaged", "Totally Damaged"],
-    },
-    {
-      label: "Health Condition",
-      name: "healthCondition" as keyof BeneficiaryForm,
-      options: ["With Illness", "Without Illness"],
-    },
-    {
-      label: "Vulnerable Group",
-      name: "vulnerableGroup" as keyof BeneficiaryForm,
-      options: [
-        "None",
-        "Elderly",
-        "Lactating Mother",
-        "Pregnant Woman",
-        "Solo Parent",
-        "PWD (Person with Disability)",
-      ],
-    },
-    {
-      label: "Ownership/Rental Type",
-      name: "ownershipRentalType" as keyof BeneficiaryForm,
-      options: [
-        "House & lot owner",
-        "Rented house & Lot",
-        "House owner & Lot Rental",
-        "House owner, rent-free lot with owner's consent",
-        "House owner, rent-free lot without owner's consent",
-        "Rent-free house & lot with owner's consent",
-        "Rent-free house & lot without owner's consent",
-      ],
-    },
-  ];
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
