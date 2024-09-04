@@ -1,13 +1,32 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Table from "@/app/components/barangay/Table";
-import beneficiaries from "@/app/json/benificiaries.json";
+import BeneficiaryModal from "@/app/components/barangay/BeneficiaryFormModal";
+import beneficiaries from "@/app/json/beneficiaries.json";
 
 // Define the type for the params object returned by useParams
 interface Params {
   barangayName: string;
+}
+
+interface BeneficiaryForm {
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  mobileNumber: string;
+  age: string;
+  address: string;
+  gender: string;
+  work?: string;
+  status: string;
+  language?: string;
+  religion?: string;
+  email?: string;
+  housingCondition: string[];
+  casualty: string[];
+  healthCondition: string[];
 }
 
 const Recipient: React.FC = () => {
@@ -15,9 +34,24 @@ const Recipient: React.FC = () => {
   const params = useParams() as unknown as Params;
   const { barangayName } = params;
 
-  // Dummy data for the table
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSubmit = (data: BeneficiaryForm) => {
+    // Handle form submission here
+    console.log("Submitted data:", data);
+    // You can also update the state or make API calls here
   };
 
   return (
@@ -32,7 +66,7 @@ const Recipient: React.FC = () => {
         <div className="flex mt-4 gap-4">
           <button
             className="bg-blue-500 text-white py-2 px-4 rounded-lg"
-            // Add functionality to open modal or navigate to another page for adding beneficiaries
+            onClick={handleOpenModal} // Open the modal on click
           >
             Add New Beneficiary
           </button>
@@ -48,6 +82,11 @@ const Recipient: React.FC = () => {
         List of Beneficiaries in Barangay {barangayName.toUpperCase()}
       </h2>
       <Table data={beneficiaries} />
+
+      {/* Render the modal conditionally */}
+      {isModalOpen && (
+        <BeneficiaryModal onClose={handleCloseModal} onSubmit={handleSubmit} />
+      )}
     </div>
   );
 };
