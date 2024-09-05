@@ -94,7 +94,7 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
                 <td
                   className={classNames(
                     "border-b py-2 px-4 font-semibold",
-                    beneficiary.status === "Claimed"
+                    beneficiary.status === "claimed"
                       ? "text-green-500"
                       : "text-orange-500"
                   )}

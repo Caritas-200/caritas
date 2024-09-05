@@ -43,6 +43,7 @@ export const addBeneficiary = async (
     // Set the document with the form data and a timestamp
     await setDoc(newBeneficiaryRef, {
       ...formData,
+      status: "unclaimed",
       dateCreated: Timestamp.now(),
     });
 

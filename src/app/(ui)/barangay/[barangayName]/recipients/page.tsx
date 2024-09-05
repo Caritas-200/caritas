@@ -4,28 +4,11 @@ import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Table from "@/app/components/barangay/Table";
 import BeneficiaryModal from "@/app/components/barangay/BeneficiaryFormModal";
+import { BeneficiaryForm } from "@/app/lib/definitions";
 
 // Define the type for the params object returned by useParams
 interface Params {
   barangayName: string;
-}
-
-interface BeneficiaryForm {
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  mobileNumber: string;
-  age: string;
-  address: string;
-  gender: string;
-  work?: string;
-  status: string;
-  language?: string;
-  religion?: string;
-  email?: string;
-  housingCondition: string[];
-  casualty: string[];
-  healthCondition: string[];
 }
 
 const Recipient: React.FC = () => {
