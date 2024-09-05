@@ -10,7 +10,7 @@ const HomeDashboard: React.FC = () => {
       <Header />
       <div className="flex flex-row flex-1 bg-gray-100">
         <LeftNav />
-        <Calendar />
+        {/* <Calendar /> */}
         {/* <BigCalendar /> */}
       </div>
     </div>
