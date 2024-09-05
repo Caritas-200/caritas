@@ -58,3 +58,39 @@ export const addBeneficiary = async (
     }
   }
 };
+
+// Function to fetch all beneficiaries for a specific barangay
+export const fetchBeneficiaries = async (
+  brgyName: string
+): Promise<BeneficiaryForm[]> => {
+  try {
+    // Reference to the recipients collection under the specified barangay document
+    const recipientsCollectionRef = collection(
+      db,
+      `barangay/${brgyName}/recipients`
+    );
+
+    // Create a query to fetch all documents in the collection
+    const q = query(recipientsCollectionRef);
+
+    // Get the documents
+    const querySnapshot = await getDocs(q);
+
+    // Map the documents to an array of beneficiary data
+    const beneficiaries = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as BeneficiaryForm[];
+
+    return beneficiaries;
+  } catch (error: unknown) {
+    // Type guard for Error object
+    if (error instanceof Error) {
+      console.error("Error fetching beneficiaries: ", error.message);
+      throw error; // Re-throw the error to handle it in the UI
+    } else {
+      console.error("Unknown error fetching beneficiaries");
+      throw new Error("Unknown error fetching beneficiaries");
+    }
+  }
+};

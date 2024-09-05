@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Table from "@/app/components/barangay/Table";
 import BeneficiaryModal from "@/app/components/barangay/BeneficiaryFormModal";
-import beneficiaries from "@/json/beneficiaries.json";
 
 // Define the type for the params object returned by useParams
 interface Params {
@@ -81,7 +80,7 @@ const Recipient: React.FC = () => {
       <h2 className="text-2xl font-bold mb-4">
         List of Beneficiaries in Barangay {barangayName.toUpperCase()}
       </h2>
-      <Table data={beneficiaries} />
+      <Table brgyName={barangayName} />
 
       {/* Render the modal conditionally */}
       {isModalOpen && (
