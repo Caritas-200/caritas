@@ -23,7 +23,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     address: "",
     gender: "",
     work: "",
-    status: "",
+    civilStatus: "",
     language: "",
     religion: "",
     email: "",
@@ -74,7 +74,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     { name: "address", label: "Address" },
     { name: "gender", label: "Gender" },
     { name: "work", label: "Work", optional: true },
-    { name: "status", label: "Status" },
+    { name: "civilStatus", label: "Civil Status" },
     { name: "language", label: "Language", optional: true },
     { name: "religion", label: "Religion", optional: true },
     { name: "email", label: "Email", optional: true },
@@ -87,8 +87,8 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
       options: ["Male", "Female", "Other"],
     },
     {
-      name: "status",
-      label: "Status",
+      name: "civilStatus",
+      label: "Civil Status",
       options: ["Single", "Married", "Widowed", "Separated"],
     },
   ];

@@ -9,7 +9,7 @@ export type BeneficiaryForm = {
   gender: string;
   work?: string;
   civilStatus: string;
-  status: "claimed" | "unclaimed";
+  status?: string;
   language?: string;
   religion?: string;
   email?: string;
