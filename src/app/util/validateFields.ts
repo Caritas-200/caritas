@@ -15,6 +15,9 @@ export const validateFields = (
     "gender",
     "civilStatus",
     "religion",
+    "occupation",
+    "ethnicity",
+    "monthlyNetIncome",
   ];
 
   requiredFields.forEach((field) => {
@@ -39,6 +42,18 @@ export const validateFields = (
     newErrors.mobileNumber = "Mobile number must be 11 digits.";
     console.error(
       `Validation error: Invalid mobile number format for ${formData.mobileNumber}`
+    );
+  }
+
+  // Validate mobile number format
+  const incomePattern = /^[0-9]/; // Should be 6 digits
+  if (
+    formData.monthlyNetIncome &&
+    !incomePattern.test(formData.monthlyNetIncome)
+  ) {
+    newErrors.monthlyNetIncome = "Net income must be digits.";
+    console.error(
+      `Validation error: Invalid mobile number format for ${formData.monthlyNetIncome}`
     );
   }
 
