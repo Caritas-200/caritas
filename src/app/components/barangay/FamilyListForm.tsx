@@ -188,7 +188,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
           ✖
         </button>
         <h2 className="text-2xl font-bold mb-4 pb-4 text-center text-gray-900">
-          Add Family Members
+          Add Family Members ( 3-3 )
         </h2>
         <form onSubmit={handleSubmit}>
           {familyMembers.map((member, index) => (

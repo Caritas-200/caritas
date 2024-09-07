@@ -80,7 +80,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
               ✖
             </button>
             <h2 className="text-2xl font-bold mb-4 pb-4 text-center text-gray-900">
-              Add New Beneficiary ( 1-3 )
+              Beneficiary Form ( 1-3 )
             </h2>
             <form onSubmit={handleNext}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
