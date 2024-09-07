@@ -7,15 +7,28 @@ export type BeneficiaryForm = {
   age: string;
   address: string;
   gender: string;
-  work?: string;
+  occupation: string;
   civilStatus: string;
-  status: "claimed" | "unclaimed";
-  language?: string;
-  religion?: string;
+  status?: string;
+  monthlyNetIncome: string;
+  ethnicity: string;
+  religion: string;
   email?: string;
+  beneficiary4Ps: string;
   housingCondition: string[];
   casualty: string[];
   healthCondition: string[];
   ownershipRentalType: string[];
-  vulnerableGroup: string[];
+  code: string[];
+};
+
+export type FamilyMember = {
+  name: string;
+  relation: string;
+  age: string;
+  gender: string;
+  civilStatus: string;
+  education: string;
+  skills: string;
+  remarks?: string;
 };
