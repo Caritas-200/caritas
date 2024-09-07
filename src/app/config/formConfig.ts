@@ -8,6 +8,11 @@ export const checkboxGroup = {
 
 export const radioGroups = [
   {
+    label: "4Ps Beneficiary",
+    name: "beneficiary4Ps" as keyof BeneficiaryForm,
+    options: ["Yes", "No"],
+  },
+  {
     label: "Housing Condition",
     name: "housingCondition" as keyof BeneficiaryForm,
     options: ["Partially Damaged", "Totally Damaged"],
@@ -18,8 +23,8 @@ export const radioGroups = [
     options: ["With Illness", "Without Illness"],
   },
   {
-    label: "Vulnerable Group",
-    name: "vulnerableGroup" as keyof BeneficiaryForm,
+    label: "Code",
+    name: "code" as keyof BeneficiaryForm,
     options: [
       "None",
       "Elderly",
@@ -41,5 +46,127 @@ export const radioGroups = [
       "Rent-free house & lot with owner's consent",
       "Rent-free house & lot without owner's consent",
     ],
+  },
+];
+
+export const textFields = [
+  { name: "firstName", label: "First Name" },
+  { name: "middleName", label: "Middle Name", optional: true },
+  { name: "lastName", label: "Last Name" },
+  { name: "mobileNumber", label: "Mobile Number" },
+  { name: "age", label: "Age" },
+  { name: "address", label: "Address" },
+  { name: "gender", label: "Gender" },
+  { name: "occupation", label: "Occupation" },
+  { name: "monthlyNetIncome", label: "Monthly Net Income" },
+  { name: "civilStatus", label: "Civil Status" },
+  { name: "ethnicity", label: "Ethnicity" },
+  { name: "religion", label: "Religion" },
+  { name: "email", label: "Email", optional: true },
+];
+
+export const dropdownFields = [
+  {
+    name: "gender",
+    label: "Gender",
+    options: ["Male", "Female", "Other"],
+  },
+  {
+    name: "civilStatus",
+    label: "Civil Status",
+    options: ["Single", "Married", "Widowed", "Separated"],
+  },
+  {
+    name: "ethnicity",
+    label: "Ethnicity ",
+    options: [
+      "Tagalog",
+      "Bisaya",
+      "Ilocano",
+      "Ilonggo",
+      "Cebuano",
+      "Bikol",
+      "Waray",
+    ],
+  },
+  {
+    name: "religion",
+    label: "Religion",
+    options: [
+      "Roman Catholicism",
+      "Islam",
+      "Iglesia ni Cristo",
+      "Seventh-day Adventist",
+      "Aglipayan Church (Philippine Independent Church)",
+      "Iglesia Filipina Independiente",
+      "Bible Baptist Church",
+      "United Church of Christ in the Philippines",
+      "Jehovah's Witnesses",
+      "Church of Christ",
+      "Other Christian denominations",
+      "Indigenous Philippine folk religions",
+      "Buddhism",
+      "Other religions",
+      "No religion",
+    ],
+  },
+];
+
+export const familyInfoFields = [
+  {
+    label: "Family Member",
+    name: "name",
+    placeholder: "Enter family member name",
+  },
+  {
+    label: "Relation",
+    name: "relation",
+    options: [
+      "Children",
+      "Spouse",
+      "Mother",
+      "Mother in Law",
+      "Father",
+      "Father in Law",
+    ],
+  },
+  { label: "Age", name: "age", placeholder: "Enter age" },
+  { label: "Gender", name: "gender", options: ["Male", "Female", "Other"] },
+  {
+    label: "Civil Status",
+    name: "civilStatus",
+    options: ["Single", "Married", "Divorced", "Widowed"],
+  },
+  {
+    label: "Education",
+    name: "education",
+    options: [
+      "No formal education",
+      "Primary",
+      "Secondary",
+      "GED (General Educational Development)",
+      "Vocational qualification",
+      "College level",
+      "Associate's degree",
+      "Bachelor's degree",
+      "Master's degree",
+      "Professional degree (e.g., MD, JD)",
+      "Doctorate degree (e.g., PhD, EdD)",
+      "Currently enrolled in high school",
+      "Currently enrolled in college",
+      "Currently enrolled in a master's program",
+      "Currently enrolled in a doctoral program",
+    ],
+  },
+
+  {
+    label: "Occupational Skills",
+    name: "skills",
+    placeholder: "Enter skills",
+  },
+  {
+    label: "Remarks",
+    name: "remarks",
+    placeholder: "Additional remarks (optional)",
   },
 ];

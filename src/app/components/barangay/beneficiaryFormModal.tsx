@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { validateFields } from "@/app/util/validateFields";
 import { BeneficiaryForm } from "@/app/lib/definitions";
 import CheckboxGroupModal from "./CheckBoxGroupModal";
+import { textFields, dropdownFields } from "@/app/config/formConfig";
 
 interface ModalProps {
   onClose: () => void;
@@ -22,16 +23,18 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     age: "",
     address: "",
     gender: "",
-    work: "",
-    status: "",
-    language: "",
+    occupation: "",
+    civilStatus: "",
+    ethnicity: "",
     religion: "",
     email: "",
+    beneficiary4Ps: "",
+    monthlyNetIncome: "",
     housingCondition: [],
     casualty: [],
     healthCondition: [],
     ownershipRentalType: [],
-    vulnerableGroup: [],
+    code: [],
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -65,34 +68,6 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     setShowSecondModal(false);
   };
 
-  const textFields = [
-    { name: "firstName", label: "First Name" },
-    { name: "middleName", label: "Middle Name", optional: true },
-    { name: "lastName", label: "Last Name" },
-    { name: "mobileNumber", label: "Mobile Number" },
-    { name: "age", label: "Age" },
-    { name: "address", label: "Address" },
-    { name: "gender", label: "Gender" },
-    { name: "work", label: "Work", optional: true },
-    { name: "status", label: "Status" },
-    { name: "language", label: "Language", optional: true },
-    { name: "religion", label: "Religion", optional: true },
-    { name: "email", label: "Email", optional: true },
-  ];
-
-  const dropdownFields = [
-    {
-      name: "gender",
-      label: "Gender",
-      options: ["Male", "Female", "Other"],
-    },
-    {
-      name: "status",
-      label: "Status",
-      options: ["Single", "Married", "Widowed", "Separated"],
-    },
-  ];
-
   return (
     <>
       {!showSecondModal ? (
@@ -105,7 +80,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
               ✖
             </button>
             <h2 className="text-2xl font-bold mb-4 pb-4 text-center text-gray-900">
-              Add New Beneficiary - Step 1
+              Beneficiary Form ( 1-3 )
             </h2>
             <form onSubmit={handleNext}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
