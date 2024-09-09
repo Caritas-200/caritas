@@ -11,7 +11,6 @@ import {
 import { db } from "@/app/services/firebaseConfig";
 import { BeneficiaryForm } from "@/app/lib/definitions";
 
-// Function to add a new beneficiary
 export const addBeneficiary = async (
   formData: BeneficiaryForm,
   brgyName: string
@@ -57,12 +56,16 @@ export const addBeneficiary = async (
     // Generate a new document reference within the recipients collection
     const newBeneficiaryRef = doc(recipientsCollectionRef);
 
-    // Set the document with the form data and a timestamp
-    await setDoc(newBeneficiaryRef, {
+    // Add the document ID to the form data
+    const formDataWithId = {
       ...formData,
+      id: newBeneficiaryRef.id, // Add the document ID here
       status: "unclaimed",
       dateCreated: Timestamp.now(),
-    });
+    };
+
+    // Set the document with the updated form data
+    await setDoc(newBeneficiaryRef, formDataWithId);
 
     console.log("Beneficiary added successfully!");
   } catch (error: unknown) {
