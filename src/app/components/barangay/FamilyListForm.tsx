@@ -3,6 +3,10 @@ import Swal from "sweetalert2";
 import { FamilyMember } from "@/app/lib/definitions";
 import { addBeneficiary } from "@/app/lib/api/beneficiary/data";
 import { familyInfoFields } from "@/app/config/formConfig";
+import QRCodeModal from "./QRcodeModal";
+import { validateFamilyForm } from "@/app/util/validateFamilyForm";
+import { removeFamilyMember } from "@/app/util/removeFamilyRow";
+import QRCode from "react-qr-code";
 
 interface FamilyModalProps {
   onClose: () => void;
@@ -31,6 +35,8 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
   ]);
 
   const [isValid, setIsValid] = useState(true);
+  const [showQRModal, setShowQRModal] = useState(false); // State to control QR modal visibility
+  const [qrData, setQrData] = useState(""); // QR data to be generated
 
   useEffect(() => {
     // Load the formData and set familyMembers if available
@@ -50,7 +56,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
       i === index ? { ...member, [name]: value } : member
     );
     setFamilyMembers(updatedMembers);
-    validateFamilyForm(updatedMembers);
+    validateFamilyForm(updatedMembers, setIsValid);
   };
 
   const addFamilyMember = () => {
@@ -67,53 +73,6 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
         remarks: "",
       },
     ]);
-  };
-
-  const removeFamilyMember = (index: number) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "This action will permanently remove the family member row.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const updatedMembers = familyMembers.filter((_, i) => i !== index);
-        setFamilyMembers(updatedMembers);
-        Swal.fire(
-          "Deleted!",
-          "The family member row has been removed.",
-          "success"
-        );
-        validateFamilyForm(updatedMembers);
-      }
-    });
-  };
-
-  const validateFamilyForm = (members: FamilyMember[]) => {
-    const isFormValid = members.every((member) => {
-      const { name, relation, age, gender, civilStatus } = member;
-      const isAgeValid = Number(age) >= 10 && Number(age) <= 100;
-      const isAnyFieldFilled =
-        name.trim() !== "" ||
-        relation !== "" ||
-        age !== "" ||
-        gender !== "" ||
-        civilStatus !== "";
-      const isComplete = isAnyFieldFilled
-        ? name.trim() !== "" &&
-          relation !== "" &&
-          isAgeValid &&
-          gender !== "" &&
-          civilStatus !== ""
-        : true;
-
-      return isComplete;
-    });
-
-    setIsValid(isFormValid);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -159,13 +118,24 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
     });
 
     try {
-      await addBeneficiary({ ...formData, familyMembers }, brgyName);
+      const beneficiaryData = { ...formData, familyMembers };
+      await addBeneficiary(beneficiaryData, brgyName);
+
+      // Generate the QR code data (just select essential fields)
+      const qrPayload = {
+        id: beneficiaryData.id,
+        name: beneficiaryData.name,
+        brgyName,
+        status: "Unclaimed",
+      };
+      setQrData(JSON.stringify(qrPayload)); // Set QR data
+
       Swal.fire({
         icon: "success",
         title: "Success!",
         text: "Beneficiary added successfully.",
       }).then(() => {
-        onClose();
+        setShowQRModal(true); // Show the QR code modal
       });
     } catch (error: unknown) {
       Swal.close();
@@ -231,7 +201,14 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
               ))}
               <button
                 type="button"
-                onClick={() => removeFamilyMember(index)}
+                onClick={() =>
+                  removeFamilyMember(
+                    index,
+                    familyMembers,
+                    setFamilyMembers,
+                    setIsValid
+                  )
+                }
                 className="col-span-1 bg-red-500 text-white px-4 py-2 rounded-lg"
               >
                 ✖
@@ -267,6 +244,9 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
           </div>
         </form>
       </div>
+
+      {/* QR Code Modal */}
+      {showQRModal && <QRCodeModal qrData={qrData} onClose={onClose} />}
     </div>
   );
 };
