@@ -163,7 +163,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
       Swal.fire({
         icon: "success",
         title: "Success!",
-        text: "Beneficiary and family members added successfully.",
+        text: "Beneficiary added successfully.",
       }).then(() => {
         onClose();
       });

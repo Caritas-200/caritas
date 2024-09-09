@@ -24,6 +24,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     address: "",
     gender: "",
     occupation: "",
+    houseNumber: "",
     civilStatus: "",
     ethnicity: "",
     religion: "",

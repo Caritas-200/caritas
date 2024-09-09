@@ -8,8 +8,9 @@ export type BeneficiaryForm = {
   address: string;
   gender: string;
   occupation: string;
+  houseNumber?: string;
   civilStatus: string;
-  status?: string;
+  status: string;
   monthlyNetIncome: string;
   ethnicity: string;
   religion: string;

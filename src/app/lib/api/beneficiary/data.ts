@@ -22,7 +22,23 @@ export const addBeneficiary = async (
       `barangay/${brgyName}/recipients`
     );
 
-    // Query to check for existing beneficiary with the same firstName, lastName, and middleName
+    // Check if houseNumber is filled
+    if (formData.houseNumber) {
+      // Query to check if houseNumber is already registered
+      const houseNumberQuery = query(
+        recipientsCollectionRef,
+        where("houseNumber", "==", formData.houseNumber)
+      );
+
+      const houseNumberSnapshot = await getDocs(houseNumberQuery);
+
+      if (!houseNumberSnapshot.empty) {
+        // House number already registered, throw an error
+        throw new Error("This house number is already registered.");
+      }
+    }
+
+    // If house number is not filled, check for name duplication
     const duplicateQuery = query(
       recipientsCollectionRef,
       where("firstName", "==", formData.firstName),
@@ -33,7 +49,7 @@ export const addBeneficiary = async (
     const querySnapshot = await getDocs(duplicateQuery);
 
     if (!querySnapshot.empty) {
-      // Duplicate found
+      // Duplicate found based on name
       throw new Error("A beneficiary with the same name already exists.");
     }
 
