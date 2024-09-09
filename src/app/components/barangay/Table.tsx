@@ -16,6 +16,8 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(5);
+  const [sortOrder, setSortOrder] = useState<string>("none");
   const [filteredData, setFilteredData] = useState<BeneficiaryForm[]>([]);
   const [beneficiaries, setBeneficiaries] = useState<BeneficiaryForm[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -24,9 +26,7 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
     string | null
   >(null);
 
-  const itemsPerPage = 5;
-
-  // Fetch data when the component mounts
+  // Fetch data when the component mounts or brgyName changes
   useEffect(() => {
     const loadBeneficiaries = async () => {
       setLoading(true);
@@ -65,16 +65,29 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
 
       return matchesSearchTerm && matchesStatus;
     });
-    setFilteredData(filtered);
+
+    // Sorting logic
+    const sorted = [...filtered];
+    if (sortOrder === "asc") {
+      sorted.sort((a, b) => a.lastName.localeCompare(b.lastName));
+    } else if (sortOrder === "desc") {
+      sorted.sort((a, b) => b.lastName.localeCompare(a.lastName));
+    } else if (sortOrder === "date") {
+      sorted.sort(
+        (a, b) => b.dateCreated.toMillis() - a.dateCreated.toMillis()
+      );
+    }
+
+    setFilteredData(sorted);
     setCurrentPage(1);
-  }, [searchTerm, statusFilter, beneficiaries]);
+  }, [searchTerm, statusFilter, beneficiaries, sortOrder]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
-  const handleViewInfo = async (id: string) => {
+  const handleViewInfo = (id: string) => {
     setSelectedBeneficiaryId(id);
   };
 
@@ -87,6 +100,7 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
       <div className="bg-gray-800 p-4 rounded-lg shadow-md">
         <div className="flex flex-col md:flex-row items-center mb-4 space-y-4 md:space-y-0 md:space-x-4">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
@@ -95,6 +109,28 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
             <option value="all">All</option>
             <option value="claimed">Claimed</option>
             <option value="unclaimed">Unclaimed</option>
+          </select>
+
+          <select
+            value={itemsPerPage}
+            onChange={(e) => setItemsPerPage(parseInt(e.target.value, 10))}
+            className="p-2 border rounded-lg text-gray-700"
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={15}>15</option>
+            <option value={20}>20</option>
+          </select>
+
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="p-2 border rounded-lg text-gray-700"
+          >
+            <option value="none">No Sorting</option>
+            <option value="asc">Sort by Last Name (A-Z)</option>
+            <option value="desc">Sort by Last Name (Z-A)</option>
+            <option value="date">Sort by Date Created (Latest First)</option>
           </select>
         </div>
 
@@ -169,6 +205,7 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
             </table>
           </div>
         )}
+
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
