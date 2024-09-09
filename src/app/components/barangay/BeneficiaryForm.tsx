@@ -10,7 +10,7 @@ interface ModalProps {
   brgyName: string;
 }
 
-const BeneficiaryForm: React.FC<ModalProps> = ({
+const BeneficiaryModal: React.FC<ModalProps> = ({
   onClose,
   onSubmit,
   brgyName,
@@ -155,4 +155,4 @@ const BeneficiaryForm: React.FC<ModalProps> = ({
   );
 };
 
-export default BeneficiaryForm;
+export default BeneficiaryModal;

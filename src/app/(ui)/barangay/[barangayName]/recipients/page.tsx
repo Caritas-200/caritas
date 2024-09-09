@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Table from "@/app/components/barangay/Table";
-import BeneficiaryModal from "@/app/components/barangay/BeneficiaryFormModal";
+import BeneficiaryModal from "@/app/components/barangay/BeneficiaryForm";
 import { BeneficiaryForm } from "@/app/lib/definitions";
 
 // Define the type for the params object returned by useParams
