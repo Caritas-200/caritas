@@ -6,6 +6,7 @@ import {
   query,
   where,
   getDocs,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "@/app/services/firebaseConfig";
 import { BeneficiaryForm } from "@/app/lib/definitions";
@@ -108,6 +109,46 @@ export const fetchBeneficiaries = async (
     } else {
       console.error("Unknown error fetching beneficiaries");
       throw new Error("Unknown error fetching beneficiaries");
+    }
+  }
+};
+
+// Function to fetch a specific beneficiary by ID
+export const fetchBeneficiaryById = async (
+  brgyName: string,
+  beneficiaryId: string
+): Promise<BeneficiaryForm | null> => {
+  try {
+    // Reference to the specific document in the beneficiaries collection
+    const beneficiaryDocRef = doc(
+      db,
+      `barangay/${brgyName}/recipients/${beneficiaryId}`
+    );
+
+    // Fetch the document
+    const docSnapshot = await getDoc(beneficiaryDocRef);
+
+    // Check if the document exists
+    if (docSnapshot.exists()) {
+      // Map the document data to BeneficiaryForm type
+      const beneficiaryData = {
+        id: docSnapshot.id,
+        ...docSnapshot.data(),
+      } as BeneficiaryForm;
+
+      return beneficiaryData;
+    } else {
+      console.error("Beneficiary not found");
+      return null; // Return null if document does not exist
+    }
+  } catch (error: unknown) {
+    // Type guard for Error object
+    if (error instanceof Error) {
+      console.error("Error fetching beneficiary: ", error.message);
+      throw error; // Re-throw the error to handle it in the UI
+    } else {
+      console.error("Unknown error fetching beneficiary");
+      throw new Error("Unknown error fetching beneficiary");
     }
   }
 };

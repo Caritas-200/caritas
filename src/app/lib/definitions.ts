@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 
 export type BeneficiaryForm = {
-  id?: string;
+  id: string;
   firstName: string;
   middleName: string;
   lastName: string;

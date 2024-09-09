@@ -3,6 +3,7 @@ import { validateFields } from "@/app/util/validateFields";
 import { BeneficiaryForm } from "@/app/lib/definitions";
 import CheckboxGroupModal from "./CheckBoxGroupModal";
 import { textFields, dropdownFields } from "@/app/config/formConfig";
+import { Timestamp } from "firebase/firestore";
 
 interface ModalProps {
   onClose: () => void;
@@ -16,6 +17,9 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   brgyName,
 }) => {
   const [formData, setFormData] = useState<BeneficiaryForm>({
+    id: "",
+    dateCreated: Timestamp.now(),
+    status: "",
     firstName: "",
     middleName: "",
     lastName: "",
