@@ -13,6 +13,7 @@ interface TableProps {
 
 const Table: React.FC<TableProps> = ({ brgyName }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("all"); // New state for status filter
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [filteredData, setFilteredData] = useState<BeneficiaryForm[]>([]);
   const [beneficiaries, setBeneficiaries] = useState<BeneficiaryForm[]>([]);
@@ -43,22 +44,26 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
     loadBeneficiaries();
   }, [brgyName]);
 
-  // Filter data based on search term
+  // Filter data based on search term and status
   useEffect(() => {
-    const filtered = beneficiaries.filter(
-      (beneficiary) =>
+    const filtered = beneficiaries.filter((beneficiary) => {
+      const matchesSearchTerm =
         beneficiary.firstName
           .toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
         beneficiary.middleName
           ?.toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
-        beneficiary.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        beneficiary.status.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+        beneficiary.lastName.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesStatus =
+        statusFilter === "all" || beneficiary.status === statusFilter;
+
+      return matchesSearchTerm && matchesStatus;
+    });
     setFilteredData(filtered);
     setCurrentPage(1); // Reset to first page when filtering
-  }, [searchTerm, beneficiaries]);
+  }, [searchTerm, statusFilter, beneficiaries]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -67,7 +72,19 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
 
   return (
     <div className="bg-gray-800 p-4 rounded-lg shadow-md">
-      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      <div className="flex items-center mb-4">
+        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="ml-4 p-2 border rounded-lg text-gray-700"
+        >
+          <option value="all">All</option>
+          <option value="claimed">Claimed</option>
+          <option value="unclaimed">Unclaimed</option>
+        </select>
+      </div>
+
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
