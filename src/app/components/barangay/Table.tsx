@@ -4,7 +4,8 @@ import SearchBar from "./SearchBar";
 import Pagination from "./Pagination";
 import { fetchBeneficiaries } from "@/app/lib/api/beneficiary/data";
 import { BeneficiaryForm } from "@/app/lib/definitions";
-import { showLoading, hideLoading } from "../loading";
+import { convertFirebaseTimestamp } from "@/app/util/FirebaseTimestamp";
+import { toSentenceCase } from "@/app/util/toSentenceCase";
 
 interface TableProps {
   brgyName: string;
@@ -72,14 +73,27 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
       ) : error ? (
         <p>Error: {error}</p>
       ) : (
-        <table className="min-w-full bg-gray-800 border border-gray-300 rounded-lg">
+        <table className="min-w-full bg-gray-800 border border-gray-500 rounded-lg">
           <thead>
             <tr>
-              <th className="border-b py-2 px-4 text-left">Last Name</th>
-              <th className="border-b py-2 px-4 text-left">First Name</th>
-              <th className="border-b py-2 px-4 text-left">Middle Name</th>
-              <th className="border-b py-2 px-4 text-left">Status</th>
-              <th className="border-b py-2 px-4 text-left">Action</th>
+              <th className="border-b border-gray-500 py-2 px-4 text-left">
+                Last Name
+              </th>
+              <th className="border-b border-gray-500 py-2 px-4 text-left">
+                First Name
+              </th>
+              <th className="border-b border-gray-500 py-2 px-4 text-left">
+                Middle Name
+              </th>
+              <th className="border-b border-gray-500 py-2 px-4 text-left">
+                Date Created
+              </th>
+              <th className="border-b border-gray-500 py-2 px-4 text-left">
+                Status
+              </th>
+              <th className="border-b border-gray-500 py-2 px-4 text-left">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -88,20 +102,30 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
                 key={beneficiary.id}
                 className="hover:bg-gray-700 transition-colors"
               >
-                <td className="border-b py-2 px-4">{beneficiary.lastName}</td>
-                <td className="border-b py-2 px-4">{beneficiary.firstName}</td>
-                <td className="border-b py-2 px-4">{beneficiary.middleName}</td>
+                <td className="border-b border-gray-500 py-2 px-4">
+                  {toSentenceCase(beneficiary.lastName)}
+                </td>
+                <td className="border-b border-gray-500 py-2 px-4">
+                  {toSentenceCase(beneficiary.firstName)}
+                </td>
+                <td className="border-b border-gray-500 py-2 px-4">
+                  {toSentenceCase(beneficiary.middleName)}
+                </td>
+                <td className="border-b border-gray-500 py-2 px-4">
+                  {convertFirebaseTimestamp(beneficiary.dateCreated)}
+                </td>
                 <td
                   className={classNames(
-                    "border-b py-2 px-4 font-semibold",
+                    "border-b border-gray-500 py-2 px-4 font-semibold",
+
                     beneficiary.status === "claimed"
                       ? "text-green-500 "
                       : "text-orange-500"
                   )}
                 >
-                  {beneficiary.status}
+                  {toSentenceCase(beneficiary.status)}
                 </td>
-                <td className="border-b py-2 px-4">
+                <td className="border-b border-gray-500 py-2 px-4">
                   <button className="bg-blue-500 text-white py-1 px-3 rounded-lg">
                     View Info
                   </button>

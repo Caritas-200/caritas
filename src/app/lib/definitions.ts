@@ -1,7 +1,9 @@
+import { Timestamp } from "firebase/firestore";
+
 export type BeneficiaryForm = {
   id?: string;
   firstName: string;
-  middleName?: string;
+  middleName: string;
   lastName: string;
   mobileNumber: string;
   age: string;
@@ -13,8 +15,9 @@ export type BeneficiaryForm = {
   status: string;
   monthlyNetIncome: string;
   ethnicity: string;
+  dateCreated: Timestamp;
   religion: string;
-  email?: string;
+  email: string;
   beneficiary4Ps: string;
   housingCondition: string[];
   casualty: string[];
