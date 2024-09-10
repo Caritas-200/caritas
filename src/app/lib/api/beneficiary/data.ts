@@ -7,6 +7,7 @@ import {
   where,
   getDocs,
   getDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db, storage } from "@/app/services/firebaseConfig";
 import { BeneficiaryForm } from "@/app/lib/definitions";
@@ -16,9 +17,8 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Firebase
 export const addBeneficiary = async (
   formData: BeneficiaryForm,
   brgyName: string
-): Promise<void> => {
+): Promise<string> => {
   try {
-    // Reference to the recipients collection under the specified barangay document
     const recipientsCollectionRef = collection(
       db,
       `barangay/${brgyName}/recipients`
@@ -26,69 +26,47 @@ export const addBeneficiary = async (
 
     // Check if houseNumber is filled
     if (formData.houseNumber) {
-      // Query to check if houseNumber is already registered
       const houseNumberQuery = query(
         recipientsCollectionRef,
         where("houseNumber", "==", formData.houseNumber)
       );
-
       const houseNumberSnapshot = await getDocs(houseNumberQuery);
-
       if (!houseNumberSnapshot.empty) {
-        // House number already registered, throw an error
         throw new Error("This house number is already registered.");
       }
     }
 
-    // If house number is not filled, check for name duplication
+    // Check for name duplication
     const duplicateQuery = query(
       recipientsCollectionRef,
       where("firstName", "==", formData.firstName),
       where("lastName", "==", formData.lastName),
       where("middleName", "==", formData.middleName)
     );
-
     const querySnapshot = await getDocs(duplicateQuery);
-
     if (!querySnapshot.empty) {
-      // Duplicate found based on name
       throw new Error("A beneficiary with the same name already exists.");
     }
 
-    // Generate a new document reference within the recipients collection
+    // Generate a new document reference and save the data (without QR code for now)
     const newBeneficiaryRef = doc(recipientsCollectionRef);
 
-    // Add the document ID to the form data
     const formDataWithId = {
       ...formData,
-      id: newBeneficiaryRef.id, // Add the document ID here
+      id: newBeneficiaryRef.id,
       status: "unclaimed",
       dateCreated: Timestamp.now(),
     };
 
-    // Upload QR code to Firebase Storage
-    const qrCodeUrl = await uploadQrCodeToStorage(
-      formData.qrCode,
-      `qr-codes/${formDataWithId.id}.png`
-    );
+    await setDoc(newBeneficiaryRef, formDataWithId);
 
-    // Add the QR code URL to the form data
-    const formDataWithQrCode = {
-      ...formDataWithId,
-      qrCode: qrCodeUrl,
-    };
-
-    // Save the beneficiary data to Firestore
-    await setDoc(newBeneficiaryRef, formDataWithQrCode);
-
-    console.log("Beneficiary added successfully!");
+    // Return the newly created document ID
+    return newBeneficiaryRef.id;
   } catch (error: unknown) {
-    // Type guard for Error object
     if (error instanceof Error) {
       console.error("Error adding beneficiary: ", error.message);
-      throw error; // Re-throw the error to handle it in the UI
+      throw error;
     } else {
-      console.error("Unknown error adding beneficiary");
       throw new Error("Unknown error adding beneficiary");
     }
   }
@@ -110,6 +88,38 @@ const uploadQrCodeToStorage = async (
 
   // Get and return the download URL
   return await getDownloadURL(storageRef);
+};
+
+export const updateBeneficiaryWithQrCode = async (
+  beneficiaryId: string,
+  qrImage: string,
+  brgyName: string
+): Promise<void> => {
+  try {
+    const qrCodeUrl = await uploadQrCodeToStorage(
+      qrImage,
+      `qr-codes/${beneficiaryId}.png`
+    );
+
+    const beneficiaryRef = doc(
+      db,
+      `barangay/${brgyName}/recipients`,
+      beneficiaryId
+    );
+
+    await updateDoc(beneficiaryRef, {
+      qrCode: qrCodeUrl,
+    });
+
+    console.log("QR code added successfully!");
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error updating beneficiary with QR code: ", error.message);
+      throw error;
+    } else {
+      throw new Error("Unknown error updating beneficiary with QR code");
+    }
+  }
 };
 
 // Function to fetch all beneficiaries for a specific barangay

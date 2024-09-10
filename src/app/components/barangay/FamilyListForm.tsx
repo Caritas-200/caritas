@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import Swal from "sweetalert2";
 import { FamilyMember } from "@/app/lib/definitions";
-import { addBeneficiary } from "@/app/lib/api/beneficiary/data";
+import {
+  addBeneficiary,
+  updateBeneficiaryWithQrCode,
+} from "@/app/lib/api/beneficiary/data";
 import { familyInfoFields } from "@/app/config/formConfig";
 import { validateFamilyForm } from "@/app/util/validateFamilyForm";
 import { removeFamilyMember } from "@/app/util/removeFamilyRow";
 import { generateQrImage } from "@/app/util/generateQRImage";
 import QRCode from "react-qr-code";
-import QRCodeModal from "./QRcodeModal";
+import BeneficiaryIdQr from "./BeneficiaryIdQr";
 
 interface FamilyModalProps {
   onClose: () => void;
@@ -39,6 +42,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
   const [showQRModal, setShowQRModal] = useState(false); // State to control QR modal visibility
   const [qrData, setQrData] = useState(""); // QR data to be generated
   const qrCodeRef = useRef<HTMLDivElement>(null); // Ref for the QR code element
+  const [printData, setPrintData] = useState("");
 
   useEffect(() => {
     // Load the formData and set familyMembers if available
@@ -122,23 +126,24 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
     try {
       const beneficiaryData = { ...formData, familyMembers };
 
-      // Generate the QR code data (just select essential fields)
+      setPrintData(JSON.stringify(beneficiaryData));
+
+      //Save the beneficiary data without QR code, get back the generated document ID
+      const newBeneficiaryId = await addBeneficiary(beneficiaryData, brgyName);
+
+      // Generate the QR code payload using the generated ID
       const qrPayload = {
-        id: "hello",
-        name: beneficiaryData.name,
+        id: newBeneficiaryId,
+        lastName: beneficiaryData.lastName,
         brgyName,
-        status: "Unclaimed",
       };
       setQrData(JSON.stringify(qrPayload)); // Set QR data
 
       // Wait for the QR code image to be generated
       const qrImage = await generateQrImage(qrCodeRef);
 
-      // Include the QR code in the beneficiary data
-      beneficiaryData.qrCode = qrImage;
-
-      // Now save the beneficiary data
-      await addBeneficiary(beneficiaryData, brgyName);
+      //Upload the QR code image and save the QR code URL in Firestore
+      await updateBeneficiaryWithQrCode(newBeneficiaryId, qrImage, brgyName);
 
       Swal.fire({
         icon: "success",
@@ -263,7 +268,13 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
       </div>
 
       {/* QR Code Modal */}
-      {showQRModal && <QRCodeModal qrData={qrData} onClose={onClose} />}
+      {showQRModal && (
+        <BeneficiaryIdQr
+          beneficiaryData={printData}
+          qrData={qrData}
+          onClose={onClose}
+        />
+      )}
     </div>
   );
 };
