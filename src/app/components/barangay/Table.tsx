@@ -4,7 +4,7 @@ import SearchBar from "./SearchBar";
 import Pagination from "./Pagination";
 import { fetchBeneficiaries } from "@/app/lib/api/beneficiary/data";
 import { BeneficiaryForm } from "@/app/lib/definitions";
-import { convertFirebaseTimestamp } from "@/app/util/FirebaseTimestamp";
+import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
 import BeneficiaryInfoModal from "./BeneficiaryInfoModal"; // Import the BeneficiaryInfoModal component
 
@@ -118,8 +118,6 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
           >
             <option value={5}>5</option>
             <option value={10}>10</option>
-            <option value={15}>15</option>
-            <option value={20}>20</option>
           </select>
 
           <select

@@ -40,6 +40,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     healthCondition: [],
     ownershipRentalType: [],
     code: [],
+    qrCode: "",
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});

@@ -24,6 +24,7 @@ export type BeneficiaryForm = {
   healthCondition: string[];
   ownershipRentalType: string[];
   code: string[];
+  qrCode: string;
 };
 
 export type FamilyMember = {

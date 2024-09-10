@@ -24,6 +24,7 @@
     "react-calendar": "^5.0.0",
     "react-csv": "^2.2.2",
     "react-dom": "^18",
+    "react-qr-code": "^2.0.15",
     "sweetalert2": "^11.12.4",
     "sweetalert2-react-content": "^5.0.7",
     "uuid": "^10.0.0",

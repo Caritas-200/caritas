@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Swal from "sweetalert2";
 import { FamilyMember } from "@/app/lib/definitions";
 import { addBeneficiary } from "@/app/lib/api/beneficiary/data";
 import { familyInfoFields } from "@/app/config/formConfig";
-import QRCodeModal from "./QRcodeModal";
 import { validateFamilyForm } from "@/app/util/validateFamilyForm";
 import { removeFamilyMember } from "@/app/util/removeFamilyRow";
+import { generateQrImage } from "@/app/util/generateQRImage";
 import QRCode from "react-qr-code";
+import QRCodeModal from "./QRcodeModal";
 
 interface FamilyModalProps {
   onClose: () => void;
@@ -37,6 +38,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
   const [isValid, setIsValid] = useState(true);
   const [showQRModal, setShowQRModal] = useState(false); // State to control QR modal visibility
   const [qrData, setQrData] = useState(""); // QR data to be generated
+  const qrCodeRef = useRef<HTMLDivElement>(null); // Ref for the QR code element
 
   useEffect(() => {
     // Load the formData and set familyMembers if available
@@ -119,16 +121,24 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
 
     try {
       const beneficiaryData = { ...formData, familyMembers };
-      await addBeneficiary(beneficiaryData, brgyName);
 
       // Generate the QR code data (just select essential fields)
       const qrPayload = {
-        id: beneficiaryData.id,
+        id: "hello",
         name: beneficiaryData.name,
         brgyName,
         status: "Unclaimed",
       };
       setQrData(JSON.stringify(qrPayload)); // Set QR data
+
+      // Wait for the QR code image to be generated
+      const qrImage = await generateQrImage(qrCodeRef);
+
+      // Include the QR code in the beneficiary data
+      beneficiaryData.qrCode = qrImage;
+
+      // Now save the beneficiary data
+      await addBeneficiary(beneficiaryData, brgyName);
 
       Swal.fire({
         icon: "success",
@@ -243,6 +253,13 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
             </div>
           </div>
         </form>
+
+        {/* Hidden QR Code */}
+        <div style={{ display: "none" }}>
+          <div ref={qrCodeRef}>
+            <QRCode value={qrData} size={200} />
+          </div>
+        </div>
       </div>
 
       {/* QR Code Modal */}

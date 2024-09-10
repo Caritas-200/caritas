@@ -8,8 +8,10 @@ import {
   getDocs,
   getDoc,
 } from "firebase/firestore";
-import { db } from "@/app/services/firebaseConfig";
+import { db, storage } from "@/app/services/firebaseConfig";
 import { BeneficiaryForm } from "@/app/lib/definitions";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Firebase Storage methods
+// import { generateQrImage } from "@/app/util/qrCodeUtils"; // Assuming you have this QR code utility function
 
 export const addBeneficiary = async (
   formData: BeneficiaryForm,
@@ -64,8 +66,20 @@ export const addBeneficiary = async (
       dateCreated: Timestamp.now(),
     };
 
-    // Set the document with the updated form data
-    await setDoc(newBeneficiaryRef, formDataWithId);
+    // Upload QR code to Firebase Storage
+    const qrCodeUrl = await uploadQrCodeToStorage(
+      formData.qrCode,
+      `qr-codes/${formDataWithId.id}.png`
+    );
+
+    // Add the QR code URL to the form data
+    const formDataWithQrCode = {
+      ...formDataWithId,
+      qrCode: qrCodeUrl,
+    };
+
+    // Save the beneficiary data to Firestore
+    await setDoc(newBeneficiaryRef, formDataWithQrCode);
 
     console.log("Beneficiary added successfully!");
   } catch (error: unknown) {
@@ -78,6 +92,24 @@ export const addBeneficiary = async (
       throw new Error("Unknown error adding beneficiary");
     }
   }
+};
+
+// Helper function to upload the QR code image to Firebase Storage and return the URL
+const uploadQrCodeToStorage = async (
+  base64Image: string,
+  filePath: string
+): Promise<string> => {
+  const response = await fetch(base64Image);
+  const blob = await response.blob();
+
+  // Reference to the Firebase Storage location
+  const storageRef = ref(storage, filePath);
+
+  // Upload the image blob to Firebase Storage
+  await uploadBytes(storageRef, blob);
+
+  // Get and return the download URL
+  return await getDownloadURL(storageRef);
 };
 
 // Function to fetch all beneficiaries for a specific barangay
