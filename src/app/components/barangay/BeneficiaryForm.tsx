@@ -3,6 +3,7 @@ import { validateFields } from "@/app/util/validateFields";
 import { BeneficiaryForm } from "@/app/lib/definitions";
 import CheckboxGroupModal from "./CheckBoxGroupModal";
 import { textFields, dropdownFields } from "@/app/config/formConfig";
+import { Timestamp } from "firebase/firestore";
 
 interface ModalProps {
   onClose: () => void;
@@ -16,6 +17,9 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   brgyName,
 }) => {
   const [formData, setFormData] = useState<BeneficiaryForm>({
+    id: "",
+    dateCreated: Timestamp.now(),
+    status: "",
     firstName: "",
     middleName: "",
     lastName: "",
@@ -24,6 +28,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     address: "",
     gender: "",
     occupation: "",
+    houseNumber: "",
     civilStatus: "",
     ethnicity: "",
     religion: "",
@@ -35,6 +40,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     healthCondition: [],
     ownershipRentalType: [],
     code: [],
+    qrCode: "",
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});

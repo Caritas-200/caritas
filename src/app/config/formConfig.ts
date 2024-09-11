@@ -74,22 +74,6 @@ export const radioGroups = [
   },
 ];
 
-export const textFields = [
-  { name: "firstName", label: "First Name" },
-  { name: "middleName", label: "Middle Name", optional: true },
-  { name: "lastName", label: "Last Name" },
-  { name: "mobileNumber", label: "Mobile Number" },
-  { name: "age", label: "Age" },
-  { name: "address", label: "Address" },
-  { name: "gender", label: "Gender" },
-  { name: "occupation", label: "Occupation" },
-  { name: "monthlyNetIncome", label: "Monthly Net Income" },
-  { name: "civilStatus", label: "Civil Status" },
-  { name: "ethnicity", label: "Ethnicity" },
-  { name: "religion", label: "Religion" },
-  { name: "email", label: "Email", optional: true },
-];
-
 export const dropdownFields = [
   {
     name: "gender",
