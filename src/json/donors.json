@@ -9,11 +9,12 @@
     "country": "USA",
     "gender": "Male",
     "work": "Engineer",
-    "status": "Single",
+    "status": "active",
+    "civilStatus": "Single",
     "language": "English",
     "religion": "Christianity",
     "email": "john.doe@example.com",
-    "password": "password123"
+    "dateCreated": "2024-09-11"
   },
   {
     "firstName": "Jane",
@@ -25,11 +26,12 @@
     "country": "Canada",
     "gender": "Female",
     "work": "Doctor",
-    "status": "Married",
+    "status": "active",
+    "civilStatus": "Married",
     "language": "French",
     "religion": "Catholicism",
     "email": "jane.smith@example.com",
-    "password": "securepass"
+    "dateCreated": "2024-09-11"
   },
   {
     "firstName": "Michael",
@@ -41,11 +43,12 @@
     "country": "UK",
     "gender": "Male",
     "work": "Teacher",
-    "status": "Divorced",
+    "status": "inactive",
+    "civilStatus": "Divorced",
     "language": "English",
     "religion": "Islam",
     "email": "michael.brown@example.com",
-    "password": "mypass456"
+    "dateCreated": "2024-09-11"
   },
   {
     "firstName": "Emily",
@@ -57,11 +60,12 @@
     "country": "Australia",
     "gender": "Female",
     "work": "Nurse",
-    "status": "Single",
+    "status": "active",
+    "civilStatus": "Single",
     "language": "English",
     "religion": "Hinduism",
     "email": "emily.davis@example.com",
-    "password": "nurse789"
+    "dateCreated": "2024-09-11"
   },
   {
     "firstName": "William",
@@ -73,11 +77,12 @@
     "country": "USA",
     "gender": "Male",
     "work": "Lawyer",
-    "status": "Widowed",
+    "status": "inactive",
+    "civilStatus": "Widowed",
     "language": "English",
     "religion": "Judaism",
     "email": "william.johnson@example.com",
-    "password": "lawpass321"
+    "dateCreated": "2024-09-11"
   },
   {
     "firstName": "Sophia",
@@ -89,11 +94,12 @@
     "country": "South Korea",
     "gender": "Female",
     "work": "Designer",
-    "status": "Married",
+    "status": "active",
+    "civilStatus": "Married",
     "language": "Korean",
     "religion": "Buddhism",
     "email": "sophia.lee@example.com",
-    "password": "des123"
+    "dateCreated": "2024-09-11"
   },
   {
     "firstName": "David",
@@ -105,11 +111,12 @@
     "country": "Mexico",
     "gender": "Male",
     "work": "Architect",
-    "status": "Single",
+    "status": "active",
+    "civilStatus": "Single",
     "language": "Spanish",
     "religion": "Christianity",
     "email": "david.martinez@example.com",
-    "password": "arch789"
+    "dateCreated": "2024-09-11"
   },
   {
     "firstName": "Isabella",
@@ -121,11 +128,12 @@
     "country": "Spain",
     "gender": "Female",
     "work": "Artist",
-    "status": "Single",
+    "status": "active",
+    "civilStatus": "Single",
     "language": "Spanish",
     "religion": "Catholicism",
     "email": "isabella.garcia@example.com",
-    "password": "artpass456"
+    "dateCreated": "2024-09-11"
   },
   {
     "firstName": "James",
@@ -137,11 +145,12 @@
     "country": "New Zealand",
     "gender": "Male",
     "work": "Scientist",
-    "status": "Divorced",
+    "status": "inactive",
+    "civilStatus": "Divorced",
     "language": "English",
     "religion": "Atheism",
     "email": "james.clark@example.com",
-    "password": "scienpass987"
+    "dateCreated": "2024-09-11"
   },
   {
     "firstName": "Olivia",
@@ -153,10 +162,11 @@
     "country": "Germany",
     "gender": "Female",
     "work": "Engineer",
-    "status": "Married",
+    "status": "active",
+    "civilStatus": "Married",
     "language": "German",
     "religion": "Christianity",
     "email": "olivia.moore@example.com",
-    "password": "eng123pass"
+    "dateCreated": "2024-09-11"
   }
 ]

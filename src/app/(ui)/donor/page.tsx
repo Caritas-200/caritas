@@ -32,20 +32,12 @@ const DonorList: React.FC = () => {
   };
 
   return (
-    <div className="h-screen">
+    <div className="h-screen ">
       <Header />
-      <div className="flex flex-row flex-1 bg-gray-100">
+      <div className="flex flex-row flex-1 bg-gray-700">
         <LeftNav />
-        <div className="p-24 bg-gray-700 min-h-screen w-full">
-          <div className="flex items-center mb-4 justify-end">
-            <div className="flex mt-4 gap-4 ">
-              {/* <button
-                className="bg-blue-500 text-white py-2 px-4 rounded-lg"
-                onClick={handleOpenModal}
-              >
-                Add Donor
-              </button> */}
-            </div>
+        <div className=" bg-gray-700 min-h-screen w-full">
+          <div className="flex px-10 pt-10 gap-4 pb-6 ">
             <DonorTable donors={donors} />
           </div>
         </div>
