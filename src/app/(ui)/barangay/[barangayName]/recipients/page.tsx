@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Table from "@/app/components/barangay/Table";
-import BeneficiaryModal from "@/app/components/barangay/BeneficiaryFormModal";
+import BeneficiaryModal from "@/app/components/barangay/BeneficiaryForm";
 import { BeneficiaryForm } from "@/app/lib/definitions";
 
 // Define the type for the params object returned by useParams
@@ -37,7 +37,7 @@ const Recipient: React.FC = () => {
   };
 
   return (
-    <div className="p-24 bg-gray-700 min-h-screen">
+    <div className="p-20 bg-gray-700 min-h-screen">
       <div className="flex justify-between items-center mb-4">
         <button
           className="bg-blue-500 text-white py-2 px-4 rounded-lg"
