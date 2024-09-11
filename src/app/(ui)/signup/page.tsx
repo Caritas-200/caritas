@@ -1,33 +1,25 @@
 "use client";
 
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { signup } from "@/app/lib/api/auth/signup";
 import { validateForm } from "@/app/util/formValidation";
 import { showLoading, hideLoading } from "@/app/components/loading";
-
-interface FormData {
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  status: string;
-  email: string;
-  mobileNumber: string;
-  gender: string;
-  position: string;
-  address: string;
-  password: string;
-  confirmPassword: string;
-}
+import { SignUpFormData } from "@/app/lib/definitions";
+import {
+  inputFieldsSignUp,
+  genderOptionsSignUp,
+  statusOptionsSignUp,
+} from "@/app/config/formConfig";
 
 interface ErrorState {
   [key: string]: string;
 }
 
 const SignUp: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<SignUpFormData>({
     firstName: "",
     middleName: "",
     lastName: "",
@@ -53,15 +45,16 @@ const SignUp: React.FC = () => {
     });
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
     showLoading();
 
     if (!validateForm(formData, setErrors)) {
+      hideLoading();
       return;
     }
 
-    //API Call
+    // API Call
     const response = await signup(formData);
     hideLoading();
 
@@ -84,47 +77,6 @@ const SignUp: React.FC = () => {
     }
   };
 
-  const inputFields = [
-    {
-      label: "First Name",
-      name: "firstName",
-      type: "text",
-    },
-    {
-      label: "Middle Name",
-      name: "middleName",
-      type: "text",
-    },
-    {
-      label: "Last Name",
-      name: "lastName",
-      type: "text",
-    },
-    {
-      label: "Email",
-      name: "email",
-      type: "email",
-      pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$",
-    },
-    {
-      label: "Mobile Number",
-      name: "mobileNumber",
-      type: "tel",
-    },
-    { label: "Position", name: "position", type: "text", pattern: "[A-Za-z]+" },
-    { label: "Address", name: "address", type: "text" },
-    { label: "Password", name: "password", type: "password", pattern: ".{5,}" },
-    {
-      label: "Confirm Password",
-      name: "confirmPassword",
-      type: "password",
-      pattern: ".{5,}",
-    },
-  ];
-
-  const statusOptions = ["Single", "Married", "Divorced", "Widowed"];
-  const genderOptions = ["Male", "Female", "Other"];
-
   return (
     <div className="flex justify-center items-center h-full py-10 bg-gray-100">
       <div className="w-full max-w-3xl bg-white p-8 rounded-lg shadow-md">
@@ -137,7 +89,7 @@ const SignUp: React.FC = () => {
 
         <form onSubmit={handleRegister}>
           <div className="flex flex-wrap -mx-2">
-            {inputFields.map((field, index) => (
+            {inputFieldsSignUp.map((field, index) => (
               <div key={index} className="w-full md:w-1/2 px-2 mb-4">
                 <label
                   htmlFor={field.name}
@@ -150,13 +102,13 @@ const SignUp: React.FC = () => {
                   id={field.name}
                   name={field.name}
                   value={formData[field.name as keyof typeof formData]}
-                  pattern={field.pattern}
                   onChange={handleChange}
                   className={`w-full text-gray-500 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                     errors[field.name]
                       ? "border-red-500"
                       : "focus:ring-blue-500"
                   }`}
+                  required={field.required}
                 />
                 {errors[field.name] && (
                   <p className="text-red-500 text-sm mt-1">
@@ -182,10 +134,9 @@ const SignUp: React.FC = () => {
                 className={`w-full text-gray-500 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                   errors.status ? "border-red-500" : "focus:ring-blue-500"
                 }`}
-                required
               >
                 <option value="">Select Status</option>
-                {statusOptions.map((option) => (
+                {statusOptionsSignUp.map((option) => (
                   <option key={option} value={option}>
                     {option}
                   </option>
@@ -212,10 +163,9 @@ const SignUp: React.FC = () => {
                 className={`w-full text-gray-500 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
                   errors.gender ? "border-red-500" : "focus:ring-blue-500"
                 }`}
-                required
               >
                 <option value="">Select Gender</option>
-                {genderOptions.map((option) => (
+                {genderOptionsSignUp.map((option) => (
                   <option key={option} value={option}>
                     {option}
                   </option>
