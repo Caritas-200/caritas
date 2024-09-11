@@ -1,3 +1,17 @@
+export type SignUpFormData = {
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  status: string;
+  email: string;
+  mobileNumber: string;
+  gender: string;
+  position: string;
+  address: string;
+  password: string;
+  confirmPassword: string;
+};
+
 export type BeneficiaryForm = {
   id?: string;
   firstName: string;
