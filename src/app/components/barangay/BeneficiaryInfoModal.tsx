@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { fetchBeneficiaryById } from "@/app/lib/api/beneficiary/data";
 import { BeneficiaryForm } from "@/app/lib/definitions";
 import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
-import BeneficiaryIdQr from "./BeneficiaryIdQr";
 
 interface BeneficiaryInfoModalProps {
   brgyName: string;
@@ -18,7 +17,6 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
   const [beneficiary, setBeneficiary] = useState<BeneficiaryForm | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [showQRModal, setShowQRModal] = useState(false);
 
   useEffect(() => {
     const fetchBeneficiary = async () => {

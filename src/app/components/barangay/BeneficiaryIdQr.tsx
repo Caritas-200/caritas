@@ -19,15 +19,15 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
   const handleClose = () => {
     Swal.fire({
       title: "Reminder",
-      text: "Don't forget to print the Beneficiary ID. If you encounter any issues with the printer, you can still print the ID from the Beneficiary details section.",
+      text: "Don't forget to print the Beneficiary ID. This will be needed for smooth claiming of benefits",
       icon: "info",
       confirmButtonText: "Close",
       cancelButtonText: "Back",
-      showCancelButton: true, // Show the cancel button
-      cancelButtonColor: "#d33", // Optional: Set color for the cancel button
+      showCancelButton: true,
+      cancelButtonColor: "#d33",
     }).then((result) => {
       if (result.isConfirmed) {
-        onClose(); // Call the onClose function if "Close" is clicked
+        onClose();
       }
     });
   };
@@ -111,7 +111,7 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
     <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="modal-content bg-white p-10 rounded-lg w-full max-w-screen-lg relative">
         <button
-          onClick={handleClose} // Trigger close notification
+          onClick={handleClose}
           className="modal-close-button absolute top-2 right-2 text-gray-700"
         >
           ✖
@@ -186,13 +186,15 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
               </p>
               <ul className="family-list list-disc list-inside">
                 {/* Render family members here */}
-                {/* {newObject.familyMembers?.map(
-                  (member: string, index: number) => (
-                    <li key={index} className="family-member">
-                      {member}
-                    </li>
-                  )
-                )} */}
+                <ul className="family-list list-disc list-inside">
+                  {newObject.familyMembers?.map(
+                    (member: any, index: number) => (
+                      <p key={index} className="family-member">
+                        <strong>{index + 1 + "."}</strong> {member.name}
+                      </p>
+                    )
+                  )}
+                </ul>
               </ul>
             </div>
           </div>
