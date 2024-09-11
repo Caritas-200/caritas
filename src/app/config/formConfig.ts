@@ -1,5 +1,30 @@
 import { BeneficiaryForm } from "@/app/lib/definitions";
 
+export const inputFieldsSignUp = [
+  { label: "First Name", name: "firstName", type: "text", required: true },
+  { label: "Middle Name", name: "middleName", type: "text" },
+  { label: "Last Name", name: "lastName", type: "text", required: true },
+  { label: "Email", name: "email", type: "email", required: true },
+  {
+    label: "Mobile Number",
+    name: "mobileNumber",
+    type: "tel",
+    required: true,
+  },
+  { label: "Position", name: "position", type: "text", required: true },
+  { label: "Address", name: "address", type: "text", required: true },
+  { label: "Password", name: "password", type: "password", required: true },
+  {
+    label: "Confirm Password",
+    name: "confirmPassword",
+    type: "password",
+    required: true,
+  },
+];
+
+export const statusOptionsSignUp = ["Single", "Married", "Divorced", "Widowed"];
+export const genderOptionsSignUp = ["Male", "Female", "Other"];
+
 export const checkboxGroup = {
   label: "Casualty",
   name: "casualty" as keyof BeneficiaryForm,
