@@ -15,7 +15,7 @@ const navItems: NavItem[] = [
   { name: "Home", href: "/home" },
   { name: "List of Barangays", href: "/barangay" },
   { name: "Documentation", href: "/documentation" },
-  { name: "Donors", href: "/donors" },
+  { name: "Donors", href: "/donor" },
 ];
 
 const Nav: React.FC = () => {

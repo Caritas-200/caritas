@@ -4,7 +4,6 @@ import SearchBar from "./SearchBar";
 import Pagination from "./Pagination";
 import { fetchBeneficiaries } from "@/app/lib/api/beneficiary/data";
 import { BeneficiaryForm } from "@/app/lib/definitions";
-import { showLoading, hideLoading } from "../loading";
 
 interface TableProps {
   brgyName: string;
