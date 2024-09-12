@@ -51,3 +51,19 @@ export type FamilyMember = {
   skills: string;
   remarks?: string;
 };
+
+export type DonorFormData = {
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  mobileNumber: string;
+  age: string;
+  address: string;
+  country: string;
+  gender: string;
+  work: string;
+  civilStatus: string;
+  language: string;
+  religion: string;
+  email: string;
+};
