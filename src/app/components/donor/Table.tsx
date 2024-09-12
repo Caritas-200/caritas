@@ -7,8 +7,7 @@ interface Donor {
   firstName: string;
   lastName: string;
   email: string;
-  status: string; // Assume 'active' or 'inactive'
-  // Add other donor details as needed
+  status: string;
 }
 
 interface DonorTableProps {
@@ -163,10 +162,10 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
                     {index + 1 + (currentPage - 1) * itemsPerPage}
                   </td>
                   <td className="border-b border-gray-500 py-2 px-4">
-                    {donor.lastName}
+                    {toSentenceCase(donor.lastName)}
                   </td>
                   <td className="border-b border-gray-500 py-2 px-4">
-                    {donor.firstName}
+                    {toSentenceCase(donor.firstName)}
                   </td>
                   <td className="border-b border-gray-500 py-2 px-4">
                     {donor.email}
