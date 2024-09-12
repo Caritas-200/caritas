@@ -214,6 +214,19 @@ export const options = {
     "No religion",
   ],
   gender: ["Male", "Female", "Other"],
+  suffix: [
+    "Jr.", // Junior
+    "Sr.", // Senior
+    "II", // Second
+    "III", // Third
+    "IV", // Fourth
+    "V", // Fifth
+    "MD", // Doctor of Medicine
+    "PhD", // Doctor of Philosophy
+    "Esq.", // Esquire (Law)
+    "DDS", // Doctor of Dental Surgery
+    "CPA", // Certified Public Accountant
+  ],
 };
 
 export const formFields = [
@@ -221,7 +234,6 @@ export const formFields = [
     id: "firstName",
     name: "firstName",
     label: "First Name",
-    required: true,
     placeholder: "John",
   },
   {
@@ -234,30 +246,25 @@ export const formFields = [
     id: "lastName",
     name: "lastName",
     label: "Last Name",
-    required: true,
     placeholder: "Doe",
   },
   {
     id: "mobileNumber",
     name: "mobileNumber",
     label: "Mobile Number",
-    required: true,
     placeholder: "09454356673",
-    pattern: "[0-9]{10}",
   },
   {
     id: "age",
     name: "age",
     label: "Age",
     type: "number",
-    required: true,
     placeholder: "30",
   },
   {
     id: "address",
     name: "address",
     label: "Address",
-    required: true,
     placeholder: "123 Main St",
   },
 
@@ -265,14 +272,12 @@ export const formFields = [
     id: "work",
     name: "work",
     label: "Work",
-    required: true,
     placeholder: "Software Engineer",
   },
   {
     id: "language",
     name: "language",
     label: "Language",
-    required: true,
     placeholder: "English",
   },
   {
@@ -280,31 +285,33 @@ export const formFields = [
     name: "email",
     label: "Email",
     type: "email",
-    required: true,
     placeholder: "john.doe@example.com",
   },
 ];
 
-export const selectFields = [
+export const dropDownFields = [
+  {
+    id: "suffix",
+    name: "suffix",
+    label: "Suffix",
+    options: options.suffix,
+  },
   {
     id: "gender",
     name: "gender",
     label: "Gender",
     options: options.gender,
-    required: true,
   },
   {
     id: "civilStatus",
     name: "civilStatus",
     label: "Civil Status",
     options: options.civilStatus,
-    required: true,
   },
   {
     id: "religion",
     name: "religion",
     label: "Religion",
     options: options.religion,
-    required: true,
   },
 ];

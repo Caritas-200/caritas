@@ -4,7 +4,6 @@ export const InputField: React.FC<{
   type?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  required?: boolean;
   label: string;
   placeholder?: string;
   pattern?: string;
@@ -14,7 +13,6 @@ export const InputField: React.FC<{
   type = "text",
   value,
   onChange,
-  required = false,
   label,
   placeholder = "",
   pattern,
@@ -22,6 +20,7 @@ export const InputField: React.FC<{
   <div>
     <label htmlFor={id} className="block text-gray-700">
       {label}
+      {name !== "middleName" && <span className="text-red-500">*</span>}
     </label>
     <input
       type={type}
@@ -30,7 +29,6 @@ export const InputField: React.FC<{
       value={value}
       onChange={onChange}
       className="w-full border border-gray-300 p-2 rounded"
-      required={required}
       placeholder={placeholder}
       pattern={pattern}
     />

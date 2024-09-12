@@ -53,13 +53,16 @@ export type FamilyMember = {
 };
 
 export type DonorFormData = {
+  id: string;
   firstName: string;
   middleName: string;
   lastName: string;
   mobileNumber: string;
   age: string;
+  suffix: string;
   address: string;
   country: string;
+  status: string;
   gender: string;
   work: string;
   civilStatus: string;

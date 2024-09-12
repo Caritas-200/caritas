@@ -16,6 +16,8 @@ export const validateDonorForm = (formData: DonorFormData) => {
     "work",
     "civilStatus",
     "email",
+    "language",
+    "religion",
   ];
 
   requiredFields.forEach((field) => {

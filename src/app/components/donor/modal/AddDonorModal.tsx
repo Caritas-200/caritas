@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { countries, formFields, selectFields } from "@/app/config/donors";
+import { countries, formFields, dropDownFields } from "@/app/config/donors";
 import { DonorFormData } from "@/app/lib/definitions";
 import { validateDonorForm } from "@/app/util/validateDonorForm";
 import { SelectField } from "../SelectedField";
 import { InputField } from "../InputField";
+import { addDonor } from "@/app/lib/api/donor/data";
+import Swal from "sweetalert2";
 
 const AddDonorModal: React.FC<{
   onClose: () => void;
-  onSave: (data: DonorFormData) => void;
-}> = ({ onClose, onSave }) => {
+}> = ({ onClose }) => {
   const [formData, setFormData] = useState<DonorFormData>({
     firstName: "",
     middleName: "",
@@ -23,6 +24,9 @@ const AddDonorModal: React.FC<{
     language: "",
     religion: "",
     email: "",
+    id: "",
+    status: "",
+    suffix: "",
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -37,17 +41,30 @@ const AddDonorModal: React.FC<{
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Run validation
     const validationErrors = validateDonorForm(formData);
 
+    // Check if there are any validation errors
     if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors); // Set errors if any
+      setErrors(validationErrors); // Display errors
       return;
     }
 
-    onSave(formData);
+    try {
+      // Call the addDonor function
+      await addDonor(formData);
+
+      // Show success message and close modal
+      Swal.fire("Success", "Donor added successfully!", "success");
+
+      // Close modal after save
+      onClose();
+    } catch (error) {
+      Swal.fire("Error", "Failed to add donor. Please try again.", "error");
+    }
   };
 
   return (
@@ -66,27 +83,23 @@ const AddDonorModal: React.FC<{
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-gray-700">
-            {formFields.map(
-              ({ id, name, label, type, required, placeholder, pattern }) => (
-                <div key={id}>
-                  <InputField
-                    id={id}
-                    name={name}
-                    type={type}
-                    value={formData[name as keyof DonorFormData]}
-                    onChange={handleChange}
-                    label={label}
-                    required={required}
-                    placeholder={placeholder}
-                    pattern={pattern}
-                  />
-                  {errors[name] && (
-                    <p className="text-red-500 text-sm">{errors[name]}</p>
-                  )}
-                </div>
-              )
-            )}
-            {selectFields.map(({ id, name, label, options, required }) => (
+            {formFields.map(({ id, name, label, type, placeholder }) => (
+              <div key={id}>
+                <InputField
+                  id={id}
+                  name={name}
+                  type={type}
+                  value={formData[name as keyof DonorFormData]}
+                  onChange={handleChange}
+                  label={label}
+                  placeholder={placeholder}
+                />
+                {errors[name] && (
+                  <p className="text-red-500 text-sm">{errors[name]}</p>
+                )}
+              </div>
+            ))}
+            {dropDownFields.map(({ id, name, label, options }) => (
               <div key={id}>
                 <SelectField
                   id={id}
@@ -95,7 +108,6 @@ const AddDonorModal: React.FC<{
                   options={options}
                   onChange={handleChange}
                   label={label}
-                  required={required}
                 />
                 {errors[name] && (
                   <p className="text-red-500 text-sm">{errors[name]}</p>
@@ -110,7 +122,6 @@ const AddDonorModal: React.FC<{
                 options={countries}
                 onChange={handleChange}
                 label="Country"
-                required
               />
               {errors.country && (
                 <p className="text-red-500 text-sm">{errors.country}</p>

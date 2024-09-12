@@ -5,11 +5,11 @@ export const SelectField: React.FC<{
   options: string[];
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   label: string;
-  required?: boolean;
-}> = ({ id, name, value, options, onChange, label, required = false }) => (
+}> = ({ id, name, value, options, onChange, label }) => (
   <div>
     <label htmlFor={id} className="block text-gray-700">
       {label}
+      {name !== "middleName" && <span className="text-red-500">*</span>}
     </label>
     <select
       id={id}
@@ -17,7 +17,6 @@ export const SelectField: React.FC<{
       value={value}
       onChange={onChange}
       className="w-full border border-gray-300 p-2 rounded"
-      required={required}
     >
       <option value="">Select {label}</option>
       {options.map((option) => (
