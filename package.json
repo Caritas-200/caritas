@@ -13,7 +13,6 @@
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "firebase": "^10.13.0",
-    "firebase-admin": "^12.4.0",
     "globalize": "^1.7.0",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
@@ -23,13 +22,10 @@
     "react-big-calendar": "^1.13.4",
     "react-bootstrap": "^2.10.4",
     "react-calendar": "^5.0.0",
-    "react-csv": "^2.2.2",
     "react-dom": "^18",
     "react-qr-code": "^2.0.15",
     "sweetalert2": "^11.12.4",
-    "sweetalert2-react-content": "^5.0.7",
-    "uuid": "^10.0.0",
-    "uuidv5": "^1.0.0"
+    "sweetalert2-react-content": "^5.0.7"
   },
   "devDependencies": {
     "@types/globalize": "^1.5.5",
