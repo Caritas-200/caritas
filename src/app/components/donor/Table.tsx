@@ -6,12 +6,15 @@ import DonorInfoModal from "./modal/DonorInfoModal";
 import Pagination from "../Pagination";
 import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
 import AddDonorModal from "./modal/AddDonorModal";
+import { deleteDonor } from "@/app/lib/api/donor/data";
 
 interface DonorTableProps {
   donors: DonorFormData[];
 }
 
 const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
+  // Local state for donors
+  const [localDonors, setLocalDonors] = useState(donors);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all"); // Filter for status
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,11 +29,6 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
     setCurrentPage(1);
   };
 
-  // Handle pagination
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
   // Handle items per page change
   const handleItemsPerPageChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setItemsPerPage(Number(e.target.value));
@@ -39,7 +37,7 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
 
   // Filter donors based on search query and status
   const filteredDonors = useMemo(() => {
-    let filtered = donors.filter(
+    let filtered = localDonors.filter(
       (donor) =>
         `${donor.firstName} ${donor.lastName}`
           .toLowerCase()
@@ -48,7 +46,7 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
     );
 
     return filtered;
-  }, [searchQuery, donors, statusFilter]);
+  }, [searchQuery, localDonors, statusFilter]);
 
   // Pagination logic
   const paginatedDonors = useMemo(() => {
@@ -59,7 +57,7 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
   // Calculate total pages
   const totalPages = Math.ceil(filteredDonors.length / itemsPerPage);
 
-  // Handle seletect donor info
+  // Handle donor view
   const handleView = (donor: DonorFormData) => {
     setShowModal((prev) => !prev);
     setSelectedDonorInfo(donor);
@@ -94,7 +92,22 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
     }).then((result) => {
       if (result.isConfirmed) {
         // Logic for deleting the donor
-        Swal.fire("Deleted!", "The donor has been deleted.", "success");
+        deleteDonor(donor.id)
+          .then(() => {
+            // Remove the deleted donor from the local state
+            setLocalDonors((prevDonors) =>
+              prevDonors.filter((d) => d.id !== donor.id)
+            );
+            Swal.fire("Deleted!", "The donor has been deleted.", "success");
+          })
+          .catch((error) => {
+            Swal.fire(
+              "Error!",
+              "There was a problem deleting the donor.",
+              "error"
+            );
+            console.error("Error deleting donor:", error);
+          });
       }
     });
   };

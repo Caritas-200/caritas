@@ -7,7 +7,7 @@ import {
   where,
   getDocs,
   updateDoc,
-  getDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "@/app/services/firebaseConfig";
 import { DonorFormData } from "@/app/lib/definitions";
@@ -117,6 +117,27 @@ export const updateDonor = async (
       throw error;
     } else {
       throw new Error("Unknown error updating donor");
+    }
+  }
+};
+
+export const deleteDonor = async (donorId: string): Promise<void> => {
+  try {
+    const donorsCollectionRef = collection(db, "donors");
+
+    // Create a document reference for the donor to be deleted
+    const donorDocRef = doc(donorsCollectionRef, donorId);
+
+    // Delete the donor document from Firestore
+    await deleteDoc(donorDocRef);
+
+    console.log(`Donor with ID ${donorId} deleted successfully.`);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error deleting donor: ", error.message);
+      throw error;
+    } else {
+      throw new Error("Unknown error occurred while deleting donor");
     }
   }
 };
