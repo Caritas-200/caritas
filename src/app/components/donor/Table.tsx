@@ -1,5 +1,4 @@
 import React, { useState, useMemo, ChangeEvent } from "react";
-import classNames from "classnames";
 import Swal from "sweetalert2";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
 
@@ -7,7 +6,7 @@ interface Donor {
   firstName: string;
   lastName: string;
   email: string;
-  status: string;
+  mobileNumber: string;
 }
 
 interface DonorTableProps {
@@ -54,10 +53,6 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
           .includes(searchQuery.toLowerCase()) ||
         donor.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
-
-    if (statusFilter !== "all") {
-      filtered = filtered.filter((donor) => donor.status === statusFilter);
-    }
 
     return filtered;
   }, [searchQuery, donors, statusFilter]);
@@ -107,17 +102,6 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
           className="p-2 border w-1/2 rounded-lg text-gray-700"
         />
 
-        {/* Status Filter */}
-        <select
-          value={statusFilter}
-          onChange={handleStatusFilterChange}
-          className="p-2 border rounded-lg text-gray-700"
-        >
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-
         {/* Items per page */}
         <select
           value={itemsPerPage}
@@ -147,7 +131,7 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
                 Email
               </th>
               <th className="border-b border-gray-500 py-2 px-4 text-left">
-                Status
+                Mobile Number
               </th>
               <th className="border-b border-gray-500 py-2 px-4 text-left">
                 Action
@@ -170,7 +154,10 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
                   <td className="border-b border-gray-500 py-2 px-4">
                     {donor.email}
                   </td>
-                  <td
+                  <td className="border-b border-gray-500 py-2 px-4">
+                    {donor.mobileNumber}
+                  </td>
+                  {/* <td
                     className={classNames(
                       "border-b border-gray-500 py-2 px-4 font-semibold",
                       donor.status === "active"
@@ -179,7 +166,7 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
                     )}
                   >
                     {toSentenceCase(donor.status)}
-                  </td>
+                  </td> */}
                   <td className="border-b border-gray-500 py-2 px-4">
                     <button
                       onClick={() => handleViewInfo(donor)}
@@ -238,7 +225,6 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
               Donor Details: {selectedDonor.firstName} {selectedDonor.lastName}
             </h2>
             <p>Email: {selectedDonor.email}</p>
-            <p>Status: {selectedDonor.status}</p>
             {/* Add other donor details as needed */}
             <button
               onClick={() => setShowModal(false)}
