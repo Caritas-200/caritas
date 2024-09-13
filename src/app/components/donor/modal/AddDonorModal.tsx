@@ -1,16 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { countries, formFields, dropDownFields } from "@/app/config/donors";
-import { DonorFormData } from "@/app/lib/definitions";
+import { DonorFormData, DonorType } from "@/app/lib/definitions";
 import { validateDonorForm } from "@/app/util/validateDonorForm";
 import { SelectField } from "../SelectedField";
 import { InputField } from "../InputField";
 import { addDonor } from "@/app/lib/api/donor/data";
 import Swal from "sweetalert2";
+import { Timestamp } from "firebase/firestore";
+import { updateDonor } from "@/app/lib/api/donor/data";
 
 const AddDonorModal: React.FC<{
   onClose: () => void;
-}> = ({ onClose }) => {
+  initialFormData?: DonorFormData | null; // Accept initial form data for editing
+  isEditing?: boolean; // Flag to check if it's editing mode
+}> = ({ onClose, initialFormData = null, isEditing = false }) => {
   const [formData, setFormData] = useState<DonorFormData>({
+    dateCreated: Timestamp.now(),
     firstName: "",
     middleName: "",
     lastName: "",
@@ -30,6 +35,13 @@ const AddDonorModal: React.FC<{
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  // Populate form data when editing
+  useEffect(() => {
+    if (initialFormData && isEditing) {
+      setFormData(initialFormData); // Populate form fields for editing
+    }
+  }, [initialFormData, isEditing]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -54,16 +66,20 @@ const AddDonorModal: React.FC<{
     }
 
     try {
-      // Call the addDonor function
-      await addDonor(formData);
-
-      // Show success message and close modal
-      Swal.fire("Success", "Donor added successfully!", "success");
+      if (isEditing && formData.id) {
+        // Update donor data if editing
+        await updateDonor(formData.id, formData);
+        Swal.fire("Success", "Donor updated successfully!", "success");
+      } else {
+        // Add new donor if not editing
+        await addDonor(formData);
+        Swal.fire("Success", "Donor added successfully!", "success");
+      }
 
       // Close modal after save
       onClose();
     } catch (error) {
-      Swal.fire("Error", "Failed to add donor. Please try again.", "error");
+      Swal.fire("Error", `${error}`);
     }
   };
 
@@ -78,7 +94,7 @@ const AddDonorModal: React.FC<{
         </button>
 
         <h2 className="text-xl font-bold mb-4 text-center text-gray-900">
-          Add New Donor
+          {isEditing ? "Edit Donor" : "Add New Donor"}
         </h2>
 
         <form onSubmit={handleSubmit}>
@@ -89,7 +105,7 @@ const AddDonorModal: React.FC<{
                   id={id}
                   name={name}
                   type={type}
-                  value={formData[name as keyof DonorFormData]}
+                  value={formData[name as keyof DonorType]}
                   onChange={handleChange}
                   label={label}
                   placeholder={placeholder}
@@ -104,7 +120,7 @@ const AddDonorModal: React.FC<{
                 <SelectField
                   id={id}
                   name={name}
-                  value={formData[name as keyof DonorFormData]}
+                  value={formData[name as keyof DonorType]}
                   options={options}
                   onChange={handleChange}
                   label={label}
@@ -134,7 +150,7 @@ const AddDonorModal: React.FC<{
               type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded-lg"
             >
-              Save
+              {isEditing ? "Update" : "Save"}
             </button>
           </div>
         </form>

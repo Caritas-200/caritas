@@ -5,6 +5,7 @@ import { DonorFormData } from "@/app/lib/definitions";
 import DonorInfoModal from "./modal/DonorInfoModal";
 import Pagination from "../Pagination";
 import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
+import AddDonorModal from "./modal/AddDonorModal";
 
 interface DonorTableProps {
   donors: DonorFormData[];
@@ -16,6 +17,7 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [selectedDonorInfo, setSelectedDonorInfo] = useState<DonorFormData>();
 
   // Handle search input
@@ -58,14 +60,25 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
   const totalPages = Math.ceil(filteredDonors.length / itemsPerPage);
 
   // Handle seletect donor info
-  const handlesSelectedDonor = (donor: DonorFormData) => {
+  const handleView = (donor: DonorFormData) => {
+    setShowModal((prev) => !prev);
     setSelectedDonorInfo(donor);
+  };
+
+  // Handle modal for viewing donor details
+  const handleModalViewClose = () => {
     setShowModal((prev) => !prev);
   };
 
   // Handle modal for viewing donor details
-  const handleViewModal = () => {
-    setShowModal((prev) => !prev);
+  const handleModalEditClose = () => {
+    setShowEditModal((prev) => !prev);
+  };
+
+  // Handle delete donor
+  const handleEdit = (donor: DonorFormData) => {
+    setShowEditModal((prev) => !prev);
+    setSelectedDonorInfo(donor);
   };
 
   // Handle delete donor
@@ -153,12 +166,18 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
                   <td className="border-b border-gray-500 py-2 px-4">
                     {convertFirebaseTimestamp(donor?.dateCreated)}
                   </td>
-                  <td className="border-b border-gray-500 py-2 px-4">
+                  <td className="flex gap-2 border-b border-gray-500 py-2 px-4">
                     <button
-                      onClick={() => handlesSelectedDonor(donor)}
-                      className="bg-blue-500 text-white px-2 py-1 rounded mr-2"
+                      onClick={() => handleView(donor)}
+                      className="bg-blue-500 text-white px-2 py-1 rounded "
                     >
                       View Info
+                    </button>
+                    <button
+                      onClick={() => handleEdit(donor)}
+                      className="bg-green-500 text-white px-2 py-1 rounded "
+                    >
+                      Edit
                     </button>
                     <button
                       onClick={() => handleDelete(donor)}
@@ -187,7 +206,18 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
       />
 
       {showModal && selectedDonorInfo && (
-        <DonorInfoModal donor={selectedDonorInfo} onClose={handleViewModal} />
+        <DonorInfoModal
+          donor={selectedDonorInfo}
+          onClose={handleModalViewClose}
+        />
+      )}
+
+      {showEditModal && selectedDonorInfo && (
+        <AddDonorModal
+          onClose={handleModalEditClose}
+          initialFormData={selectedDonorInfo}
+          isEditing={true}
+        />
       )}
     </div>
   );

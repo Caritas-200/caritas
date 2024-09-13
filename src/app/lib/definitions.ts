@@ -71,3 +71,22 @@ export type DonorFormData = {
   religion: string;
   email: string;
 };
+
+export type DonorType = {
+  id: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  mobileNumber: string;
+  age: string;
+  suffix: string;
+  address: string;
+  country: string;
+  status: string;
+  gender: string;
+  work: string;
+  civilStatus: string;
+  language: string;
+  religion: string;
+  email: string;
+};

@@ -6,6 +6,8 @@ import {
   query,
   where,
   getDocs,
+  updateDoc,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "@/app/services/firebaseConfig";
 import { DonorFormData } from "@/app/lib/definitions";
@@ -14,16 +16,26 @@ export const addDonor = async (formData: DonorFormData): Promise<string> => {
   try {
     const donorsCollectionRef = collection(db, "donors");
 
-    // Check for donor duplication using email and name
+    // Check for donor email duplication
     const duplicateEmailQuery = query(
       donorsCollectionRef,
-      where("email", "==", formData.email),
-      where("lastName", "==", formData.lastName),
-      where("firstName", "==", formData.firstName)
+      where("email", "==", formData.email)
     );
     const emailSnapshot = await getDocs(duplicateEmailQuery);
     if (!emailSnapshot.empty) {
       throw new Error("A donor with the same email already exists.");
+    }
+
+    // Check for donor name duplication (firstName, middleName, lastName)
+    const duplicateNameQuery = query(
+      donorsCollectionRef,
+      where("firstName", "==", formData.firstName),
+      where("middleName", "==", formData.middleName),
+      where("lastName", "==", formData.lastName)
+    );
+    const nameSnapshot = await getDocs(duplicateNameQuery);
+    if (!nameSnapshot.empty) {
+      throw new Error("A donor with the same name already Exist");
     }
 
     // Generate a new document reference and save the donor data
@@ -76,6 +88,35 @@ export const fetchDonors = async () => {
       throw error;
     } else {
       throw new Error("Unknown error fetching donors");
+    }
+  }
+};
+
+// Update an existing donor
+export const updateDonor = async (
+  donorId: string,
+  formData: Partial<DonorFormData>
+): Promise<void> => {
+  try {
+    // Reference the existing donor document by ID
+    const donorDocRef = doc(db, "donors", donorId);
+
+    // Prepare the updated data, including the timestamp for last modified
+    const updatedData = {
+      ...formData,
+      dateUpdated: Timestamp.now(), // Update timestamp
+    };
+
+    // Update the donor document with the new data
+    await updateDoc(donorDocRef, updatedData);
+
+    console.log(`Donor with ID ${donorId} has been updated.`);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error updating donor: ", error.message);
+      throw error;
+    } else {
+      throw new Error("Unknown error updating donor");
     }
   }
 };
