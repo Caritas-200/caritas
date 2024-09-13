@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import classNames from "classnames";
 import SearchBar from "./SearchBar";
-import Pagination from "./Pagination";
+import Pagination from "../Pagination";
 import { fetchBeneficiaries } from "@/app/lib/api/beneficiary/data";
 import { BeneficiaryForm } from "@/app/lib/definitions";
 import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
