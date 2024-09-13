@@ -58,6 +58,7 @@ export type DonorFormData = {
   middleName: string;
   lastName: string;
   mobileNumber: string;
+  dateCreated: Timestamp;
   age: string;
   suffix: string;
   address: string;

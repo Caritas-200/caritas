@@ -1,16 +1,13 @@
 import React, { useState, useMemo, ChangeEvent } from "react";
 import Swal from "sweetalert2";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
-
-interface Donor {
-  firstName: string;
-  lastName: string;
-  email: string;
-  mobileNumber: string;
-}
+import { DonorFormData } from "@/app/lib/definitions";
+import DonorInfoModal from "./modal/DonorInfoModal";
+import Pagination from "../Pagination";
+import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
 
 interface DonorTableProps {
-  donors: Donor[];
+  donors: DonorFormData[];
 }
 
 const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
@@ -19,17 +16,11 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [showModal, setShowModal] = useState(false);
-  const [selectedDonor, setSelectedDonor] = useState<Donor | null>(null);
+  const [selectedDonorInfo, setSelectedDonorInfo] = useState<DonorFormData>();
 
   // Handle search input
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1);
-  };
-
-  // Handle filter change
-  const handleStatusFilterChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setStatusFilter(e.target.value);
     setCurrentPage(1);
   };
 
@@ -66,14 +57,19 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
   // Calculate total pages
   const totalPages = Math.ceil(filteredDonors.length / itemsPerPage);
 
+  // Handle seletect donor info
+  const handlesSelectedDonor = (donor: DonorFormData) => {
+    setSelectedDonorInfo(donor);
+    setShowModal((prev) => !prev);
+  };
+
   // Handle modal for viewing donor details
-  const handleViewInfo = (donor: Donor) => {
-    setSelectedDonor(donor);
-    setShowModal(true);
+  const handleViewModal = () => {
+    setShowModal((prev) => !prev);
   };
 
   // Handle delete donor
-  const handleDelete = (donor: Donor) => {
+  const handleDelete = (donor: DonorFormData) => {
     Swal.fire({
       title: "Are you sure?",
       text: `Do you want to delete ${donor.firstName} ${donor.lastName}?`,
@@ -131,7 +127,7 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
                 Email
               </th>
               <th className="border-b border-gray-500 py-2 px-4 text-left">
-                Mobile Number
+                Date Created
               </th>
               <th className="border-b border-gray-500 py-2 px-4 text-left">
                 Action
@@ -155,21 +151,11 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
                     {donor.email}
                   </td>
                   <td className="border-b border-gray-500 py-2 px-4">
-                    {donor.mobileNumber}
+                    {convertFirebaseTimestamp(donor?.dateCreated)}
                   </td>
-                  {/* <td
-                    className={classNames(
-                      "border-b border-gray-500 py-2 px-4 font-semibold",
-                      donor.status === "active"
-                        ? "text-green-500"
-                        : "text-red-500"
-                    )}
-                  >
-                    {toSentenceCase(donor.status)}
-                  </td> */}
                   <td className="border-b border-gray-500 py-2 px-4">
                     <button
-                      onClick={() => handleViewInfo(donor)}
+                      onClick={() => handlesSelectedDonor(donor)}
                       className="bg-blue-500 text-white px-2 py-1 rounded mr-2"
                     >
                       View Info
@@ -194,46 +180,14 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-between items-center mt-4">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg disabled:bg-gray-300"
-        >
-          Previous
-        </button>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        setCurrentPage={setCurrentPage}
+      />
 
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg disabled:bg-gray-300"
-        >
-          Next
-        </button>
-      </div>
-
-      {/* Modal for Donor Details */}
-      {showModal && selectedDonor && (
-        <div className="fixed text-gray-700 inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
-          <div className="bg-white p-6 rounded-lg w-1/3">
-            <h2 className="text-xl mb-4">
-              Donor Details: {selectedDonor.firstName} {selectedDonor.lastName}
-            </h2>
-            <p>Email: {selectedDonor.email}</p>
-            {/* Add other donor details as needed */}
-            <button
-              onClick={() => setShowModal(false)}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg mt-4"
-            >
-              Close
-            </button>
-          </div>
-        </div>
+      {showModal && selectedDonorInfo && (
+        <DonorInfoModal donor={selectedDonorInfo} onClose={handleViewModal} />
       )}
     </div>
   );
