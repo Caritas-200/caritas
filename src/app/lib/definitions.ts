@@ -1,6 +1,5 @@
-<<<<<<< HEAD
 import { Timestamp } from "firebase/firestore";
-=======
+
 export type SignUpFormData = {
   firstName: string;
   middleName?: string;
@@ -14,7 +13,6 @@ export type SignUpFormData = {
   password: string;
   confirmPassword: string;
 };
->>>>>>> origin
 
 export type BeneficiaryForm = {
   id: string;
@@ -52,4 +50,43 @@ export type FamilyMember = {
   education: string;
   skills: string;
   remarks?: string;
+};
+
+export type DonorFormData = {
+  id: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  mobileNumber: string;
+  dateCreated: Timestamp;
+  age: string;
+  suffix: string;
+  address: string;
+  country: string;
+  status: string;
+  gender: string;
+  work: string;
+  civilStatus: string;
+  language: string;
+  religion: string;
+  email: string;
+};
+
+export type DonorType = {
+  id: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  mobileNumber: string;
+  age: string;
+  suffix: string;
+  address: string;
+  country: string;
+  status: string;
+  gender: string;
+  work: string;
+  civilStatus: string;
+  language: string;
+  religion: string;
+  email: string;
 };

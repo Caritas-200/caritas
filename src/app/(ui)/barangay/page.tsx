@@ -63,7 +63,7 @@ const BarangayList: React.FC = () => {
   return (
     <div className="h-screen">
       <Header />
-      <div className="flex flex-row flex-1 bg-gray-100">
+      <div className="flex flex-row flex-1 bg-gray-700 ">
         <LeftNav />
         <div className="p-4 w-full bg-gray-700 shadow-md ">
           <h2 className="p-8 text-3xl font-bold mb-4 text-center">
