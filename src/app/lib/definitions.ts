@@ -90,3 +90,12 @@ export type DonorType = {
   religion: string;
   email: string;
 };
+
+export interface Event {
+  event: string[];
+  timestamp: Timestamp; // Use Timestamp here if that's your requirement
+}
+
+export interface EventMap {
+  [key: string]: Event[];
+}
