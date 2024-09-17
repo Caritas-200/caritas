@@ -20,12 +20,32 @@ export const validateFields = (
     "monthlyNetIncome",
   ];
 
+  // Validate required fields
   requiredFields.forEach((field) => {
     if (!formData[field]) {
       newErrors[field] = "This field is required.";
       console.error(`Validation error: ${field} is required but is missing.`);
     }
   });
+
+  // Nested validation for the 'address' field
+  if (formData.address) {
+    const { region, province, cityMunicipality, barangay } = formData.address;
+    if (!region) {
+      newErrors["address.region"] = "Region is required.";
+    }
+    if (!province) {
+      newErrors["address.province"] = "Province is required.";
+    }
+    if (!cityMunicipality) {
+      newErrors["address.cityMunicipality"] = "City/Municipality is required.";
+    }
+    if (!barangay) {
+      newErrors["address.barangay"] = "Barangay is required.";
+    }
+  } else {
+    newErrors["address"] = "Address is required.";
+  }
 
   // Validate email format
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,15 +65,15 @@ export const validateFields = (
     );
   }
 
-  // Validate mobile number format
-  const incomePattern = /^[0-9]/; // Should be 6 digits
+  // Validate monthly income format
+  const incomePattern = /^[0-9]+$/; // Should be digits only
   if (
     formData.monthlyNetIncome &&
     !incomePattern.test(formData.monthlyNetIncome)
   ) {
     newErrors.monthlyNetIncome = "Net income must be digits.";
     console.error(
-      `Validation error: Invalid mobile number format for ${formData.monthlyNetIncome}`
+      `Validation error: Invalid monthly net income format for ${formData.monthlyNetIncome}`
     );
   }
 

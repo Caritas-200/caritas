@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { validateFields } from "@/app/util/validateFields";
-import { BeneficiaryForm } from "@/app/lib/definitions";
+import { BeneficiaryForm, Address } from "@/app/lib/definitions";
 import CheckboxGroupModal from "./CheckBoxGroupModal";
 import { textFields, dropdownFields } from "@/app/config/formConfig";
 import { Timestamp } from "firebase/firestore";
+import regions from "@/json/region.json";
+import provinces from "@/json/province.json";
+import municipalities from "@/json/municipality.json";
+import barangays from "@/json/barangay.json";
+import DropdownAddress from "../button/DropDownAddress";
 
 interface ModalProps {
   onClose: () => void;
@@ -25,7 +30,27 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     lastName: "",
     mobileNumber: "",
     age: "",
-    address: "",
+    address: {
+      region: {
+        region_id: "",
+        region_name: "",
+      },
+      province: {
+        province_id: "",
+        region_id: "",
+        province_name: "",
+      },
+      cityMunicipality: {
+        municipality_id: "",
+        province_id: "",
+        municipality_name: "",
+      },
+      barangay: {
+        barangay_id: "",
+        municipality_id: "",
+        barangay_name: "",
+      },
+    },
     gender: "",
     occupation: "",
     houseNumber: "",
@@ -52,10 +77,20 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     >
   ) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       [name]: value,
-    });
+    }));
+  };
+
+  const handleAddressChange = (field: keyof Address, value: any) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      address: {
+        ...prevFormData.address,
+        [field]: value,
+      },
+    }));
   };
 
   const handleNext = (e: React.FormEvent) => {
@@ -136,7 +171,20 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                   </div>
                 ))}
               </div>
-              <div className="mt-4 flex justify-center gap-4">
+              <h1 className="mb-2 pt-2 text-xl font-semibold text-gray-800 border-t-2 my-4 ">
+                Address
+              </h1>
+              <DropdownAddress
+                address={formData.address}
+                setAddress={handleAddressChange}
+                regions={regions}
+                provinces={provinces}
+                municipalities={municipalities}
+                barangays={barangays}
+                errors={errors}
+              />
+
+              <div className="mt-8 flex justify-center gap-4">
                 <button
                   type="submit"
                   className="bg-blue-500 text-white py-2 px-4 rounded-lg"

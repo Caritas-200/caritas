@@ -80,7 +80,6 @@ export const textFields = [
   { name: "lastName", label: "Last Name" },
   { name: "mobileNumber", label: "Mobile Number" },
   { name: "age", label: "Age" },
-  { name: "address", label: "Address" },
   { name: "gender", label: "Gender" },
   { name: "occupation", label: "Occupation" },
   { name: "monthlyNetIncome", label: "Monthly Net Income" },
