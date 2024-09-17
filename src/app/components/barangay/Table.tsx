@@ -6,7 +6,7 @@ import { fetchBeneficiaries } from "@/app/lib/api/beneficiary/data";
 import { BeneficiaryForm } from "@/app/lib/definitions";
 import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
-import BeneficiaryInfoModal from "./BeneficiaryInfoModal"; // Import the BeneficiaryInfoModal component
+import BeneficiaryInfoModal from "./modal/BeneficiaryInfoModal"; // Import the BeneficiaryInfoModal component
 
 interface TableProps {
   brgyName: string;

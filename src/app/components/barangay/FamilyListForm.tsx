@@ -10,7 +10,7 @@ import { validateFamilyForm } from "@/app/util/validateFamilyForm";
 import { removeFamilyMember } from "@/app/util/removeFamilyRow";
 import { generateQrImage } from "@/app/util/generateQRImage";
 import QRCode from "react-qr-code";
-import BeneficiaryIdQr from "./BeneficiaryIdQr";
+import BeneficiaryIdQr from "./modal/BeneficiaryIdQr";
 
 interface FamilyModalProps {
   onClose: () => void;

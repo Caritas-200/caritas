@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Swal from "sweetalert2"; // Import SweetAlert2
 import { BeneficiaryForm, FamilyMember } from "@/app/lib/definitions";
 import { checkboxGroup, radioGroups } from "@/app/config/formConfig";
-import FamilyListModal from "./FamilyListForm";
+import FamilyListModal from "../FamilyListForm";
 
 interface CheckboxGroupModalProps {
   formData: BeneficiaryForm;
