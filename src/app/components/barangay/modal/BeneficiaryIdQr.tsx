@@ -15,6 +15,15 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
 }) => {
   const newObject = JSON.parse(beneficiaryData);
 
+  // Safely extract address fields and construct the full address
+  const fullAddress = [
+    newObject.address?.barangay?.barangay_name,
+    newObject.address?.cityMunicipality?.municipality_name,
+    newObject.address?.province?.province_name,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
   // Function to handle closing the modal
   const handleClose = () => {
     Swal.fire({
@@ -32,7 +41,7 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
     });
   };
 
-  // Data to display on the ID (optimize with a loop)
+  // Data to display on the ID
   const dataItems = [
     { label: "House #", value: newObject.houseNumber },
     { label: "Age", value: newObject.age },
@@ -57,7 +66,7 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
           padding: 1rem;
           width: 5in;
           height: 3in;
-          margin-bottom:20px;
+          margin-bottom: 20px;
           padding: 30px;
         }
         .id-front-photo {
@@ -67,15 +76,12 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
           display: flex;
           justify-content: center;
           align-items: center;
-          margin-top:20px;
-          margin-left:30px;
-          mmargin-bottom: 20px;
+          margin-top: 20px;
+          margin-left: 30px;
         }
         .id-front-qr {
           display: flex;
-          height: 0in;
           justify-content: flex-end;
-        
         }
         .id-front-name {
           font-size: 1.25rem;
@@ -177,7 +183,7 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
           <div className="id-back border-2 p-4 id-back-container">
             <div className="id-back-address mt-2">
               <p className="address-label font-bold">Address/Tirahan:</p>
-              <p className="address-value">{newObject.address}</p>
+              <p className="address-value">Brgy. {fullAddress || "N/A"}</p>
             </div>
 
             <div className="id-back-family mt-4">
@@ -185,16 +191,11 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
                 Allowed Family Members to Claim:
               </p>
               <ul className="family-list list-disc list-inside">
-                {/* Render family members here */}
-                <ul className="family-list list-disc list-inside">
-                  {newObject.familyMembers?.map(
-                    (member: any, index: number) => (
-                      <p key={index} className="family-member">
-                        <strong>{index + 1 + "."}</strong> {member.name}
-                      </p>
-                    )
-                  )}
-                </ul>
+                {newObject.familyMembers?.map((member: any, index: number) => (
+                  <p key={index} className="family-member">
+                    <strong>{index + 1 + "."}</strong> {member.name}
+                  </p>
+                ))}
               </ul>
             </div>
           </div>

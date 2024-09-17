@@ -45,16 +45,26 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
     return <div className="p-4">Beneficiary not found</div>;
   }
 
+  // Safely extract address fields and handle undefined cases
+  // const { address } = beneficiary;
+  // const fullAddress = [
+  //   address?.barangay?.barangay_name,
+  //   address?.cityMunicipality?.municipality_name,
+  //   address?.province?.province_name,
+  //   address?.region?.region_name,
+  // ]
+  //   .filter(Boolean) // Remove any undefined or null values
+  //   .join(", ");
+
   const fields = {
     "First Name": beneficiary.firstName,
     "Middle Name": beneficiary.middleName,
     "Last Name": beneficiary.lastName,
     "Mobile Number": beneficiary.mobileNumber,
     Age: beneficiary.age,
-    Address: beneficiary.address,
+    // Address: fullAddress || "N/A", // Use the fullAddress constructed above
     Gender: beneficiary.gender,
     Occupation: beneficiary.occupation,
-    "House Number": beneficiary.houseNumber,
     "Civil Status": beneficiary.civilStatus,
     Ethnicity: beneficiary.ethnicity,
     Religion: beneficiary.religion,
@@ -106,14 +116,6 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
           ))}
         </div>
       </div>
-
-      {/* {showQRModal && (
-        <BeneficiaryIdQr
-          beneficiaryData={beneficiary}
-          qrData={beneficiary.qrCode}
-          onClose={onClose}
-        />
-      )} */}
     </div>
   );
 };
