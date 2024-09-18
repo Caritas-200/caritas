@@ -55,78 +55,70 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
       printWindow.document.write("<html><head><title>Print ID</title>");
       printWindow.document.write("<style>");
       printWindow.document.write(`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
         body {
-          margin: 0;
-          padding: 0;
+          font-family: 'DM Sans', sans-serif;
         }
-        .print-container {
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-start;
-          align-items: flex-start;
-          border: 1px solid black;
-          height: 100%;
+        .print-area {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+          width: 100%;
+        }
+        .id-front-container, .id-back-container {
+          border: 1px solid #000;
+          padding: 1rem;
+          width: 5in;
+          height: 3in;
+          margin-bottom: 20px;
           padding: 30px;
-          box-sizing: border-box;
-          font-family: Arial, sans-serif;
+          position: relative;
         }
-        .qr-code {
+        .id-front-photo {
+          border: 1px solid #ddd;
+          width: 1in;
+          height: 1in;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-left: 0;
           position: absolute;
-          right: 30px;
           top: 30px;
+          left: 30px;
+          background-color: #f0f0f0;
         }
-        .details {
-          margin-top: 50px;
-          margin-left: 30px;
+        .id-front-qr {
+          position: absolute;
+          top: 30px;
+          right: 30px;
         }
-        .detail-item {
-          font-size: 16px;
-          margin-bottom: 10px;
+        .id-front-name {
+          font-size: 1.25rem;
+          margin-top: 1.5in;
+          font-weight: 700;
+          text-align: left;
+     
+        }
+        .id-front-details {
+          margin-top: 0.5rem;
+          text-align: left;
+          font-weight: 500;
+        }
+        .address-label, .family-label {
+          font-weight: 700;
         }
         .detail-label {
-          font-weight: bold;
+          font-weight: 700;
         }
         .family-list {
-          margin-top: 20px;
-          font-size: 16px;
+          list-style-type: disc;
+          list-style-position: inside;
         }
       `);
       printWindow.document.write("</style></head><body>");
-      printWindow.document.write(`
-        <div class="print-container">
-          <div class="qr-code">
-            <img src="${document.querySelector(
-              ".id-front-qr img"
-            )}" alt="QR Code" />
-          </div>
-          <div class="details">
-            <p class="detail-item"><span class="detail-label">Full Name:</span> ${
-              newObject.firstName
-            } ${newObject.middleName} ${newObject.lastName}</p>
-            <p class="detail-item"><span class="detail-label">House #:</span> ${
-              newObject.houseNumber
-            }</p>
-            <p class="detail-item"><span class="detail-label">Age:</span> ${
-              newObject.age
-            }</p>
-            <p class="detail-item"><span class="detail-label">Gender:</span> ${
-              newObject.gender
-            }</p>
-            <p class="detail-item"><span class="detail-label">Address:</span> ${fullAddress}</p>
-            <div class="family-list">
-              <p class="detail-label">Allowed Family Members to Claim:</p>
-              <ul>
-                ${newObject.familyMembers
-                  ?.map(
-                    (member: any, index: number) =>
-                      `<li>${index + 1}. ${member.name}</li>`
-                  )
-                  .join("")}
-              </ul>
-            </div>
-          </div>
-        </div>
-      `);
+      printWindow.document.write(
+        document.getElementById("printArea")?.innerHTML || ""
+      );
       printWindow.document.write("</body></html>");
       printWindow.document.close();
       printWindow.focus();
