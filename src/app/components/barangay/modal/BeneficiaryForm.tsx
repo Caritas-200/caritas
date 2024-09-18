@@ -230,15 +230,25 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                   </div>
                 ))}
               </div>
-              <h1 className="mb-2 pt-2 text-xl font-semibold text-gray-800 border-t-2 my-4">
+              <h1 className="mb-2 pt-2 pb-2 text-xl font-semibold text-gray-800 border-t-2 my-4">
                 Address
               </h1>
+
+              <DropdownAddress
+                address={formData.address}
+                setAddress={handleAddressChange}
+                regions={regions}
+                provinces={provinces}
+                municipalities={municipalities}
+                barangays={barangays}
+                errors={errors}
+              />
               {/* House number field to address section */}
-              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
                 {BeneficiaryInputFields.filter(
                   (field) => field.name === "houseNumber"
                 ).map((field) => (
-                  <div key={field.name} className="flex flex-col">
+                  <div key={field.name} className="flex flex-col mt-2">
                     <label className="mb-1 font-semibold text-gray-800">
                       {field.label}
                       {!field.optional && (
@@ -265,16 +275,6 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                   </div>
                 ))}
               </div>
-
-              <DropdownAddress
-                address={formData.address}
-                setAddress={handleAddressChange}
-                regions={regions}
-                provinces={provinces}
-                municipalities={municipalities}
-                barangays={barangays}
-                errors={errors}
-              />
 
               <div className="mt-8 flex justify-center gap-4">
                 <button
