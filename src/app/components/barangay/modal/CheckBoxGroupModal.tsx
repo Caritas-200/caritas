@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Swal from "sweetalert2"; // Import SweetAlert2
 import { BeneficiaryForm, FamilyMember } from "@/app/lib/definitions";
 import { checkboxGroup, radioGroups } from "@/app/config/formConfig";
-import FamilyListModal from "../FamilyListForm";
+import FamilyListModal from "./FamilyListForm";
+import ProgressBar from "../../ProgressBar";
 
 interface CheckboxGroupModalProps {
   formData: BeneficiaryForm;
@@ -90,16 +90,18 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
     <>
       {!showFamilyModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg w-full max-w-screen-lg mx-4 my-6 relative">
+          <div className="bg-white p-8 rounded-lg w-full max-h-[90%] overflow-auto max-w-screen-lg mx-4 my-6 relative">
             <button
               onClick={onClose}
               className="absolute top-2 right-2 text-gray-700"
             >
               ✖
             </button>
-            <h2 className="text-2xl font-bold mb-4 pb-4 text-center text-gray-900">
-              Add New Beneficiary ( 2-3 )
+            <h2 className="text-2xl font-bold mb-4  text-center text-gray-900">
+              Beneficiary Form
             </h2>
+
+            <ProgressBar currentStep={2} />
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {radioGroups.map((group) => (
@@ -177,7 +179,7 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
                   )}
                 </div>
               </div>
-              <div className="mt-4 flex justify-center gap-4">
+              <div className="mt-8 flex justify-center gap-4">
                 <button
                   type="button"
                   onClick={onBack}

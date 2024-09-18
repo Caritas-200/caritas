@@ -10,7 +10,8 @@ import { validateFamilyForm } from "@/app/util/validateFamilyForm";
 import { removeFamilyMember } from "@/app/util/removeFamilyRow";
 import { generateQrImage } from "@/app/util/generateQRImage";
 import QRCode from "react-qr-code";
-import BeneficiaryIdQr from "./modal/BeneficiaryIdQr";
+import BeneficiaryIdQr from "./BeneficiaryIdQr";
+import ProgressBar from "../../ProgressBar";
 
 interface FamilyModalProps {
   onClose: () => void;
@@ -105,15 +106,15 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
         cancelButtonText: "No, go back",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          await saveBeneficiary();
+          await saveBeneficiary(false); // Indicate no family data
         }
       });
     } else {
-      await saveBeneficiary();
+      await saveBeneficiary(true); // Indicate there is family data
     }
   };
 
-  const saveBeneficiary = async () => {
+  const saveBeneficiary = async (includeFamilyMembers: boolean) => {
     Swal.fire({
       title: "Saving...",
       text: "Please wait while we save the beneficiary data.",
@@ -124,11 +125,14 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
     });
 
     try {
-      const beneficiaryData = { ...formData, familyMembers };
+      const beneficiaryData = { ...formData };
+
+      // Always include familyMembers key but leave it as an empty array if no data is added
+      beneficiaryData.familyMembers = includeFamilyMembers ? familyMembers : [];
 
       setPrintData(JSON.stringify(beneficiaryData));
 
-      //Save the beneficiary data without QR code, get back the generated document ID
+      // Save the beneficiary data without QR code, get back the generated document ID
       const newBeneficiaryId = await addBeneficiary(beneficiaryData, brgyName);
 
       // Generate the QR code payload using the generated ID
@@ -142,7 +146,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
       // Wait for the QR code image to be generated
       const qrImage = await generateQrImage(qrCodeRef);
 
-      //Upload the QR code image and save the QR code URL in Firestore
+      // Upload the QR code image and save the QR code URL in Firestore
       await updateBeneficiaryWithQrCode(newBeneficiaryId, qrImage, brgyName);
 
       Swal.fire({
@@ -173,8 +177,10 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
           ✖
         </button>
         <h2 className="text-2xl font-bold mb-4 pb-4 text-center text-gray-900">
-          Add Family Members ( 3-3 )
+          Add Family Members
         </h2>
+
+        <ProgressBar currentStep={3} />
         <form onSubmit={handleSubmit}>
           {familyMembers.map((member, index) => (
             <div

@@ -12,6 +12,7 @@ import provinces from "@/json/province.json";
 import municipalities from "@/json/municipality.json";
 import barangays from "@/json/barangay.json";
 import DropdownAddress from "../button/DropDownAddress";
+import ProgressBar from "../../ProgressBar";
 
 interface ModalProps {
   onClose: () => void;
@@ -116,18 +117,19 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   return (
     <>
       {!showSecondModal ? (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg w-full max-w-screen-lg mx-4 my-6 relative">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center  items-center">
+          <div className="bg-white p-8 rounded-lg w-full max-h-[90%] overflow-auto max-w-screen-lg mx-4 my-6 relative">
             <button
               onClick={onClose}
               className="absolute top-2 right-2 text-gray-700"
             >
               ✖
             </button>
-            <h2 className="text-2xl font-bold mb-4 pb-4 text-center text-gray-900">
-              Beneficiary Form ( 1-3 )
+            <h2 className="text-2xl font-bold mb-4  text-center text-gray-900">
+              Beneficiary Form
             </h2>
-            <form onSubmit={handleNext}>
+            <ProgressBar currentStep={1} />
+            <form className="overflow-y-auto" onSubmit={handleNext}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {BeneficiaryInputFields.filter(
                   (field) => field.name !== "houseNumber"
