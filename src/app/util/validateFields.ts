@@ -18,6 +18,8 @@ export const validateFields = (
     "occupation",
     "ethnicity",
     "monthlyNetIncome",
+    "calamity",
+    "calamityName",
   ];
 
   // Validate required fields
@@ -82,6 +84,32 @@ export const validateFields = (
   if (formData.age && !agePattern.test(formData.age)) {
     newErrors.age = "Age must be a number between 10 and 100.";
     console.error(`Validation error: Invalid age value ${formData.age}`);
+  }
+
+  // Validate calamity field
+  const calamityOptions = [
+    "Typhoon",
+    "Earthquake",
+    "Flood",
+    "Volcanic Eruption",
+    "Tsunami",
+    "Landslide",
+    "Drought",
+    "Other",
+  ];
+  if (formData.calamity && !calamityOptions.includes(formData.calamity)) {
+    newErrors.calamity = "Invalid calamity type.";
+    console.error(
+      `Validation error: Invalid calamity type ${formData.calamity}`
+    );
+  }
+
+  // Validate calamityName if 'Other' is selected
+  if (formData.calamity === "Other" && !formData.calamityName) {
+    newErrors.calamityName = "Please specify the calamity.";
+    console.error(
+      "Validation error: Calamity Name are required if 'Other' is selected."
+    );
   }
 
   // Log form data changes if fields are updated

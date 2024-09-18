@@ -61,6 +61,8 @@ export type BeneficiaryForm = {
   ownershipRentalType: string[];
   code: string[];
   qrCode: string;
+  calamity: string;
+  calamityName: string;
 };
 
 export type FamilyMember = {

@@ -75,6 +75,7 @@ export const radioGroups = [
 ];
 
 export const BeneficiaryInputFields = [
+  { name: "calamityName", label: "Calamity Name" },
   { name: "firstName", label: "First Name" },
   { name: "middleName", label: "Middle Name", optional: true },
   { name: "lastName", label: "Last Name" },
