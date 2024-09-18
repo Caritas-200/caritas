@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { validateFields } from "@/app/util/validateFields";
 import { BeneficiaryForm, Address } from "@/app/lib/definitions";
 import CheckboxGroupModal from "./CheckBoxGroupModal";
-import { textFields, dropdownFields } from "@/app/config/formConfig";
+import {
+  BeneficiaryInputFields,
+  dropdownFields,
+} from "@/app/config/formConfig";
 import { Timestamp } from "firebase/firestore";
 import regions from "@/json/region.json";
 import provinces from "@/json/province.json";
@@ -30,6 +33,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     lastName: "",
     mobileNumber: "",
     age: "",
+    houseNumber: "",
     address: {
       region: {
         region_id: "",
@@ -53,7 +57,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     },
     gender: "",
     occupation: "",
-    houseNumber: "",
+
     civilStatus: "",
     ethnicity: "",
     religion: "",
@@ -125,7 +129,9 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
             </h2>
             <form onSubmit={handleNext}>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {textFields.map((field) => (
+                {BeneficiaryInputFields.filter(
+                  (field) => field.name !== "houseNumber"
+                ).map((field) => (
                   <div key={field.name} className="flex flex-col">
                     <label className="mb-1 font-semibold text-gray-800">
                       {field.label}
@@ -174,6 +180,39 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
               <h1 className="mb-2 pt-2 text-xl font-semibold text-gray-800 border-t-2 my-4 ">
                 Address
               </h1>
+              {/* House number field to address section */}
+              <div className="grid grid-cols-2 md:grid-cols-2  lg:grid-cols-4 gap-4">
+                {BeneficiaryInputFields.filter(
+                  (field) => field.name === "houseNumber"
+                ).map((field) => (
+                  <div key={field.name} className="flex flex-col">
+                    <label className="mb-1 font-semibold text-gray-800">
+                      {field.label}
+                      {!field.optional && (
+                        <span className="text-red-500">*</span>
+                      )}
+                    </label>
+
+                    <input
+                      name={field.name}
+                      type="text"
+                      value={(formData as any)[field.name]}
+                      onChange={handleChange}
+                      className={`p-2 border border-gray-300 rounded text-gray-700 ${
+                        errors[field.name] ? "border-red-500" : ""
+                      }`}
+                      placeholder={`Please enter ${field.label.toLowerCase()}`}
+                    />
+
+                    {errors[field.name] && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors[field.name]}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+
               <DropdownAddress
                 address={formData.address}
                 setAddress={handleAddressChange}

@@ -53,59 +53,80 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
     const printWindow = window.open("", "", "height=2550,width=3200");
     if (printWindow) {
       printWindow.document.write("<html><head><title>Print ID</title>");
-      printWindow.document.write("<style>"); // Add your print styles here
+      printWindow.document.write("<style>");
       printWindow.document.write(`
-        .print-area {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1rem;
-          width: 100%;
+        body {
+          margin: 0;
+          padding: 0;
         }
-        .id-front-container, .id-back-container {
-          border: 1px solid #000;
-          padding: 1rem;
-          width: 5in;
-          height: 3in;
-          margin-bottom: 20px;
-          padding: 30px;
-        }
-        .id-front-photo {
-          border: 1px solid #ddd;
-          width: 1in;
-          height: 1in;
+        .print-container {
           display: flex;
-          justify-content: center;
-          align-items: center;
-          margin-top: 20px;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: flex-start;
+          border: 1px solid black;
+          height: 100%;
+          padding: 30px;
+          box-sizing: border-box;
+          font-family: Arial, sans-serif;
+        }
+        .qr-code {
+          position: absolute;
+          right: 30px;
+          top: 30px;
+        }
+        .details {
+          margin-top: 50px;
           margin-left: 30px;
         }
-        .id-front-qr {
-          display: flex;
-          justify-content: flex-end;
-        }
-        .id-front-name {
-          font-size: 1.25rem;
-          margin-top: 1rem;
-          font-weight: bold;
-        }
-        .id-front-details {
-          margin-top: 1rem;
-        }
-        .address-label, .family-label {
-          font-weight: bold;
+        .detail-item {
+          font-size: 16px;
+          margin-bottom: 10px;
         }
         .detail-label {
           font-weight: bold;
         }
         .family-list {
-          list-style-type: disc;
-          list-style-position: inside;
+          margin-top: 20px;
+          font-size: 16px;
         }
       `);
       printWindow.document.write("</style></head><body>");
-      printWindow.document.write(
-        document.getElementById("printArea")?.innerHTML || ""
-      );
+      printWindow.document.write(`
+        <div class="print-container">
+          <div class="qr-code">
+            <img src="${document.querySelector(
+              ".id-front-qr img"
+            )}" alt="QR Code" />
+          </div>
+          <div class="details">
+            <p class="detail-item"><span class="detail-label">Full Name:</span> ${
+              newObject.firstName
+            } ${newObject.middleName} ${newObject.lastName}</p>
+            <p class="detail-item"><span class="detail-label">House #:</span> ${
+              newObject.houseNumber
+            }</p>
+            <p class="detail-item"><span class="detail-label">Age:</span> ${
+              newObject.age
+            }</p>
+            <p class="detail-item"><span class="detail-label">Gender:</span> ${
+              newObject.gender
+            }</p>
+            <p class="detail-item"><span class="detail-label">Address:</span> ${fullAddress}</p>
+            <div class="family-list">
+              <p class="detail-label">Allowed Family Members to Claim:</p>
+              <ul>
+                ${newObject.familyMembers
+                  ?.map(
+                    (member: any, index: number) =>
+                      `<li>${index + 1}. ${member.name}</li>`
+                  )
+                  .join("")}
+              </ul>
+            </div>
+          </div>
+        </div>
+      `);
       printWindow.document.write("</body></html>");
       printWindow.document.close();
       printWindow.focus();

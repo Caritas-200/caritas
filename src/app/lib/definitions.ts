@@ -43,10 +43,10 @@ export type BeneficiaryForm = {
   lastName: string;
   mobileNumber: string;
   age: string;
+  houseNumber?: string;
   address: Address;
   gender: string;
   occupation: string;
-  houseNumber?: string;
   civilStatus: string;
   status: string;
   monthlyNetIncome: string;

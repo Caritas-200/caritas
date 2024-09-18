@@ -74,7 +74,7 @@ export const radioGroups = [
   },
 ];
 
-export const textFields = [
+export const BeneficiaryInputFields = [
   { name: "firstName", label: "First Name" },
   { name: "middleName", label: "Middle Name", optional: true },
   { name: "lastName", label: "Last Name" },
@@ -87,6 +87,7 @@ export const textFields = [
   { name: "ethnicity", label: "Ethnicity" },
   { name: "religion", label: "Religion" },
   { name: "email", label: "Email", optional: true },
+  { name: "houseNumber", label: "House #", optional: true },
 ];
 
 export const dropdownFields = [

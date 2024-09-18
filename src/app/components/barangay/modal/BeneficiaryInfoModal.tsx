@@ -46,15 +46,15 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
   }
 
   // Safely extract address fields and handle undefined cases
-  // const { address } = beneficiary;
-  // const fullAddress = [
-  //   address?.barangay?.barangay_name,
-  //   address?.cityMunicipality?.municipality_name,
-  //   address?.province?.province_name,
-  //   address?.region?.region_name,
-  // ]
-  //   .filter(Boolean) // Remove any undefined or null values
-  //   .join(", ");
+  const { address } = beneficiary;
+  const fullAddress = [
+    address?.barangay?.barangay_name,
+    address?.cityMunicipality?.municipality_name,
+    address?.province?.province_name,
+    address?.region?.region_name,
+  ]
+    .filter(Boolean) // Remove any undefined or null values
+    .join(", ");
 
   const fields = {
     "First Name": beneficiary.firstName,
@@ -62,7 +62,7 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
     "Last Name": beneficiary.lastName,
     "Mobile Number": beneficiary.mobileNumber,
     Age: beneficiary.age,
-    // Address: fullAddress || "N/A", // Use the fullAddress constructed above
+    Address: fullAddress || "N/A", // Use the fullAddress constructed above
     Gender: beneficiary.gender,
     Occupation: beneficiary.occupation,
     "Civil Status": beneficiary.civilStatus,
