@@ -14,6 +14,28 @@ export type SignUpFormData = {
   confirmPassword: string;
 };
 
+export type Address = {
+  region: {
+    region_id: string;
+    region_name: string;
+  };
+  province: {
+    province_id: string;
+    region_id: string;
+    province_name: string;
+  };
+  cityMunicipality: {
+    municipality_id: string;
+    province_id: string;
+    municipality_name: string;
+  };
+  barangay: {
+    barangay_id: string;
+    municipality_id: string;
+    barangay_name: string;
+  };
+};
+
 export type BeneficiaryForm = {
   id: string;
   firstName: string;
@@ -21,10 +43,10 @@ export type BeneficiaryForm = {
   lastName: string;
   mobileNumber: string;
   age: string;
-  address: string;
+  houseNumber?: string;
+  address: Address;
   gender: string;
   occupation: string;
-  houseNumber?: string;
   civilStatus: string;
   status: string;
   monthlyNetIncome: string;
@@ -39,6 +61,8 @@ export type BeneficiaryForm = {
   ownershipRentalType: string[];
   code: string[];
   qrCode: string;
+  calamity: string;
+  calamityName: string;
 };
 
 export type FamilyMember = {

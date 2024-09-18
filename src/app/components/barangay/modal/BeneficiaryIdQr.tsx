@@ -15,6 +15,15 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
 }) => {
   const newObject = JSON.parse(beneficiaryData);
 
+  // Safely extract address fields and construct the full address
+  const fullAddress = [
+    newObject.address?.barangay?.barangay_name,
+    newObject.address?.cityMunicipality?.municipality_name,
+    newObject.address?.province?.province_name,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
   // Function to handle closing the modal
   const handleClose = () => {
     Swal.fire({
@@ -32,7 +41,7 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
     });
   };
 
-  // Data to display on the ID (optimize with a loop)
+  // Data to display on the ID
   const dataItems = [
     { label: "House #", value: newObject.houseNumber },
     { label: "Age", value: newObject.age },
@@ -44,8 +53,12 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
     const printWindow = window.open("", "", "height=2550,width=3200");
     if (printWindow) {
       printWindow.document.write("<html><head><title>Print ID</title>");
-      printWindow.document.write("<style>"); // Add your print styles here
+      printWindow.document.write("<style>");
       printWindow.document.write(`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+        body {
+          font-family: 'DM Sans', sans-serif;
+        }
         .print-area {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -57,8 +70,9 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
           padding: 1rem;
           width: 5in;
           height: 3in;
-          margin-bottom:20px;
+          margin-bottom: 20px;
           padding: 30px;
+          position: relative;
         }
         .id-front-photo {
           border: 1px solid #ddd;
@@ -67,29 +81,34 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
           display: flex;
           justify-content: center;
           align-items: center;
-          margin-top:20px;
-          margin-left:30px;
-          mmargin-bottom: 20px;
+          margin-left: 0;
+          position: absolute;
+          top: 30px;
+          left: 30px;
+          background-color: #f0f0f0;
         }
         .id-front-qr {
-          display: flex;
-          height: 0in;
-          justify-content: flex-end;
-        
+          position: absolute;
+          top: 30px;
+          right: 30px;
         }
         .id-front-name {
           font-size: 1.25rem;
-          margin-top: 1rem;
-          font-weight: bold;
+          margin-top: 1.5in;
+          font-weight: 700;
+          text-align: left;
+     
         }
         .id-front-details {
-          margin-top: 1rem;
+          margin-top: 0.5rem;
+          text-align: left;
+          font-weight: 500;
         }
         .address-label, .family-label {
-          font-weight: bold;
+          font-weight: 700;
         }
         .detail-label {
-          font-weight: bold;
+          font-weight: 700;
         }
         .family-list {
           list-style-type: disc;
@@ -109,7 +128,7 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
 
   return (
     <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="modal-content bg-white p-10 rounded-lg w-full max-w-screen-lg relative">
+      <div className="modal-content bg-white p-10 rounded-lg w-full h-[90%] max-w-screen-lg relative">
         <button
           onClick={handleClose}
           className="modal-close-button absolute top-2 right-2 text-gray-700"
@@ -177,7 +196,7 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
           <div className="id-back border-2 p-4 id-back-container">
             <div className="id-back-address mt-2">
               <p className="address-label font-bold">Address/Tirahan:</p>
-              <p className="address-value">{newObject.address}</p>
+              <p className="address-value">Brgy. {fullAddress || "N/A"}</p>
             </div>
 
             <div className="id-back-family mt-4">
@@ -185,16 +204,11 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
                 Allowed Family Members to Claim:
               </p>
               <ul className="family-list list-disc list-inside">
-                {/* Render family members here */}
-                <ul className="family-list list-disc list-inside">
-                  {newObject.familyMembers?.map(
-                    (member: any, index: number) => (
-                      <p key={index} className="family-member">
-                        <strong>{index + 1 + "."}</strong> {member.name}
-                      </p>
-                    )
-                  )}
-                </ul>
+                {newObject.familyMembers?.map((member: any, index: number) => (
+                  <p key={index} className="family-member">
+                    <strong>{index + 1 + "."}</strong> {member.name}
+                  </p>
+                ))}
               </ul>
             </div>
           </div>

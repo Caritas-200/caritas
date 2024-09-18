@@ -18,14 +18,36 @@ export const validateFields = (
     "occupation",
     "ethnicity",
     "monthlyNetIncome",
+    "calamity",
+    "calamityName",
   ];
 
+  // Validate required fields
   requiredFields.forEach((field) => {
     if (!formData[field]) {
       newErrors[field] = "This field is required.";
       console.error(`Validation error: ${field} is required but is missing.`);
     }
   });
+
+  // Nested validation for the 'address' field
+  if (formData.address) {
+    const { region, province, cityMunicipality, barangay } = formData.address;
+    if (!region) {
+      newErrors["address.region"] = "Region is required.";
+    }
+    if (!province) {
+      newErrors["address.province"] = "Province is required.";
+    }
+    if (!cityMunicipality) {
+      newErrors["address.cityMunicipality"] = "City/Municipality is required.";
+    }
+    if (!barangay) {
+      newErrors["address.barangay"] = "Barangay is required.";
+    }
+  } else {
+    newErrors["address"] = "Address is required.";
+  }
 
   // Validate email format
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,15 +67,15 @@ export const validateFields = (
     );
   }
 
-  // Validate mobile number format
-  const incomePattern = /^[0-9]/; // Should be 6 digits
+  // Validate monthly income format
+  const incomePattern = /^[0-9]+$/; // Should be digits only
   if (
     formData.monthlyNetIncome &&
     !incomePattern.test(formData.monthlyNetIncome)
   ) {
     newErrors.monthlyNetIncome = "Net income must be digits.";
     console.error(
-      `Validation error: Invalid mobile number format for ${formData.monthlyNetIncome}`
+      `Validation error: Invalid monthly net income format for ${formData.monthlyNetIncome}`
     );
   }
 
@@ -62,6 +84,32 @@ export const validateFields = (
   if (formData.age && !agePattern.test(formData.age)) {
     newErrors.age = "Age must be a number between 10 and 100.";
     console.error(`Validation error: Invalid age value ${formData.age}`);
+  }
+
+  // Validate calamity field
+  const calamityOptions = [
+    "Typhoon",
+    "Earthquake",
+    "Flood",
+    "Volcanic Eruption",
+    "Tsunami",
+    "Landslide",
+    "Drought",
+    "Other",
+  ];
+  if (formData.calamity && !calamityOptions.includes(formData.calamity)) {
+    newErrors.calamity = "Invalid calamity type.";
+    console.error(
+      `Validation error: Invalid calamity type ${formData.calamity}`
+    );
+  }
+
+  // Validate calamityName if 'Other' is selected
+  if (formData.calamity === "Other" && !formData.calamityName) {
+    newErrors.calamityName = "Please specify the calamity.";
+    console.error(
+      "Validation error: Calamity Name are required if 'Other' is selected."
+    );
   }
 
   // Log form data changes if fields are updated
