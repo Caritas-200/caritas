@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { fetchBeneficiaryById } from "@/app/lib/api/beneficiary/data";
 import { BeneficiaryForm } from "@/app/lib/definitions";
 import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
+import { toSentenceCase } from "@/app/util/toSentenceCase";
+import { formatToPHP } from "@/app/util/formatToPHP";
 
 interface BeneficiaryInfoModalProps {
   brgyName: string;
@@ -57,9 +59,6 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
     .join(", ");
 
   const fields = {
-    "First Name": beneficiary.firstName,
-    "Middle Name": beneficiary.middleName,
-    "Last Name": beneficiary.lastName,
     "Mobile Number": beneficiary.mobileNumber,
     Age: beneficiary.age,
     Address: fullAddress || "N/A", // Use the fullAddress constructed above
@@ -70,7 +69,7 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
     Religion: beneficiary.religion,
     Email: beneficiary.email,
     "Beneficiary 4Ps": beneficiary.beneficiary4Ps,
-    "Monthly Net Income": beneficiary.monthlyNetIncome,
+    "Monthly Net Income": formatToPHP(+beneficiary.monthlyNetIncome),
     "Housing Condition": beneficiary.housingCondition.join(", "),
     Casualty: beneficiary.casualty.join(", "),
     "Health Condition": beneficiary.healthCondition.join(", "),
@@ -84,7 +83,7 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
     <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-screen-lg">
         <div className="flex items-center justify-between border-b border-gray-300 pb-2 mb-4">
-          <h2 className="text-xl font-semibold text-gray-700 ">
+          <h2 className="text-xl font-semibold text-gray-700">
             Beneficiary Details
           </h2>
           <button
@@ -107,9 +106,20 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
             </svg>
           </button>
         </div>
-        <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+
+        {/* Display the full name first */}
+        <div className="text-start mb-6 font-bold text-gray-900">
+          <h3 className="text-2xl font-bold">
+            {toSentenceCase(beneficiary.firstName)}{" "}
+            {toSentenceCase(beneficiary.middleName)}{" "}
+            {toSentenceCase(beneficiary.lastName)}
+          </h3>
+        </div>
+
+        {/* Map over the remaining details */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-x-12 gap-2">
           {Object.entries(fields).map(([key, value]) => (
-            <div key={key} className="mb-3">
+            <div key={key} className="grid grid-cols-2 mb-3 ">
               <div className="text-gray-700 font-semibold">{key}:</div>
               <div className="text-gray-900">{value}</div>
             </div>
