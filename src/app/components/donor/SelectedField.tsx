@@ -9,7 +9,9 @@ export const SelectField: React.FC<{
   <div>
     <label htmlFor={id} className="block text-gray-700">
       {label}
-      {name !== "middleName" && <span className="text-red-500">*</span>}
+      {name !== "suffix" && name !== "middleName" && (
+        <span className="text-red-500">*</span>
+      )}
     </label>
     <select
       id={id}

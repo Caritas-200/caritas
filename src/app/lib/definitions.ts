@@ -94,6 +94,7 @@ export type DonorFormData = {
   language: string;
   religion: string;
   email: string;
+  donationType: string;
 };
 
 export type DonorType = {
