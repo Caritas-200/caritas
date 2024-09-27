@@ -197,7 +197,7 @@ export const countries = [
 export const options = {
   civilStatus: ["Single", "Married", "Divorced", "Widowed"],
   religion: [
-    "Roman Catholicism",
+    "Roman Catholic",
     "Islam",
     "Iglesia ni Cristo",
     "Seventh-day Adventist",
