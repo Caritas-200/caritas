@@ -119,7 +119,7 @@ export const dropdownFields = [
     name: "religion",
     label: "Religion",
     options: [
-      "Roman Catholicism",
+      "Roman Catholic",
       "Islam",
       "Iglesia ni Cristo",
       "Seventh-day Adventist",
