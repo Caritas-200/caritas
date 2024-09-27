@@ -43,6 +43,10 @@ const DonorInfoModal: React.FC<DonorModalProps> = ({ donor, onClose }) => {
       label: "Religion",
       value: donor.religion,
     },
+    {
+      label: "Donation Type",
+      value: donor.donationType,
+    },
   ];
 
   return (

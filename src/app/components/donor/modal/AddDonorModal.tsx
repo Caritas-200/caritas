@@ -32,6 +32,7 @@ const AddDonorModal: React.FC<{
     id: "",
     status: "",
     suffix: "",
+    donationType: "",
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});

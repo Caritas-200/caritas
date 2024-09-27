@@ -227,6 +227,18 @@ export const options = {
     "DDS", // Doctor of Dental Surgery
     "CPA", // Certified Public Accountant
   ],
+  donationType: [
+    "Monetary Donations",
+    "Food and Water",
+    "Clothing",
+    "Medical Supplies",
+    "Hygiene Kits",
+    "Shelter Materials",
+    "Volunteering Services",
+    "Educational Supplies",
+    "Pet Supplies",
+    "Transportation Assistance",
+  ],
 };
 
 export const formFields = [
@@ -290,6 +302,12 @@ export const formFields = [
 ];
 
 export const dropDownFields = [
+  {
+    id: "donationType",
+    name: "donationType",
+    label: "Type of Donation",
+    options: options.donationType,
+  },
   {
     id: "suffix",
     name: "suffix",
