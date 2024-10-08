@@ -4,6 +4,7 @@ import { FamilyMember } from "@/app/lib/definitions";
 import {
   addBeneficiary,
   updateBeneficiaryWithQrCode,
+  updateBeneficiary,
 } from "@/app/lib/api/beneficiary/data";
 import { familyInfoFields } from "@/app/config/formConfig";
 import { validateFamilyForm } from "@/app/util/validateFamilyForm";
@@ -18,6 +19,7 @@ interface FamilyModalProps {
   onBack: () => void;
   formData: any;
   brgyName: string;
+  isEditing?: boolean;
 }
 
 const FamilyListModal: React.FC<FamilyModalProps> = ({
@@ -25,6 +27,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
   onBack,
   formData,
   brgyName,
+  isEditing,
 }) => {
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([
     {
@@ -40,9 +43,9 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
   ]);
 
   const [isValid, setIsValid] = useState(true);
-  const [showQRModal, setShowQRModal] = useState(false); // State to control QR modal visibility
-  const [qrData, setQrData] = useState(""); // QR data to be generated
-  const qrCodeRef = useRef<HTMLDivElement>(null); // Ref for the QR code element
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [qrData, setQrData] = useState("");
+  const qrCodeRef = useRef<HTMLDivElement>(null);
   const [printData, setPrintData] = useState("");
 
   useEffect(() => {
@@ -132,30 +135,46 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
 
       setPrintData(JSON.stringify(beneficiaryData));
 
-      // Save the beneficiary data without QR code, get back the generated document ID
-      const newBeneficiaryId = await addBeneficiary(beneficiaryData, brgyName);
+      if (isEditing) {
+        // Use updateBeneficiary if editing
+        await updateBeneficiary(beneficiaryData.id, beneficiaryData, brgyName);
 
-      // Generate the QR code payload using the generated ID
-      const qrPayload = {
-        id: newBeneficiaryId,
-        lastName: beneficiaryData.lastName,
-        brgyName,
-      };
-      setQrData(JSON.stringify(qrPayload)); // Set QR data
+        Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "Beneficiary updated successfully.",
+        }).then(() => {
+          onClose(); // Close the modal on success
+        });
+      } else {
+        // If not editing, add a new beneficiary
+        const newBeneficiaryId = await addBeneficiary(
+          beneficiaryData,
+          brgyName
+        );
 
-      // Wait for the QR code image to be generated
-      const qrImage = await generateQrImage(qrCodeRef);
+        // Generate the QR code payload using the generated ID
+        const qrPayload = {
+          id: newBeneficiaryId,
+          lastName: beneficiaryData.lastName,
+          brgyName,
+        };
+        setQrData(JSON.stringify(qrPayload)); // Set QR data
 
-      // Upload the QR code image and save the QR code URL in Firestore
-      await updateBeneficiaryWithQrCode(newBeneficiaryId, qrImage, brgyName);
+        // Wait for the QR code image to be generated
+        const qrImage = await generateQrImage(qrCodeRef);
 
-      Swal.fire({
-        icon: "success",
-        title: "Success!",
-        text: "Beneficiary added successfully.",
-      }).then(() => {
-        setShowQRModal(true); // Show the QR code modal
-      });
+        // Upload the QR code image and save the QR code URL in Firestore
+        await updateBeneficiaryWithQrCode(newBeneficiaryId, qrImage, brgyName);
+
+        Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "Beneficiary added successfully.",
+        }).then(() => {
+          setShowQRModal(true); // Show the QR code modal for new beneficiaries
+        });
+      }
     } catch (error: unknown) {
       Swal.close();
       Swal.fire({
@@ -177,7 +196,9 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
           ✖
         </button>
         <h2 className="text-2xl font-bold mb-4 pb-4 text-center text-gray-900">
-          Add Family Members
+          {`${
+            !isEditing ? "Add Family Members " : "Edit Family Member Details"
+          }`}
         </h2>
 
         <ProgressBar currentStep={3} />
@@ -259,7 +280,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
                 }`}
                 disabled={!isValid}
               >
-                Add Beneficiary
+                {`${!isEditing ? "Add Beneficiary" : " Update Beneficiary"}`}
               </button>
             </div>
           </div>

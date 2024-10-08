@@ -11,6 +11,7 @@ interface CheckboxGroupModalProps {
   onClose: () => void;
   onBack: () => void;
   brgyName: string;
+  isEditing?: boolean;
 }
 
 const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
@@ -19,6 +20,7 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
   onClose,
   onBack,
   brgyName,
+  isEditing,
 }) => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showFamilyModal, setShowFamilyModal] = useState(false); // State to show FamilyModal
@@ -98,7 +100,7 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
               ✖
             </button>
             <h2 className="text-2xl font-bold mb-4  text-center text-gray-900">
-              Beneficiary Form
+              {`${!isEditing ? "Beneficiary Form" : "Edit Beneficiary"}`}
             </h2>
 
             <ProgressBar currentStep={2} />
@@ -202,8 +204,8 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
       {/* Family members modal (3rd form) */}
       {showFamilyModal && (
         <FamilyListModal
+          isEditing={isEditing}
           onClose={onClose}
-          // onSubmit={onChange}
           onBack={onBack}
           formData={formData}
           brgyName={brgyName}

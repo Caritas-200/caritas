@@ -2,11 +2,16 @@ import React, { useState, useEffect } from "react";
 import classNames from "classnames";
 import SearchBar from "./SearchBar";
 import Pagination from "../Pagination";
-import { fetchBeneficiaries } from "@/app/lib/api/beneficiary/data";
+import {
+  fetchBeneficiaries,
+  deleteBeneficiary,
+} from "@/app/lib/api/beneficiary/data";
 import { BeneficiaryForm } from "@/app/lib/definitions";
 import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
-import BeneficiaryInfoModal from "./modal/BeneficiaryInfoModal"; // Import the BeneficiaryInfoModal component
+import BeneficiaryInfoModal from "./modal/BeneficiaryInfoModal";
+import Swal from "sweetalert2";
+import BeneficiaryModal from "./modal/BeneficiaryForm";
 
 interface TableProps {
   brgyName: string;
@@ -21,12 +26,16 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
   const [sortOrder, setSortOrder] = useState<string>("none");
   const [filteredData, setFilteredData] = useState<BeneficiaryForm[]>([]);
   const [beneficiaries, setBeneficiaries] = useState<BeneficiaryForm[]>([]);
+  const [localBeneficiaries, setLocalBeneficiaries] = useState(beneficiaries);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedBeneficiaryId, setSelectedBeneficiaryId] = useState<
     string | null
   >(null);
   const [calamityNameOptions, setCalamityNameOptions] = useState<string[]>([]);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedBeneficiaryInfo, setSelectedBeneficiaryInfo] =
+    useState<BeneficiaryForm>();
 
   // Fetch data when the component mounts or brgyName changes
   useEffect(() => {
@@ -57,7 +66,7 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
 
   // Filter data based on search term, status, and calamity name
   useEffect(() => {
-    const filtered = beneficiaries.filter((beneficiary) => {
+    const filtered = localBeneficiaries.filter((beneficiary) => {
       const matchesSearchTerm =
         beneficiary.firstName
           .toLowerCase()
@@ -111,7 +120,13 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
 
     setFilteredData(sorted);
     setCurrentPage(1);
-  }, [searchTerm, statusFilter, calamityNameFilter, beneficiaries, sortOrder]);
+  }, [
+    searchTerm,
+    statusFilter,
+    calamityNameFilter,
+    localBeneficiaries,
+    sortOrder,
+  ]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -122,8 +137,52 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
     setSelectedBeneficiaryId(id);
   };
 
+  // Handle delete donor
+  const handleEdit = (beneficiary: BeneficiaryForm) => {
+    setShowEditModal((prev) => !prev);
+    setSelectedBeneficiaryInfo(beneficiary);
+  };
+
+  // Handle delete donor
+  const handleDelete = (beneficiary: BeneficiaryForm) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: `Do you want to delete ${beneficiary.firstName} ${beneficiary.lastName}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Logic for deleting the beneficiaries
+        deleteBeneficiary(brgyName, beneficiary.id)
+          .then(() => {
+            // Remove the deleted beneficiaries from the local state
+            setLocalBeneficiaries((prevBeneficiaries) =>
+              prevBeneficiaries.filter((b) => b.id !== beneficiary.id)
+            );
+            Swal.fire(
+              "Deleted!",
+              "The beneficiary has been deleted.",
+              "success"
+            );
+          })
+          .catch((error) => {
+            Swal.fire(
+              "Error!",
+              "There was a problem deleting the beneficiary.",
+              "error"
+            );
+            console.error("Error deleting beneficiary:", error);
+          });
+      }
+    });
+  };
+
   const handleCloseModal = () => {
     setSelectedBeneficiaryId(null);
+    setShowEditModal(false);
   };
 
   return (
@@ -245,12 +304,27 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
                     >
                       {toSentenceCase(beneficiary.status)}
                     </td>
-                    <td className="border-b border-gray-500 py-2 px-4">
+
+                    <td className="flex gap-2 border-b border-gray-500 py-2 px-4">
                       <button
                         onClick={() => handleViewInfo(beneficiary.id)}
-                        className="bg-blue-500 text-white py-1 px-3 rounded-lg"
+                        className="bg-blue-500 text-white px-2 py-1 rounded "
                       >
                         View Info
+                      </button>
+
+                      <button
+                        onClick={() => handleEdit(beneficiary)}
+                        className="bg-green-500 text-white px-2 py-1 rounded "
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        onClick={() => handleDelete(beneficiary)}
+                        className="bg-red-500 text-white px-2 py-1 rounded"
+                      >
+                        Delete
                       </button>
                     </td>
                   </tr>
@@ -273,6 +347,18 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
           brgyName={brgyName}
           beneficiaryId={selectedBeneficiaryId}
           onClose={handleCloseModal}
+        />
+      )}
+
+      {showEditModal && selectedBeneficiaryInfo && (
+        <BeneficiaryModal
+          brgyName={brgyName}
+          onClose={handleCloseModal}
+          initialFormData={selectedBeneficiaryInfo}
+          isEditing={true}
+          onSubmit={function (data: BeneficiaryForm): void {
+            throw new Error("Function not implemented.");
+          }}
         />
       )}
     </>
