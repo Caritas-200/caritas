@@ -8,11 +8,11 @@ import {
   getDocs,
   getDoc,
   updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db, storage } from "@/app/services/firebaseConfig";
 import { BeneficiaryForm } from "@/app/lib/definitions";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Firebase Storage methods
-// import { generateQrImage } from "@/app/util/qrCodeUtils"; // Assuming you have this QR code utility function
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export const addBeneficiary = async (
   formData: BeneficiaryForm,
@@ -194,6 +194,30 @@ export const fetchBeneficiaryById = async (
     } else {
       console.error("Unknown error fetching beneficiary");
       throw new Error("Unknown error fetching beneficiary");
+    }
+  }
+};
+
+export const deleteBeneficiary = async (
+  brgyName: string,
+  beneficiaryId: string
+): Promise<void> => {
+  try {
+    const beneficiaryDocRef = doc(
+      db,
+      `barangay/${brgyName}/recipients/${beneficiaryId}`
+    );
+
+    // Delete the beneficiary document from Firestore
+    await deleteDoc(beneficiaryDocRef);
+
+    console.log(`beneficiary with ID ${beneficiaryId} deleted successfully.`);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error deleting beneficiary: ", error.message);
+      throw error;
+    } else {
+      throw new Error("Unknown error occurred while deleting beneficiary");
     }
   }
 };
