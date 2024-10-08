@@ -21,48 +21,36 @@ const DropdownAddress: React.FC<DropdownAddressProps> = ({
   errors,
 }) => {
   const [filteredProvinces, setFilteredProvinces] = useState<any[]>([]);
-  const [filteredMunicipality, setFilteredMunicipality] = useState<any[]>([]);
+  const [filteredMunicipalities, setFilteredMunicipalities] = useState<any[]>(
+    []
+  );
   const [filteredBarangays, setFilteredBarangays] = useState<any[]>([]);
 
   // Unified function for filtering dependent options
   const filterOptions = (type: keyof Address, id: number | null) => {
     switch (type) {
       case "region":
-        if (id) {
-          setFilteredProvinces(
-            provinces.filter((province) => province.region_id === id)
-          );
-        } else {
-          setFilteredProvinces([]);
-        }
-        setFilteredMunicipality([]);
+        setFilteredProvinces(
+          id ? provinces.filter((p) => p.region_id === id) : []
+        );
+        setFilteredMunicipalities([]);
         setFilteredBarangays([]);
         setAddress("province", null);
         setAddress("cityMunicipality", null);
         setAddress("barangay", null);
         break;
       case "province":
-        if (id) {
-          setFilteredMunicipality(
-            municipalities.filter(
-              (municipality) => municipality.province_id === id
-            )
-          );
-        } else {
-          setFilteredMunicipality([]);
-        }
+        setFilteredMunicipalities(
+          id ? municipalities.filter((m) => m.province_id === id) : []
+        );
         setFilteredBarangays([]);
         setAddress("cityMunicipality", null);
         setAddress("barangay", null);
         break;
       case "cityMunicipality":
-        if (id) {
-          setFilteredBarangays(
-            barangays.filter((barangay) => barangay.municipality_id === id)
-          );
-        } else {
-          setFilteredBarangays([]);
-        }
+        setFilteredBarangays(
+          id ? barangays.filter((b) => b.municipality_id === id) : []
+        );
         setAddress("barangay", null);
         break;
       default:
@@ -73,28 +61,18 @@ const DropdownAddress: React.FC<DropdownAddressProps> = ({
   // Handle changes in dropdowns
   const handleChange = (type: keyof Address, value: string) => {
     const id = parseInt(value, 10) || null;
+    const map = {
+      region: regions.find((r) => r.region_id === id) || null,
+      province: provinces.find((p) => p.province_id === id) || null,
+      cityMunicipality:
+        municipalities.find((m) => m.municipality_id === id) || null,
+      barangay: barangays.find((b) => b.barangay_id === id) || null,
+    };
 
-    if (type === "region") {
-      const selectedRegion = regions.find((region) => region.region_id === id);
-      setAddress("region", selectedRegion || null);
-      filterOptions("region", id);
-    } else if (type === "province") {
-      const selectedProvince = provinces.find(
-        (province) => province.province_id === id
-      );
-      setAddress("province", selectedProvince || null);
-      filterOptions("province", id);
-    } else if (type === "cityMunicipality") {
-      const selectedCity = municipalities.find(
-        (municipality) => municipality.municipality_id === id
-      );
-      setAddress("cityMunicipality", selectedCity || null);
-      filterOptions("cityMunicipality", id);
-    } else if (type === "barangay") {
-      const selectedBarangay = barangays.find(
-        (barangay) => barangay.barangay_id === id
-      );
-      setAddress("barangay", selectedBarangay || null);
+    setAddress(type, map[type]);
+
+    if (type !== "barangay") {
+      filterOptions(type, id);
     }
   };
 
@@ -164,7 +142,7 @@ const DropdownAddress: React.FC<DropdownAddressProps> = ({
           disabled={!address.province}
         >
           <option value="">Select City/Municipality</option>
-          {filteredMunicipality.map((municipality) => (
+          {filteredMunicipalities.map((municipality) => (
             <option
               key={municipality.municipality_id}
               value={municipality.municipality_id}

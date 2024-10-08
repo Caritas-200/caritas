@@ -198,6 +198,51 @@ export const fetchBeneficiaryById = async (
   }
 };
 
+export const updateBeneficiary = async (
+  beneficiaryId: string, // ID of the beneficiary to update
+  updatedFormData: BeneficiaryForm, // New data to update
+  brgyName: string // Barangay name
+): Promise<void> => {
+  try {
+    // Reference to the specific beneficiary document using the provided ID
+    const beneficiaryDocRef = doc(
+      db,
+      `barangay/${brgyName}/recipients`,
+      beneficiaryId
+    );
+
+    // Fetch the existing beneficiary data
+    const beneficiaryDoc = await getDoc(beneficiaryDocRef);
+
+    if (!beneficiaryDoc.exists()) {
+      throw new Error("Beneficiary does not exist.");
+    }
+
+    // Get the current data to ensure id and dateCreated are not changed
+    const currentData = beneficiaryDoc.data() as BeneficiaryForm;
+
+    // Merge the existing id and dateCreated with the updated form data
+    const updatedBeneficiaryData = {
+      ...updatedFormData,
+      id: currentData.id, // Ensure the ID is not changed
+      dateCreated: currentData.dateCreated, // Ensure the creation date is not changed
+      dateUpdated: Timestamp.now(), // Add the dateUpdated field with the current timestamp
+    };
+
+    // Update the document with the new data
+    await setDoc(beneficiaryDocRef, updatedBeneficiaryData);
+
+    console.log("Beneficiary updated successfully.");
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error updating beneficiary: ", error.message);
+      throw error;
+    } else {
+      throw new Error("Unknown error updating beneficiary");
+    }
+  }
+};
+
 export const deleteBeneficiary = async (
   brgyName: string,
   beneficiaryId: string

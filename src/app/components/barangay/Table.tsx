@@ -11,6 +11,7 @@ import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
 import BeneficiaryInfoModal from "./modal/BeneficiaryInfoModal";
 import Swal from "sweetalert2";
+import BeneficiaryModal from "./modal/BeneficiaryForm";
 
 interface TableProps {
   brgyName: string;
@@ -32,6 +33,9 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
     string | null
   >(null);
   const [calamityNameOptions, setCalamityNameOptions] = useState<string[]>([]);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedBeneficiaryInfo, setSelectedBeneficiaryInfo] =
+    useState<BeneficiaryForm>();
 
   // Fetch data when the component mounts or brgyName changes
   useEffect(() => {
@@ -134,6 +138,12 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
   };
 
   // Handle delete donor
+  const handleEdit = (beneficiary: BeneficiaryForm) => {
+    setShowEditModal((prev) => !prev);
+    setSelectedBeneficiaryInfo(beneficiary);
+  };
+
+  // Handle delete donor
   const handleDelete = (beneficiary: BeneficiaryForm) => {
     Swal.fire({
       title: "Are you sure?",
@@ -172,6 +182,7 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
 
   const handleCloseModal = () => {
     setSelectedBeneficiaryId(null);
+    setShowEditModal(false);
   };
 
   return (
@@ -303,6 +314,13 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
                       </button>
 
                       <button
+                        onClick={() => handleEdit(beneficiary)}
+                        className="bg-green-500 text-white px-2 py-1 rounded "
+                      >
+                        Edit
+                      </button>
+
+                      <button
                         onClick={() => handleDelete(beneficiary)}
                         className="bg-red-500 text-white px-2 py-1 rounded"
                       >
@@ -329,6 +347,18 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
           brgyName={brgyName}
           beneficiaryId={selectedBeneficiaryId}
           onClose={handleCloseModal}
+        />
+      )}
+
+      {showEditModal && selectedBeneficiaryInfo && (
+        <BeneficiaryModal
+          brgyName={brgyName}
+          onClose={handleCloseModal}
+          initialFormData={selectedBeneficiaryInfo}
+          isEditing={true}
+          onSubmit={function (data: BeneficiaryForm): void {
+            throw new Error("Function not implemented.");
+          }}
         />
       )}
     </>

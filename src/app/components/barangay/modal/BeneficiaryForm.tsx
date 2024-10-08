@@ -19,61 +19,56 @@ interface ModalProps {
   onClose: () => void;
   onSubmit: (data: BeneficiaryForm) => void;
   brgyName: string;
+  initialFormData?: BeneficiaryForm;
+  isEditing?: boolean;
 }
 
 const BeneficiaryModal: React.FC<ModalProps> = ({
   onClose,
   onSubmit,
   brgyName,
+  initialFormData,
+  isEditing,
 }) => {
-  const [formData, setFormData] = useState<BeneficiaryForm>({
-    id: "",
-    dateCreated: Timestamp.now(),
-    status: "",
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    mobileNumber: "",
-    age: "",
-    houseNumber: "",
-    address: {
-      region: {
-        region_id: "",
-        region_name: "",
+  const [formData, setFormData] = useState<BeneficiaryForm>(
+    initialFormData || {
+      id: "",
+      dateCreated: Timestamp.now(),
+      status: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      mobileNumber: "",
+      age: "",
+      houseNumber: "",
+      address: {
+        region: { region_id: "", region_name: "" },
+        province: { province_id: "", region_id: "", province_name: "" },
+        cityMunicipality: {
+          municipality_id: "",
+          province_id: "",
+          municipality_name: "",
+        },
+        barangay: { barangay_id: "", municipality_id: "", barangay_name: "" },
       },
-      province: {
-        province_id: "",
-        region_id: "",
-        province_name: "",
-      },
-      cityMunicipality: {
-        municipality_id: "",
-        province_id: "",
-        municipality_name: "",
-      },
-      barangay: {
-        barangay_id: "",
-        municipality_id: "",
-        barangay_name: "",
-      },
-    },
-    gender: "",
-    occupation: "",
-    civilStatus: "",
-    ethnicity: "",
-    religion: "",
-    email: "",
-    beneficiary4Ps: "",
-    monthlyNetIncome: "",
-    housingCondition: [],
-    casualty: [],
-    healthCondition: [],
-    ownershipRentalType: [],
-    code: [],
-    qrCode: "",
-    calamity: "",
-    calamityName: "",
-  });
+      gender: "",
+      occupation: "",
+      civilStatus: "",
+      ethnicity: "",
+      religion: "",
+      email: "",
+      beneficiary4Ps: "",
+      monthlyNetIncome: "",
+      housingCondition: [],
+      casualty: [],
+      healthCondition: [],
+      ownershipRentalType: [],
+      code: [],
+      qrCode: "",
+      calamity: "",
+      calamityName: "",
+    }
+  );
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showSecondModal, setShowSecondModal] = useState(false);
@@ -83,14 +78,6 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
-
-  const handleDetailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -116,7 +103,17 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   };
 
   const handleFinalSubmit = (updatedData: BeneficiaryForm) => {
-    onSubmit(updatedData);
+    if (isEditing && initialFormData) {
+      // Preserve the original id and dateCreated if editing
+      onSubmit({
+        ...updatedData,
+        id: initialFormData.id,
+        dateCreated: initialFormData.dateCreated,
+      });
+    } else {
+      // Handle creation of a new beneficiary
+      onSubmit(updatedData);
+    }
     onClose();
   };
 
@@ -136,7 +133,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
               ✖
             </button>
             <h2 className="text-2xl font-bold mb-4 text-center text-gray-900">
-              Beneficiary Form
+              {isEditing ? "Edit Beneficiary" : "Add Beneficiary"}
             </h2>
             <ProgressBar currentStep={1} />
             <form className="overflow-y-auto" onSubmit={handleNext}>
@@ -230,6 +227,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                   </div>
                 ))}
               </div>
+
               <h1 className="mb-2 pt-2 pb-2 text-xl font-semibold text-gray-800 border-t-2 my-4">
                 Address
               </h1>
@@ -255,10 +253,9 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                         <span className="text-red-500">*</span>
                       )}
                     </label>
-
                     <input
                       name={field.name}
-                      type="text"
+                      type={field.name === "email" ? "email" : "text"}
                       value={(formData as any)[field.name]}
                       onChange={handleChange}
                       className={`p-2 border border-gray-300 rounded text-gray-700 ${
@@ -266,7 +263,6 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                       }`}
                       placeholder={`Please enter ${field.label.toLowerCase()}`}
                     />
-
                     {errors[field.name] && (
                       <p className="text-red-500 text-sm mt-1">
                         {errors[field.name]}
@@ -276,10 +272,17 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                 ))}
               </div>
 
-              <div className="mt-8 flex justify-center gap-4">
+              <div className="flex justify-between mt-4">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
                 <button
                   type="submit"
-                  className="bg-blue-500 text-white py-2 px-4 rounded-lg"
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
                 >
                   Next
                 </button>
@@ -288,7 +291,9 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
           </div>
         </div>
       ) : (
+        // Second part of the modal for additional information (if needed)
         <CheckboxGroupModal
+          isEditing={isEditing}
           formData={formData}
           onChange={setFormData}
           onSubmit={handleFinalSubmit}

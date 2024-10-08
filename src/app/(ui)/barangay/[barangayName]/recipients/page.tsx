@@ -68,6 +68,7 @@ const Recipient: React.FC = () => {
       {/* Render the modal conditionally */}
       {isModalOpen && (
         <BeneficiaryModal
+          isEditing={false}
           onClose={handleCloseModal}
           onSubmit={handleSubmit}
           brgyName={barangayName}
