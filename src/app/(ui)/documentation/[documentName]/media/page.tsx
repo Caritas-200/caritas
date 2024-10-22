@@ -6,12 +6,13 @@ import { useDropzone } from "react-dropzone";
 import Resizer from "react-image-file-resizer";
 import JSZip from "jszip";
 import FileSaver from "file-saver";
+import { addMediaFiles } from "@/app/lib/api/document/data";
 
 interface Params {
   documentName: string;
 }
 
-const Document: React.FC = () => {
+const Media: React.FC = () => {
   const router = useRouter();
   const params = useParams() as unknown as Params;
   const { documentName } = params;
@@ -37,7 +38,10 @@ const Document: React.FC = () => {
     }
     setIsCompressing(false);
 
-    setMediaFiles([...mediaFiles, ...compressedFiles]);
+    setMediaFiles((prev) => [...prev, ...compressedFiles]);
+
+    // Upload the media files to Firebase Storage
+    await addMediaFiles(documentName, compressedFiles);
   };
 
   const compressImage = (file: File): Promise<File> => {
@@ -70,9 +74,7 @@ const Document: React.FC = () => {
   });
 
   const handleDeleteMedia = (index: number) => {
-    const updatedFiles = [...mediaFiles];
-    updatedFiles.splice(index, 1);
-    setMediaFiles(updatedFiles);
+    setMediaFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleViewingOptionChange = (
@@ -96,7 +98,6 @@ const Document: React.FC = () => {
     FileSaver.saveAs(content, `${documentName}_files.zip`);
   };
 
-  // Set the grid columns based on the viewing option
   const getGridColumns = () => {
     switch (viewingOption) {
       case "Large":
@@ -110,7 +111,6 @@ const Document: React.FC = () => {
     }
   };
 
-  // Define character limits based on viewing option
   const getCharLimit = () => {
     switch (viewingOption) {
       case "Large":
@@ -134,17 +134,15 @@ const Document: React.FC = () => {
           Back
         </button>
         <div className="flex gap-4">
-          <div>
-            <select
-              value={viewingOption}
-              onChange={handleViewingOptionChange}
-              className="bg-gray-600 text-white py-2 px-4 rounded-lg"
-            >
-              <option value="Large">Large</option>
-              <option value="Medium">Medium</option>
-              <option value="Small">Small</option>
-            </select>
-          </div>
+          <select
+            value={viewingOption}
+            onChange={handleViewingOptionChange}
+            className="bg-gray-600 text-white py-2 px-4 rounded-lg"
+          >
+            <option value="Large">Large</option>
+            <option value="Medium">Medium</option>
+            <option value="Small">Small</option>
+          </select>
           <button
             className="bg-green-500 text-white py-2 px-4 rounded-lg"
             onClick={downloadAllFiles}
@@ -169,15 +167,16 @@ const Document: React.FC = () => {
         )}
       </div>
 
-      <div className={`grid ${getGridColumns()} gap-4`}>
+      <div className={`grid ${getGridColumns()} relative gap-4`}>
         {mediaFiles.map((file, index) => (
           <div
             key={index}
-            className="relative bg-gray-600 p-4 rounded-lg overflow-hidden"
+            className="relative bg-gray-600 p-4 rounded-lg h-fit"
           >
-            <div className="absolute top-2 right-2">
+            {/* Positioning for dropdown button */}
+            <div className="absolute top-2 right-2 z-10">
               <button
-                className="text-white p-2 rounded-full w-10"
+                className="text-white p-2 rounded-full w-10 z-12"
                 onClick={() =>
                   setSelectedFileIndex(
                     selectedFileIndex === index ? null : index
@@ -187,7 +186,13 @@ const Document: React.FC = () => {
                 ⋮
               </button>
               {selectedFileIndex === index && (
-                <div className="absolute right-0 mt-2 bg-gray-700 rounded-lg shadow-lg">
+                <div className="absolute right-0 mt-2 bg-gray-700 rounded-lg shadow-lg z-20 hover:z-25">
+                  <button
+                    className="block text-white px-4 py-2 hover:bg-red-600"
+                    onClick={() => handleDeleteMedia(index)}
+                  >
+                    Delete
+                  </button>
                   <button
                     className="block text-white px-4 py-2 hover:bg-gray-600"
                     onClick={() => {
@@ -202,15 +207,11 @@ const Document: React.FC = () => {
                   >
                     Download
                   </button>
-                  <button
-                    className="block text-white px-4 py-2 hover:bg-red-600"
-                    onClick={() => handleDeleteMedia(index)}
-                  >
-                    Delete
-                  </button>
                 </div>
               )}
             </div>
+
+            {/* File preview for images */}
             {file.type.startsWith("image/") && (
               <img
                 src={URL.createObjectURL(file)}
@@ -218,6 +219,8 @@ const Document: React.FC = () => {
                 className="w-full h-auto"
               />
             )}
+
+            {/* File preview for videos */}
             {file.type.startsWith("video/") && (
               <video
                 controls
@@ -225,15 +228,26 @@ const Document: React.FC = () => {
                 className="w-full h-auto"
               />
             )}
+
+            {/* For document types, do not display name */}
             {!file.type.startsWith("image/") &&
               !file.type.startsWith("video/") && (
-                <p className="text-white">{file.name}</p>
+                <p className="text-white text-wrap overflow-clip">
+                  {file.name.length > getCharLimit()
+                    ? `${file.name.substring(0, getCharLimit())}...`
+                    : file.name}
+                </p>
               )}
-            <p className="text-white mt-2 overflow-clip scale-10">
-              {file.name.length > getCharLimit()
-                ? `${file.name.substring(0, getCharLimit())}...`
-                : file.name}
-            </p>
+
+            {/* Display name only for images and videos */}
+            {(file.type.startsWith("image/") ||
+              file.type.startsWith("video/")) && (
+              <p className="text-white mt-2 overflow-clip">
+                {file.name.length > getCharLimit()
+                  ? `${file.name.substring(0, getCharLimit())}...`
+                  : file.name}
+              </p>
+            )}
           </div>
         ))}
       </div>
@@ -241,4 +255,4 @@ const Document: React.FC = () => {
   );
 };
 
-export default Document;
+export default Media;

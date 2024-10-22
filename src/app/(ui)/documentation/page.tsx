@@ -60,7 +60,7 @@ const Documentation: React.FC = () => {
 
   const handleFolderClick = (folderId: string) => {
     // Redirect to the sub-nested folder for media files
-    router.push(`/documentation/${folderId}/documents`);
+    router.push(`/documentation/${folderId}/media`);
   };
 
   const filteredFolders = folders.filter((folder) =>
