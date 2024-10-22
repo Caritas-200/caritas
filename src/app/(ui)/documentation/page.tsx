@@ -17,7 +17,7 @@ interface Folder {
   name: string;
 }
 
-const Document: React.FC = () => {
+const Documentation: React.FC = () => {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [newFolderName, setNewFolderName] = useState<string>("");
@@ -60,7 +60,7 @@ const Document: React.FC = () => {
 
   const handleFolderClick = (folderId: string) => {
     // Redirect to the sub-nested folder for media files
-    router.push(`/documentation/${folderId}`);
+    router.push(`/documentation/${folderId}/documents`);
   };
 
   const filteredFolders = folders.filter((folder) =>
@@ -119,4 +119,4 @@ const Document: React.FC = () => {
   );
 };
 
-export default Document;
+export default Documentation;
