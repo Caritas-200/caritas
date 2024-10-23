@@ -53,9 +53,9 @@ const Documentation: React.FC = () => {
     setNewFolderName(""); // Clear the input after adding
   };
 
-  const handleDeleteFolder = async (id: string) => {
-    await deleteFolder(id);
-    setFolders(folders.filter((folder) => folder.id !== id));
+  const handleDeleteFolder = async (name: string) => {
+    await deleteFolder(name);
+    setFolders(folders.filter((folder) => folder.name !== name));
   };
 
   const handleFolderClick = (folderId: string) => {
@@ -108,8 +108,8 @@ const Documentation: React.FC = () => {
               <Folder
                 key={folder.id}
                 name={folder.name}
-                onDelete={() => handleDeleteFolder(folder.id)}
-                onClick={() => handleFolderClick(folder.id)}
+                onDelete={() => handleDeleteFolder(folder.name)}
+                onClick={() => handleFolderClick(folder.name)}
               />
             ))}
           </div>
