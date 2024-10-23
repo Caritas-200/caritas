@@ -1,4 +1,4 @@
-import { Timestamp, doc, setDoc } from "firebase/firestore";
+import { Timestamp, doc, setDoc, getDoc, arrayUnion } from "firebase/firestore";
 import { db } from "@/app/services/firebaseConfig"; // Ensure you import your Firestore configuration
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; // New imports for Storage
 
@@ -34,19 +34,36 @@ export const addMediaFiles = async (
 
     const uploadedFiles = await Promise.all(mediaFilePromises);
 
-    // Save the uploaded files in Firestore under the specified document
+    // Reference to the Firestore document
     const docRef = doc(db, "documentation", documentName);
 
+    // Get the existing media count from Firestore
+    const docSnapshot = await getDoc(docRef);
+    let existingCount = 0;
+
+    if (docSnapshot.exists()) {
+      // Retrieve the existing media count if it exists
+      existingCount = docSnapshot.data().mediaCount || 0;
+    }
+
+    // Generate new keys for the uploaded files based on the existing count
+    const newMediaEntries = uploadedFiles.map((fileData, index) => ({
+      ...fileData,
+      order: existingCount + index, // Adjust index to reflect the new position in the array
+    }));
+
+    // Update the Firestore document with the new media files and count
     await setDoc(
       docRef,
       {
-        mediaFiles: uploadedFiles,
+        mediaFiles: arrayUnion(...newMediaEntries), // Use arrayUnion to avoid fetching the entire array
+        mediaCount: existingCount + uploadedFiles.length,
         updatedAt: Timestamp.now(),
       },
       { merge: true }
-    ); // Merge to avoid overwriting existing data
+    );
 
-    console.log("Media files added successfully:", uploadedFiles);
+    console.log("Media files added successfully:", newMediaEntries);
   } catch (error) {
     console.error("Error adding media files: ", error);
   }
