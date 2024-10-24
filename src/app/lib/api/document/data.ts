@@ -1,4 +1,12 @@
-import { Timestamp, doc, setDoc, getDoc, arrayUnion } from "firebase/firestore";
+import {
+  Timestamp,
+  doc,
+  setDoc,
+  getDoc,
+  arrayUnion,
+  updateDoc,
+  arrayRemove,
+} from "firebase/firestore";
 import { db } from "@/app/services/firebaseConfig";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -87,5 +95,46 @@ export const fetchMediaFiles = async (documentName: string): Promise<any[]> => {
   } catch (error) {
     console.error("Error fetching media files: ", error);
     return [];
+  }
+};
+
+// Function to delete a media file from Firestore and Firebase Storage
+// Function to delete a media file from Firestore
+export const deleteMediaFile = async (
+  documentName: string,
+  fileName: string
+) => {
+  try {
+    const docRef = doc(db, "documentation", documentName);
+
+    // Retrieve the current document data
+    const docSnapshot = await getDoc(docRef);
+    if (!docSnapshot.exists()) {
+      console.log(`Document "${documentName}" does not exist.`);
+      return;
+    }
+
+    const mediaFiles = docSnapshot.data().mediaFiles || [];
+
+    // Find the exact file object to remove
+    const fileToRemove = mediaFiles.find(
+      (file: { name: string }) => file.name === fileName
+    );
+    if (!fileToRemove) {
+      console.log(`File "${fileName}" not found in the document.`);
+      return;
+    }
+
+    // Update the document to remove the specified file
+    await updateDoc(docRef, {
+      mediaFiles: arrayRemove(fileToRemove), // Pass the exact file object for arrayRemove to work
+      updatedAt: Timestamp.now(),
+    });
+
+    console.log(
+      `Media file "${fileName}" deleted successfully from Firestore.`
+    );
+  } catch (error) {
+    console.error("Error deleting media file: ", error);
   }
 };
