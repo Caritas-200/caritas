@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { UserProfile } from "@/app/lib/definitions";
 import Header from "@/app/components/Header";
 import LeftNav from "@/app/components/Nav";
-
 import {
   fetchUserProfile,
   updateUserProfile,
