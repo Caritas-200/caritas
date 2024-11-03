@@ -11,28 +11,30 @@ interface NavItem {
   href: string;
 }
 
+// Navigation items array
 const navItems: NavItem[] = [
   { name: "Home", href: "/home" },
   { name: "List of Barangays", href: "/barangay" },
   { name: "Documentation", href: "/documentation" },
   { name: "Donors", href: "/donor" },
+  { name: "Profile", href: "/profile" },
 ];
 
 const Nav: React.FC = () => {
   const pathname = usePathname(); // Get the current pathname
 
   return (
-    <nav className="bg-gray-800 text-white min-h-screen  p-4 min-w-[14%]">
+    <nav className="bg-gray-800 text-white min-h-screen p-4 min-w-[200px]">
       <ul className="space-y-4">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
 
           return (
             <li key={item.name}>
-              <Link href={item.href}>
+              <Link href={item.href} passHref>
                 <button
                   className={clsx(
-                    "block px-4 py-2 rounded-lg transition-colors duration-200",
+                    "block px-4 py-2 rounded-lg transition-colors duration-200 whitespace-nowrap",
                     {
                       "bg-gray-700": isActive,
                       "hover:bg-gray-600": !isActive,
