@@ -124,3 +124,17 @@ export interface Event {
 export interface EventMap {
   [key: string]: Event[];
 }
+
+export interface UserProfile {
+  address: string;
+  dateCreated: string;
+  email: string;
+  firstName: string;
+  gender: string;
+  lastName: string;
+  middleName: string;
+  mobileNumber: string;
+  position: string;
+  status: string;
+  password: string;
+}
