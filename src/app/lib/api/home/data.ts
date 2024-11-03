@@ -31,6 +31,7 @@ export const saveEvent = async (date: Date, event: Event) => {
     console.error("Error saving event: ", error);
   }
 };
+
 export const loadEvents = async (): Promise<EventMap> => {
   const eventsRef = collection(db, "events");
   const snapshot = await getDocs(eventsRef);
@@ -54,18 +55,47 @@ export const loadEvents = async (): Promise<EventMap> => {
   return eventsMap;
 };
 
-const deleteEvent = async (date: Date, event: string) => {
+export const deleteEvent = async (date: Date, event: Event) => {
   const dateKey = format(date, "yyyy-MM-dd");
   const eventRef = doc(db, "events", dateKey);
 
   try {
     await updateDoc(eventRef, {
       events: arrayRemove({
-        event,
-        timestamp: Timestamp.fromDate(new Date()), // Ensure the timestamp matches
+        event: event.event,
+        timestamp: event.timestamp, // Make sure to pass the exact timestamp for accurate deletion
       }),
     });
   } catch (error) {
     console.error("Error deleting event: ", error);
+  }
+};
+
+export const updateEvent = async (
+  date: Date,
+  oldEvent: Event,
+  updatedEventData: string
+) => {
+  const dateKey = format(date, "yyyy-MM-dd");
+  const eventRef = doc(db, "events", dateKey);
+
+  try {
+    // Remove the old event
+    await updateDoc(eventRef, {
+      events: arrayRemove({
+        event: oldEvent.event,
+        timestamp: oldEvent.timestamp,
+      }),
+    });
+
+    // Add the updated event
+    await updateDoc(eventRef, {
+      events: arrayUnion({
+        event: [updatedEventData],
+        timestamp: oldEvent.timestamp, // Use the same timestamp to keep track of updates
+      }),
+    });
+  } catch (error) {
+    console.error("Error updating event: ", error);
   }
 };

@@ -15,10 +15,11 @@ import {
   setMonth,
   setYear,
 } from "date-fns";
-import { saveEvent, loadEvents } from "@/app/lib/api/home/data";
+import { saveEvent, loadEvents, deleteEvent } from "@/app/lib/api/home/data";
 import EventDialog from "./calendar/DialogModal";
 import { Event, EventMap } from "../lib/definitions";
 import { Timestamp } from "firebase/firestore";
+import { toSentenceCase } from "../util/toSentenceCase";
 
 const Calendar: React.FC = () => {
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
@@ -161,12 +162,23 @@ const Calendar: React.FC = () => {
             </div>
             <div className="text-sm">
               {events[format(cloneDay, "yyyy-MM-dd")]?.map(
-                (
-                  event: { event: any[] },
-                  idx: React.Key | null | undefined
-                ) => (
-                  <div key={idx} className="bg-blue-500 mt-1 p-1 rounded">
-                    {event.event.join(", ")}
+                (event: Event, idx: React.Key | null | undefined) => (
+                  <div
+                    key={idx}
+                    className="bg-gray-700 mt-1 p-2 rounded flex justify-between items-center"
+                  >
+                    <span className="text-white">
+                      {toSentenceCase(event.event.join(", "))}
+                    </span>
+                    <button
+                      className="hover:text-red-500 ml-2"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering the day click
+                        handleDeleteEvent(cloneDay, event);
+                      }}
+                    >
+                      ✖
+                    </button>
                   </div>
                 )
               )}
@@ -183,6 +195,19 @@ const Calendar: React.FC = () => {
       days = [];
     }
     return <div>{rows}</div>;
+  };
+
+  const handleDeleteEvent = async (day: Date, event: Event) => {
+    await deleteEvent(day, event);
+    setEvents((prevEvents) => {
+      const dateKey = format(day, "yyyy-MM-dd");
+      return {
+        ...prevEvents,
+        [dateKey]: prevEvents[dateKey].filter(
+          (e) => e.timestamp !== event.timestamp // Ensure to match the timestamp for deletion
+        ),
+      };
+    });
   };
 
   const onDateClick = (day: Date) => {

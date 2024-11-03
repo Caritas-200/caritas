@@ -1,13 +1,12 @@
-import React, { Dispatch, SetStateAction } from "react";
-import { Dialog } from "@headlessui/react";
-import { format } from "date-fns";
+import React from "react";
+import { DialogPanel, Dialog, DialogTitle } from "@headlessui/react";
 
 interface EventDialogProps {
   open: boolean;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: (open: boolean) => void;
   selectedDate: Date;
   eventInput: string;
-  setEventInput: Dispatch<SetStateAction<string>>;
+  setEventInput: (input: string) => void;
   addEvent: () => void;
 }
 
@@ -20,50 +19,39 @@ const EventDialog: React.FC<EventDialogProps> = ({
   addEvent,
 }) => {
   return (
-    <Dialog
-      open={open}
-      onClose={() => setOpen(false)}
-      className="fixed inset-0 flex items-center justify-center z-50"
-    >
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-xl mb-4 text-gray-700">
-          Add Event for {format(selectedDate, "MMMM d, yyyy")}
-        </h2>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Select Date:</label>
-          <input
-            type="date"
-            className="w-full p-2 border rounded text-gray-700"
-            value={format(selectedDate, "yyyy-MM-dd")}
-            onChange={(e) =>
-              setEventInput(new Date(e.target.value).toISOString())
-            }
+    <Dialog open={open} onClose={() => setOpen(false)}>
+      <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+      <div className="fixed inset-0 flex items-center justify-center p-4">
+        <DialogPanel className="mx-auto w-full max-w-sm rounded bg-gray-800 p-6">
+          <DialogTitle className="text-lg font-medium text-gray-100">
+            {"Add Event"} {" on "} {selectedDate.toDateString()}
+          </DialogTitle>
+
+          <textarea
+            value={eventInput}
+            onChange={(e) => setEventInput(e.target.value)}
+            className="mt-2 w-full h-24 bg-gray-700 text-gray-100 rounded p-2"
+            placeholder="Event Description"
           />
-        </div>
-        <input
-          type="text"
-          className="w-full p-2 border rounded text-gray-700"
-          placeholder="Event name"
-          value={eventInput}
-          onChange={(e) => setEventInput(e.target.value)}
-        />
-        <div className="flex justify-end space-x-2 mt-4">
+
+          <div className="mt-4 flex justify-between">
+            <button
+              className={`bg-blue-500 ${
+                !eventInput.trim() ? "opacity-50" : ""
+              } text-white px-4 py-2 rounded`}
+              onClick={addEvent}
+              disabled={!eventInput.trim()} // Disable button if textarea is empty
+            >
+              Add Event
+            </button>
+          </div>
           <button
-            className="bg-gray-500 text-white px-4 py-2 rounded"
+            className="absolute top-2 right-2 text-gray-500"
             onClick={() => setOpen(false)}
           >
-            Cancel
+            X
           </button>
-          <button
-            className={`bg-blue-500 text-white px-4 py-2 rounded ${
-              !eventInput ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={addEvent}
-            disabled={!eventInput}
-          >
-            Add Event
-          </button>
-        </div>
+        </DialogPanel>
       </div>
     </Dialog>
   );
