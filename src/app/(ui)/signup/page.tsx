@@ -4,7 +4,7 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { signup } from "@/app/lib/api/auth/signup";
+import { signup } from "@/app/lib/api/auth/data";
 import { validateForm } from "@/app/util/formValidation";
 import { showLoading, hideLoading } from "@/app/components/loading";
 import { SignUpFormData } from "@/app/lib/definitions";
