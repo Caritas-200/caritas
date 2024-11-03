@@ -27,13 +27,8 @@ const Calendar: React.FC = () => {
   const [showEventModal, setShowEventModal] = useState<boolean>(false);
   const [eventInput, setEventInput] = useState<string>("");
 
-  // State for theme (dark or light)
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
-
-  // Determine theme classes based on the state
-  const themeClasses = isDarkMode
-    ? "bg-gray-800 text-gray-100"
-    : "bg-white text-gray-800";
+  // Fixed theme to dark mode
+  const themeClasses = "bg-gray-800 text-gray-100";
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -59,21 +54,21 @@ const Calendar: React.FC = () => {
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-            className={`ml-2 ${isDarkMode ? "text-gray-100" : "text-gray-800"}`}
+            className="ml-2 text-gray-100"
           >
             Prev
           </button>
 
           <button
             onClick={() => setCurrentMonth(new Date())}
-            className={`ml-2 ${isDarkMode ? "text-gray-100" : "text-gray-800"}`}
+            className="ml-2 text-gray-100"
           >
             Today
           </button>
 
           <button
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-            className={`ml-2 ${isDarkMode ? "text-gray-100" : "text-gray-800"}`}
+            className="ml-2 text-gray-100"
           >
             Next
           </button>
@@ -89,11 +84,7 @@ const Calendar: React.FC = () => {
                 setMonth(currentMonth, months.indexOf(e.target.value))
               )
             }
-            className={`p-2 rounded-lg ${
-              isDarkMode
-                ? "bg-gray-700 text-gray-100"
-                : "bg-gray-100 text-gray-800"
-            }`}
+            className="p-2 rounded-lg bg-gray-700 text-gray-100"
           >
             {months.map((month, idx) => (
               <option key={idx} value={month}>
@@ -108,11 +99,7 @@ const Calendar: React.FC = () => {
             onChange={(e) =>
               setCurrentMonth(setYear(currentMonth, Number(e.target.value)))
             }
-            className={`p-2 rounded-lg ${
-              isDarkMode
-                ? "bg-gray-700 text-gray-100"
-                : "bg-gray-100 text-gray-800"
-            }`}
+            className="p-2 rounded-lg bg-gray-700 text-gray-100"
           >
             {years.map((year, idx) => (
               <option key={idx} value={year}>
@@ -159,7 +146,7 @@ const Calendar: React.FC = () => {
         days.push(
           <div
             key={day.toString()}
-            className={`p-2 border md:min-h-20 lg:min-h-32  hover:bg-blue-100 cursor-pointer ${
+            className={`p-2 border md:min-h-20 lg:min-h-32 hover:bg-blue-100 cursor-pointer ${
               !isSameMonth(day, monthStart) ? "text-gray-400" : ""
             } ${isSameDay(day, selectedDate) ? "bg-gray-600" : ""}`}
             onClick={() => onDateClick(cloneDay)}
@@ -225,31 +212,17 @@ const Calendar: React.FC = () => {
   return (
     <div className={`w-full h-full m-4 rounded-lg mt-8 ${themeClasses}`}>
       <div className={`p-4 shadow-lg min-h-screen rounded-lg ${themeClasses}`}>
-        {/* Header and Theme Toggle */}
+        {/* Header */}
         <div className="flex justify-between items-center mb-4">
           {renderHeader()}
 
-          <div className="flex items-center space-x-4">
-            {/* Theme Toggle Button */}
-            <button
-              className={`px-4 py-2 rounded-lg ${
-                isDarkMode
-                  ? "bg-gray-700 text-gray-100"
-                  : "bg-gray-200 text-gray-800"
-              }`}
-              onClick={() => setIsDarkMode(!isDarkMode)}
-            >
-              {isDarkMode ? "Switch to Light" : "Switch to Dark"}
-            </button>
-
-            {/* Add Event Button */}
-            <button
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-              onClick={() => setShowEventModal(true)}
-            >
-              Add Event
-            </button>
-          </div>
+          {/* Add Event Button */}
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+            onClick={() => setShowEventModal(true)}
+          >
+            Add Event
+          </button>
         </div>
 
         {renderDays()}
