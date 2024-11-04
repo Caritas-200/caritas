@@ -290,7 +290,7 @@ const Calendar: React.FC = () => {
   };
 
   return (
-    <div className={`w-full h-full m-4 rounded-lg mt-8 ${themeClasses}`}>
+    <div className={`w-full h-full m-4 rounded-lg mt-4 ${themeClasses}`}>
       <div className={`p-4 shadow-lg min-h-screen rounded-lg ${themeClasses}`}>
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
