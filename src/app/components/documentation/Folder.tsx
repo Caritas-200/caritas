@@ -32,7 +32,7 @@ const Folder: React.FC<FolderProps> = ({ name, onDelete, onClick }) => {
 
   return (
     <div
-      className="relative bg-gray-500 p-4 rounded-lg shadow-md cursor-pointer"
+      className="relative bg-gray-500 hover:bg-blue-500 p-4 rounded-lg shadow-md cursor-pointer"
       onClick={onClick}
     >
       <h3 className="text-lg font-semibold">{name.toUpperCase()}</h3>
@@ -41,7 +41,7 @@ const Folder: React.FC<FolderProps> = ({ name, onDelete, onClick }) => {
           e.stopPropagation();
           handleDelete();
         }}
-        className="absolute top-2 right-2 text-red-500"
+        className="absolute top-1 right-2 text-red-200 hover:text-red-500"
       >
         ✖
       </button>

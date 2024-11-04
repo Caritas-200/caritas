@@ -10,6 +10,7 @@ import {
   deleteMediaFile,
 } from "@/app/lib/api/document/data";
 import Swal from "sweetalert2";
+import Image from "next/image";
 
 // Skeleton Loader Component
 const SkeletonLoader: React.FC = () => (
@@ -252,9 +253,11 @@ const Media: React.FC = () => {
                 </div>
 
                 {file.type && file.type.startsWith("image/") && (
-                  <img
+                  <Image
                     src={URL.createObjectURL(file)}
                     alt="Image Preview"
+                    width={400}
+                    height={400}
                     className="w-full h-fill object-fit"
                   />
                 )}
@@ -311,10 +314,12 @@ const Media: React.FC = () => {
                 </div>
 
                 {media.type && media.type.startsWith("image/") && (
-                  <img
+                  <Image
                     src={media.url}
                     alt="Image Preview"
-                    className="w-full h-fill object-fit"
+                    width={400}
+                    height={400}
+                    className="w-full h-fill object-cover"
                   />
                 )}
                 {media.type && media.type.startsWith("video/") && (
