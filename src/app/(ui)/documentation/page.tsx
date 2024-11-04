@@ -82,12 +82,12 @@ const Documentation: React.FC = () => {
                 className="bg-blue-500 text-white py-2 px-4 rounded-lg whitespace-nowrap"
                 onClick={handleAddFolder}
               >
-                Add Folder
+                <span className="font-extrabold text-xl">＋</span> Folder
               </button>
               <input
                 type="text"
                 placeholder="Folder name..."
-                className="w-full text-gray-700 p-2 border rounded-lg "
+                className="w-full text-gray-700 bg-gray-100 p-2 border rounded-lg shadow-inner"
                 value={newFolderName}
                 onChange={(e) => setNewFolderName(e.target.value)}
               />
@@ -96,14 +96,14 @@ const Documentation: React.FC = () => {
               <input
                 type="text"
                 placeholder="Search for folder..."
-                className="w-full text-gray-700 p-2 border rounded-lg"
+                className="w-full text-gray-700 bg-gray-100 p-2 border rounded-lg shadow-inner"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <h1 className="mt-2">Folders:</h1>
+          <div className="grid mt-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredFolders.map((folder) => (
               <Folder
                 key={folder.id}
