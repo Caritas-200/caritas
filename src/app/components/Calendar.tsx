@@ -15,7 +15,12 @@ import {
   setMonth,
   setYear,
 } from "date-fns";
-import { saveEvent, loadEvents, deleteEvent } from "@/app/lib/api/home/data";
+import {
+  saveEvent,
+  loadEvents,
+  deleteEvent,
+  updateEvent,
+} from "@/app/lib/api/home/data";
 import EventDialog from "./calendar/DialogModal";
 import { Event, EventMap } from "../lib/definitions";
 import { Timestamp } from "firebase/firestore";
@@ -27,6 +32,8 @@ const Calendar: React.FC = () => {
   const [events, setEvents] = useState<EventMap>({});
   const [showEventModal, setShowEventModal] = useState<boolean>(false);
   const [eventInput, setEventInput] = useState<string>("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [eventToEdit, setEventToEdit] = useState<Event | null>(null);
 
   // Fixed theme to dark mode
   const themeClasses = "bg-gray-800 text-gray-100";
@@ -147,7 +154,7 @@ const Calendar: React.FC = () => {
         days.push(
           <div
             key={day.toString()}
-            className={`p-2 border md:min-h-20 lg:min-h-32 hover:bg-blue-100 cursor-pointer ${
+            className={`p-2 border md:min-h-20 lg:min-h-32 hover:bg-green-500 cursor-pointer ${
               !isSameMonth(day, monthStart) ? "text-gray-400" : ""
             } ${isSameDay(day, selectedDate) ? "bg-gray-600" : ""}`}
             onClick={() => onDateClick(cloneDay)}
@@ -162,7 +169,7 @@ const Calendar: React.FC = () => {
             </div>
             <div className="text-sm">
               {events[format(cloneDay, "yyyy-MM-dd")]?.map(
-                (event: Event, idx: React.Key | null | undefined) => (
+                (event: Event, idx) => (
                   <div
                     key={idx}
                     className="bg-gray-700 mt-1 p-2 rounded flex justify-between items-center"
@@ -170,15 +177,28 @@ const Calendar: React.FC = () => {
                     <span className="text-white">
                       {toSentenceCase(event.event.join(", "))}
                     </span>
-                    <button
-                      className="hover:text-red-500 ml-2"
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent triggering the day click
-                        handleDeleteEvent(cloneDay, event);
-                      }}
-                    >
-                      ✖
-                    </button>
+                    <div className="flex space-x-2">
+                      {/* Edit Button */}
+                      <button
+                        className="hover:text-yellow-500 text-lg opacity-70 hover:opacity-100"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering the day click
+                          handleEditEvent(cloneDay, event);
+                        }}
+                      >
+                        ✎
+                      </button>
+                      {/* Delete Button */}
+                      <button
+                        className="hover:text-red-500 text-lg opacity-70 hover:opacity-100"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering the day click
+                          handleDeleteEvent(cloneDay, event);
+                        }}
+                      >
+                        ✖
+                      </button>
+                    </div>
                   </div>
                 )
               )}
@@ -195,6 +215,14 @@ const Calendar: React.FC = () => {
       days = [];
     }
     return <div>{rows}</div>;
+  };
+
+  const handleEditEvent = (day: Date, event: Event) => {
+    setSelectedDate(day);
+    setEventInput(event.event.join(", "));
+    setEventToEdit(event);
+    setIsEditing(true);
+    setShowEventModal(true);
   };
 
   const handleDeleteEvent = async (day: Date, event: Event) => {
@@ -215,23 +243,50 @@ const Calendar: React.FC = () => {
     setShowEventModal(true);
   };
 
-  const addEvent = async () => {
+  const addOrUpdateEvent = async () => {
     const dateKey = format(selectedDate, "yyyy-MM-dd");
-    const newEvent: Event = {
-      event: [eventInput],
-      timestamp: Timestamp.fromDate(new Date()),
-    };
 
-    setEvents((prevEvents) => ({
-      ...prevEvents,
-      [dateKey]: prevEvents[dateKey]
-        ? [...prevEvents[dateKey], newEvent]
-        : [newEvent],
-    }));
+    if (isEditing && eventToEdit) {
+      // Update event
+      await updateEvent(selectedDate, eventToEdit, eventInput);
 
+      // Update events state
+      setEvents((prevEvents) => ({
+        ...prevEvents,
+        [dateKey]: prevEvents[dateKey].map((e) =>
+          e.timestamp === eventToEdit.timestamp
+            ? { ...e, event: [eventInput] }
+            : e
+        ),
+      }));
+    } else {
+      // Add new event
+      const newEvent: Event = {
+        event: [eventInput],
+        timestamp: Timestamp.fromDate(new Date()),
+      };
+
+      setEvents((prevEvents) => ({
+        ...prevEvents,
+        [dateKey]: prevEvents[dateKey]
+          ? [...prevEvents[dateKey], newEvent]
+          : [newEvent],
+      }));
+
+      await saveEvent(selectedDate, newEvent);
+    }
+
+    // Reset modal and states
     setEventInput("");
+    setIsEditing(false);
+    setEventToEdit(null);
     setShowEventModal(false);
-    await saveEvent(selectedDate, newEvent);
+  };
+
+  const resetModal = () => {
+    setEventInput("");
+    setIsEditing(false);
+    setEventInput("");
   };
 
   return (
@@ -258,11 +313,15 @@ const Calendar: React.FC = () => {
       {showEventModal && (
         <EventDialog
           open={showEventModal}
-          setOpen={setShowEventModal}
+          setOpen={(open) => {
+            setShowEventModal(open);
+            if (!open) resetModal();
+          }}
           selectedDate={selectedDate}
           eventInput={eventInput}
           setEventInput={setEventInput}
-          addEvent={addEvent}
+          addEvent={addOrUpdateEvent}
+          isEditing={isEditing}
         />
       )}
     </div>

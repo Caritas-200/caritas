@@ -8,6 +8,7 @@ interface EventDialogProps {
   eventInput: string;
   setEventInput: (input: string) => void;
   addEvent: () => void;
+  isEditing: boolean;
 }
 
 const EventDialog: React.FC<EventDialogProps> = ({
@@ -17,14 +18,25 @@ const EventDialog: React.FC<EventDialogProps> = ({
   eventInput,
   setEventInput,
   addEvent,
+  isEditing,
 }) => {
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <DialogPanel className="mx-auto w-full max-w-sm rounded bg-gray-800 p-6">
+          <div className="flex justify-end">
+            <button
+              className="hover:text-red-500 text-lg opacity-70 hover:opacity-100 mt-[-12px]"
+              onClick={() => setOpen(false)}
+            >
+              ✖
+            </button>
+          </div>
+
           <DialogTitle className="text-lg font-medium text-gray-100">
-            {"Add Event"} {" on "} {selectedDate.toDateString()}
+            {isEditing ? "Edit Event" : "Add Event"} on{" "}
+            {selectedDate.toDateString()}
           </DialogTitle>
 
           <textarea
@@ -34,23 +46,17 @@ const EventDialog: React.FC<EventDialogProps> = ({
             placeholder="Event Description"
           />
 
-          <div className="mt-4 flex justify-between">
+          <div className="mt-4 flex justify-center">
             <button
               className={`bg-blue-500 ${
                 !eventInput.trim() ? "opacity-50" : ""
               } text-white px-4 py-2 rounded`}
               onClick={addEvent}
-              disabled={!eventInput.trim()} // Disable button if textarea is empty
+              disabled={!eventInput.trim()}
             >
-              Add Event
+              {isEditing ? "Update Event" : "Add Event"}
             </button>
           </div>
-          <button
-            className="absolute top-2 right-2 text-gray-500"
-            onClick={() => setOpen(false)}
-          >
-            X
-          </button>
         </DialogPanel>
       </div>
     </Dialog>
