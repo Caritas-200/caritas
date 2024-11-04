@@ -154,9 +154,9 @@ const Calendar: React.FC = () => {
         days.push(
           <div
             key={day.toString()}
-            className={`p-2 border md:min-h-20 lg:min-h-32 hover:bg-green-500 cursor-pointer ${
+            className={`p-2 border md:min-h-20 lg:min-h-32 hover:bg-blue-500 cursor-pointer ${
               !isSameMonth(day, monthStart) ? "text-gray-400" : ""
-            } ${isSameDay(day, selectedDate) ? "bg-gray-600" : ""}`}
+            } ${isSameDay(day, selectedDate) ? "bg-blue-500" : ""}`}
             onClick={() => onDateClick(cloneDay)}
           >
             <div className="relative">
