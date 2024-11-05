@@ -64,69 +64,64 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
     loadBeneficiaries();
   }, [brgyName]);
 
-  // Filter data based on search term, status, and calamity name
+  // Updated `useEffect` for filtering
   useEffect(() => {
-    const filtered = localBeneficiaries.filter((beneficiary) => {
-      const matchesSearchTerm =
-        beneficiary.firstName
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        beneficiary.lastName.toLowerCase().includes(searchTerm.toLowerCase());
+    const filterAndSortBeneficiaries = () => {
+      const filtered = beneficiaries.filter((beneficiary) => {
+        // Match search term in first name or last name
+        const matchesSearchTerm =
+          beneficiary.firstName
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          beneficiary.lastName.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesStatus =
-        statusFilter === "all" || beneficiary.status === statusFilter;
+        // Match status
+        const matchesStatus =
+          statusFilter === "all" || beneficiary.status === statusFilter;
 
-      const matchesCalamityName =
-        calamityNameFilter === "" ||
-        beneficiary.calamityName === calamityNameFilter;
+        // Match calamity name
+        const matchesCalamityName =
+          calamityNameFilter === "" ||
+          beneficiary.calamityName === calamityNameFilter;
 
-      return matchesSearchTerm && matchesStatus && matchesCalamityName;
-    });
+        return matchesSearchTerm && matchesStatus && matchesCalamityName;
+      });
 
-    // Sorting logic
-    const sorted = [...filtered];
-    if (sortOrder === "asc" || sortOrder === "desc") {
-      sorted.sort((a, b) => {
-        const compare =
+      // Sorting logic
+      const sorted = [...filtered];
+      if (sortOrder === "asc" || sortOrder === "desc") {
+        sorted.sort((a, b) =>
           sortOrder === "asc"
             ? a.lastName.localeCompare(b.lastName)
-            : b.lastName.localeCompare(a.lastName);
-        return compare;
-      });
-    } else if (sortOrder === "calamityAsc" || sortOrder === "calamityDesc") {
-      sorted.sort((a, b) => {
-        const compare =
+            : b.lastName.localeCompare(a.lastName)
+        );
+      } else if (sortOrder === "calamityAsc" || sortOrder === "calamityDesc") {
+        sorted.sort((a, b) =>
           sortOrder === "calamityAsc"
             ? a.calamity.localeCompare(b.calamity)
-            : b.calamity.localeCompare(a.calamity);
-        return compare;
-      });
-    } else if (
-      sortOrder === "calamityNameAsc" ||
-      sortOrder === "calamityNameDesc"
-    ) {
-      sorted.sort((a, b) => {
-        const compare =
+            : b.calamity.localeCompare(a.calamity)
+        );
+      } else if (
+        sortOrder === "calamityNameAsc" ||
+        sortOrder === "calamityNameDesc"
+      ) {
+        sorted.sort((a, b) =>
           sortOrder === "calamityNameAsc"
             ? (a.calamityName || "").localeCompare(b.calamityName || "")
-            : (b.calamityName || "").localeCompare(a.calamityName || "");
-        return compare;
-      });
-    } else if (sortOrder === "date") {
-      sorted.sort(
-        (a, b) => b.dateCreated.toMillis() - a.dateCreated.toMillis()
-      );
-    }
+            : (b.calamityName || "").localeCompare(a.calamityName || "")
+        );
+      } else if (sortOrder === "date") {
+        sorted.sort(
+          (a, b) => b.dateCreated.toMillis() - a.dateCreated.toMillis()
+        );
+      }
 
-    setFilteredData(sorted);
-    setCurrentPage(1);
-  }, [
-    searchTerm,
-    statusFilter,
-    calamityNameFilter,
-    localBeneficiaries,
-    sortOrder,
-  ]);
+      setFilteredData(sorted);
+      setCurrentPage(1);
+    };
+
+    filterAndSortBeneficiaries();
+  }, [searchTerm, statusFilter, calamityNameFilter, beneficiaries, sortOrder]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
