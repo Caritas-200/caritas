@@ -46,7 +46,7 @@ const DonorList: React.FC = () => {
           <LeftNav />
           <div className="w-full overflow-y-auto h-lvh">
             <div className="bg-gray-700 h-full w-full">
-              <div className="flex flex-col px-10 pt-10 gap-4 pb-24">
+              <div className="flex flex-col px-4 pt-10 gap-4 pb-24">
                 <div className="flex justify-between items-center">
                   <h1 className="text-2xl font-bold">List of Donors</h1>
                   <button

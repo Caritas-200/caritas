@@ -153,10 +153,12 @@ const Profile: React.FC = () => {
         <LeftNav />
         <div className="w-full overflow-y-auto h-lvh ">
           <div className="w-full overflow-y-auto h-svh pb-24">
-            <div className="p-10 bg-gray-700 min-h-screen">
-              <h2 className="text-2xl font-bold mb-4">User Profile</h2>
+            <div className="p-4 bg-gray-700 pt-10 min-h-screen">
+              <div className="flex justify-between items-center pb-6">
+                <h1 className="text-2xl font-bold">User Profile</h1>
+              </div>
 
-              <div className="flex flex-wrap -mx-2">
+              <div className="flex flex-wrap">
                 {renderInputField("Email", "email", "email")}
                 {renderInputField("First Name", "firstName")}
                 {renderInputField("Middle Name", "middleName")}
