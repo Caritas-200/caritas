@@ -14,6 +14,7 @@ import { showLoading, hideLoading } from "@/app/components/loading";
 import { validateProfileForm } from "@/app/util/validateProfileForm";
 import { logoutUser } from "@/app/lib/api/auth/data";
 import { useRouter } from "next/navigation";
+import { MainLayout } from "@/app/layouts/MainLayout";
 
 const Profile: React.FC = () => {
   const router = useRouter();
@@ -146,60 +147,64 @@ const Profile: React.FC = () => {
     </div>
   );
   return (
-    <div className="h-screen">
+    <MainLayout>
       <Header />
       <div className="flex flex-row flex-1 bg-gray-700">
         <LeftNav />
-        <div className="p-10 bg-gray-700 min-h-screen">
-          <h2 className="text-2xl font-bold mb-4">User Profile</h2>
+        <div className="w-full overflow-y-auto h-lvh ">
+          <div className="w-full overflow-y-auto h-svh pb-24">
+            <div className="p-10 bg-gray-700 min-h-screen">
+              <h2 className="text-2xl font-bold mb-4">User Profile</h2>
 
-          <div className="flex flex-wrap -mx-2">
-            {renderInputField("Email", "email", "email")}
-            {renderInputField("First Name", "firstName")}
-            {renderInputField("Middle Name", "middleName")}
-            {renderInputField("Last Name", "lastName")}
-            {renderInputField("Mobile Number", "mobileNumber")}
-            {renderInputField("Gender", "gender", "text", true, [
-              "Male",
-              "Female",
-            ])}
-            {renderInputField("Status", "status", "text", true, [
-              "Single",
-              "Married",
-              "Divorced",
-              "Widowed",
-            ])}
-            {renderInputField("Position", "position")}
-            {renderInputField("Address", "address")}
-          </div>
+              <div className="flex flex-wrap -mx-2">
+                {renderInputField("Email", "email", "email")}
+                {renderInputField("First Name", "firstName")}
+                {renderInputField("Middle Name", "middleName")}
+                {renderInputField("Last Name", "lastName")}
+                {renderInputField("Mobile Number", "mobileNumber")}
+                {renderInputField("Gender", "gender", "text", true, [
+                  "Male",
+                  "Female",
+                ])}
+                {renderInputField("Status", "status", "text", true, [
+                  "Single",
+                  "Married",
+                  "Divorced",
+                  "Widowed",
+                ])}
+                {renderInputField("Position", "position")}
+                {renderInputField("Address", "address")}
+              </div>
 
-          <div className="flex space-x-4 mt-4">
-            <button
-              className="bg-green-500 text-white py-2 px-4 rounded-lg"
-              onClick={handleUpdateProfile}
-            >
-              Save Changes
-            </button>
-          </div>
+              <div className="flex space-x-4 mt-4">
+                <button
+                  className="bg-green-500 text-white py-2 px-4 rounded-lg"
+                  onClick={handleUpdateProfile}
+                >
+                  Save Changes
+                </button>
+              </div>
 
-          <div className="mt-6">
-            <label className="text-white">Change Password:</label>
-            <input
-              type="password"
-              className="bg-gray-600 text-white py-2 px-4 rounded-lg w-full"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button
-              onClick={handleUpdatePassword}
-              className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4"
-            >
-              Update Password
-            </button>
+              <div className="mt-6">
+                <label className="text-white">Change Password:</label>
+                <input
+                  type="password"
+                  className="bg-gray-600 text-white py-2 px-4 rounded-lg w-full"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  onClick={handleUpdatePassword}
+                  className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4"
+                >
+                  Update Password
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 
