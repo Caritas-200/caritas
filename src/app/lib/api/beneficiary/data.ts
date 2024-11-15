@@ -266,3 +266,29 @@ export const deleteBeneficiary = async (
     }
   }
 };
+
+// Function to verify if a beneficiary document exists in Firestore
+export const verifyRecipient = async (
+  brgyName: string,
+  beneficiaryId: string
+): Promise<boolean> => {
+  try {
+    // Reference to the specific beneficiary document using the provided ID
+    const beneficiaryDocRef = doc(
+      db,
+      `barangay/${brgyName}/recipients/${beneficiaryId}`
+    );
+
+    // Fetch the document snapshot
+    const docSnapshot = await getDoc(beneficiaryDocRef);
+    // Return true if the document exists, false otherwise
+    return docSnapshot.exists();
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error verifying beneficiary: ", error.message);
+      throw error;
+    } else {
+      throw new Error("Unknown error occurred while verifying beneficiary");
+    }
+  }
+};
