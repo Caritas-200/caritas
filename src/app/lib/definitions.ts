@@ -138,3 +138,13 @@ export interface UserProfile {
   status: string;
   password: string;
 }
+
+export interface fetchedBeneficiaryData {
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  familyMembers: string[];
+  dateCreated: string;
+  calamityType: string;
+  calamityName: string;
+}

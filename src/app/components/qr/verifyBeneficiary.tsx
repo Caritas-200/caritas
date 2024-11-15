@@ -6,6 +6,7 @@ import Image from "next/image";
 import { verifyRecipient } from "@/app/lib/api/beneficiary/data";
 import clsx from "clsx";
 import { showLoading, hideLoading } from "../loading";
+import { BeneficiaryForm, fetchedBeneficiaryData } from "@/app/lib/definitions";
 
 interface ModalProps {
   onClose: () => void;
@@ -18,6 +19,8 @@ interface DecodedData {
 
 export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
   const [decodedData, setDecodedData] = useState<DecodedData | null>(null);
+  const [beneficiaryData, setBeneficiaryData] =
+    useState<fetchedBeneficiaryData>();
   const [error, setError] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState<boolean>(true);
   const [verificationResult, setVerificationResult] = useState<string | null>(
@@ -53,7 +56,6 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
   };
 
   const handleError = (err: any) => {
-    console.error(err);
     setError("Error reading QR code. Please try again.");
   };
 
@@ -65,9 +67,10 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
       hideLoading();
       verificationDoneRef.current = true; // Set flag to true after verification
 
-      if (result) {
+      if (result.found) {
         setVerificationResult("Beneficiary Found!");
         setFound(true);
+        setBeneficiaryData(result.beneficiaryData);
       } else {
         setVerificationResult("No Beneficiary Found!");
       }
@@ -84,6 +87,8 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
       handleVerify(decodedData.brgyName, decodedData.id);
     }
   }, [decodedData]);
+
+  console.log(beneficiaryData);
 
   return (
     <div className="fixed inset-0 h-full bg-black bg-opacity-50 flex justify-center items-center z-10">
@@ -138,6 +143,13 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
                 Please wait while we verify the beneficiary from the Database.
               </h4>
             )}
+
+            <button
+              className="bg-green-700 hover:bg-green-500 p-2 px-4 text-white rounded-md mt-4"
+              onClick={onClose}
+            >
+              Release Benefits
+            </button>
           </div>
         )}
 

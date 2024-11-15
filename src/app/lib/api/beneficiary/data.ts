@@ -11,7 +11,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { db, storage } from "@/app/services/firebaseConfig";
-import { BeneficiaryForm } from "@/app/lib/definitions";
+import { BeneficiaryForm, fetchedBeneficiaryData } from "@/app/lib/definitions";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export const addBeneficiary = async (
@@ -267,11 +267,13 @@ export const deleteBeneficiary = async (
   }
 };
 
-// Function to verify if a beneficiary document exists in Firestore
 export const verifyRecipient = async (
   brgyName: string,
   beneficiaryId: string
-): Promise<boolean> => {
+): Promise<{
+  found: boolean;
+  beneficiaryData: Partial<fetchedBeneficiaryData> | null;
+}> => {
   try {
     // Reference to the specific beneficiary document using the provided ID
     const beneficiaryDocRef = doc(
@@ -279,10 +281,25 @@ export const verifyRecipient = async (
       `barangay/${brgyName}/recipients/${beneficiaryId}`
     );
 
-    // Fetch the document snapshot
+    // Fetch the document snapshot, but only select specific fields
     const docSnapshot = await getDoc(beneficiaryDocRef);
-    // Return true if the document exists, false otherwise
-    return docSnapshot.exists();
+
+    if (docSnapshot.exists()) {
+      // Select only the necessary fields
+      const beneficiaryData = {
+        firstName: docSnapshot.data()?.firstName,
+        middleName: docSnapshot.data()?.middleName,
+        lastName: docSnapshot.data()?.lastName,
+        familyMembers: docSnapshot.data()?.familyMembers,
+        dateCreated: docSnapshot.data()?.dateCreated,
+        calamityType: docSnapshot.data()?.calamityType,
+        calamityName: docSnapshot.data()?.calamityName,
+      } as Partial<fetchedBeneficiaryData>;
+
+      return { found: true, beneficiaryData };
+    } else {
+      return { found: false, beneficiaryData: null };
+    }
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error verifying beneficiary: ", error.message);
