@@ -11,7 +11,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { db, storage } from "@/app/services/firebaseConfig";
-import { BeneficiaryForm, fetchedBeneficiaryData } from "@/app/lib/definitions";
+import { BeneficiaryForm, UserData } from "@/app/lib/definitions";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export const addBeneficiary = async (
@@ -272,7 +272,7 @@ export const verifyRecipient = async (
   beneficiaryId: string
 ): Promise<{
   found: boolean;
-  beneficiaryData: Partial<fetchedBeneficiaryData> | null;
+  beneficiaryData: Partial<UserData> | null;
 }> => {
   try {
     // Reference to the specific beneficiary document using the provided ID
@@ -292,9 +292,9 @@ export const verifyRecipient = async (
         lastName: docSnapshot.data()?.lastName,
         familyMembers: docSnapshot.data()?.familyMembers,
         dateCreated: docSnapshot.data()?.dateCreated,
-        calamityType: docSnapshot.data()?.calamityType,
+        calamityType: docSnapshot.data()?.calamity,
         calamityName: docSnapshot.data()?.calamityName,
-      } as Partial<fetchedBeneficiaryData>;
+      } as Partial<UserData>;
 
       return { found: true, beneficiaryData };
     } else {

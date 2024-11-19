@@ -6,7 +6,8 @@ import Image from "next/image";
 import { verifyRecipient } from "@/app/lib/api/beneficiary/data";
 import clsx from "clsx";
 import { showLoading, hideLoading } from "../loading";
-import { BeneficiaryForm, fetchedBeneficiaryData } from "@/app/lib/definitions";
+import { UserData } from "@/app/lib/definitions";
+import UserFormModal from "./ConfirmedBeneficiaryModal";
 
 interface ModalProps {
   onClose: () => void;
@@ -19,10 +20,10 @@ interface DecodedData {
 
 export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
   const [decodedData, setDecodedData] = useState<DecodedData | null>(null);
-  const [beneficiaryData, setBeneficiaryData] =
-    useState<fetchedBeneficiaryData>();
+  const [beneficiaryData, setBeneficiaryData] = useState<UserData>();
   const [error, setError] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState<boolean>(true);
+  const [modalView, setModalView] = useState<boolean>(false);
   const [verificationResult, setVerificationResult] = useState<string | null>(
     null
   ); // Store verification result
@@ -70,7 +71,7 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
       if (result.found) {
         setVerificationResult("Beneficiary Found!");
         setFound(true);
-        setBeneficiaryData(result.beneficiaryData);
+        setBeneficiaryData(result.beneficiaryData as UserData | undefined);
       } else {
         setVerificationResult("No Beneficiary Found!");
       }
@@ -88,7 +89,9 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
     }
   }, [decodedData]);
 
-  console.log(beneficiaryData);
+  const handleModalForm = () => {
+    setModalView((prev) => !prev);
+  };
 
   return (
     <div className="fixed inset-0 h-full bg-black bg-opacity-50 flex justify-center items-center z-10">
@@ -146,7 +149,9 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
 
             <button
               className="bg-green-700 hover:bg-green-500 p-2 px-4 text-white rounded-md mt-4"
-              onClick={onClose}
+              onClick={() => {
+                handleModalForm();
+              }}
             >
               Release Benefits
             </button>
@@ -157,6 +162,10 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
           <p className="text-red-500 text-sm font-semibold -mt-6 text-center">
             Please align the code properly to decode.
           </p>
+        )}
+
+        {modalView && beneficiaryData && (
+          <UserFormModal onClose={onClose} data={beneficiaryData} />
         )}
       </div>
     </div>

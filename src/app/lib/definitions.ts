@@ -139,12 +139,12 @@ export interface UserProfile {
   password: string;
 }
 
-export interface fetchedBeneficiaryData {
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  familyMembers: string[];
-  dateCreated: string;
-  calamityType: string;
+export interface UserData {
   calamityName: string;
+  calamityType?: string;
+  dateCreated: { seconds: number; nanoseconds: number };
+  familyMembers: { name: string; relation: string }[];
+  firstName: string;
+  lastName: string;
+  middleName: string;
 }
