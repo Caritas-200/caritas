@@ -309,3 +309,71 @@ export const verifyRecipient = async (
     }
   }
 };
+
+export const updateVerifiedBeneficiary = async (
+  beneficiaryId: string,
+  newFields: Record<string, any>,
+  brgyName: string,
+  newStatus: string,
+  imageFile: File | null
+): Promise<{ success: boolean; message?: string }> => {
+  try {
+    // Reference to the specific beneficiary document
+    const beneficiaryDocRef = doc(
+      db,
+      `barangay/${brgyName}/recipients`,
+      beneficiaryId
+    );
+
+    // Fetch the existing beneficiary data
+    const beneficiaryDoc = await getDoc(beneficiaryDocRef);
+
+    if (!beneficiaryDoc.exists()) {
+      return { success: false, message: "Beneficiary does not exist." };
+    }
+
+    // Check if the status is already 'claimed'
+    const existingData = beneficiaryDoc.data();
+    if (existingData?.status === "claimed") {
+      return { success: false, message: "Benefits are already claimed." };
+    }
+
+    let imageUrl: string | null = null;
+
+    // Upload image if present using a promise
+    if (imageFile) {
+      const storageRef = ref(
+        storage,
+        `claimantImage/${beneficiaryId}/${imageFile.name}`
+      );
+      imageUrl = await new Promise<string>((resolve, reject) => {
+        uploadBytes(storageRef, imageFile)
+          .then(async () => {
+            const url = await getDownloadURL(storageRef);
+            resolve(url); // Resolve with the image URL
+          })
+          .catch((error) => reject(error)); // Handle any upload errors
+      });
+    }
+
+    // Prepare the update data, including the image URL if available
+    const updateData = {
+      ...newFields,
+      status: newStatus,
+      dateUpdated: Timestamp.now(),
+      claimantImage: imageUrl, // Save the image URL as claimantImage
+    };
+
+    // Update the document with the new data
+    await updateDoc(beneficiaryDocRef, updateData);
+
+    return { success: true, message: "Beneficiary updated successfully." };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error updating beneficiary: ", error.message);
+      return { success: false, message: error.message };
+    } else {
+      return { success: false, message: "Unknown error updating beneficiary" };
+    }
+  }
+};

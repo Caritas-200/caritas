@@ -164,8 +164,12 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
           </p>
         )}
 
-        {modalView && beneficiaryData && (
-          <UserFormModal onClose={onClose} data={beneficiaryData} />
+        {modalView && beneficiaryData && decodedData && (
+          <UserFormModal
+            onClose={onClose}
+            data={beneficiaryData}
+            decodedData={decodedData}
+          />
         )}
       </div>
     </div>

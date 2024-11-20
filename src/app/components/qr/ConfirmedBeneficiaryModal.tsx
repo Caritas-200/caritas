@@ -3,13 +3,25 @@ import { UserData } from "@/app/lib/definitions";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
 import Webcam from "react-webcam";
 import Image from "next/image";
+import { updateVerifiedBeneficiary } from "@/app/lib/api/beneficiary/data";
+import Swal from "sweetalert2";
+
+interface DecodedData {
+  id: string;
+  brgyName: string;
+}
 
 interface ModalProps {
   data: UserData;
   onClose: () => void;
+  decodedData: DecodedData;
 }
 
-const UserFormModal: React.FC<ModalProps> = ({ data, onClose }) => {
+const UserFormModal: React.FC<ModalProps> = ({
+  data,
+  onClose,
+  decodedData,
+}) => {
   const [formData] = useState<UserData>(data);
   const [benefitForm, setBenefitForm] = useState<{
     donationType: string;
@@ -22,7 +34,6 @@ const UserFormModal: React.FC<ModalProps> = ({ data, onClose }) => {
   });
   const [customCost, setCustomCost] = useState<string>("");
   const [isCustomCost, setIsCustomCost] = useState<boolean>(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const [isCameraOpen, setIsCameraOpen] = useState<boolean>(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const webcamRef = React.useRef<Webcam>(null);
@@ -49,13 +60,78 @@ const UserFormModal: React.FC<ModalProps> = ({ data, onClose }) => {
     setBenefitForm((prev) => ({ ...prev, cost: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent): void => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
-    console.log("Benefit Form Submitted", benefitForm);
-    if (capturedImage) {
-      console.log("Captured Image:", capturedImage);
+
+    // Check if required fields are filled
+    if (!benefitForm || !capturedImage) {
+      // Display a notification if any required field is missing
+      Swal.fire({
+        title: "Missing Required Fields",
+        text: "Please fill out all required fields (Donation Type, Monetary Value) and ensure an image is captured before submitting.",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+      return; // Prevent form submission
     }
-    onClose();
+
+    const newStatus = "claimed";
+
+    try {
+      let imageFile: File | null = null;
+
+      if (capturedImage) {
+        // Convert base64 string to a File object if needed
+        const byteString = atob(capturedImage.split(",")[1]);
+        const mimeType =
+          capturedImage.split(",")[0].match(/:(.*?);/)?.[1] || "image/png";
+        const byteArray = new Uint8Array(byteString.length);
+        for (let i = 0; i < byteString.length; i++) {
+          byteArray[i] = byteString.charCodeAt(i);
+        }
+        imageFile = new File([byteArray], "captured-image.png", {
+          type: mimeType,
+        });
+      }
+
+      // Perform the update
+      const result = await updateVerifiedBeneficiary(
+        decodedData.id,
+        benefitForm,
+        decodedData.brgyName,
+        newStatus,
+        imageFile
+      );
+
+      if (result.success) {
+        // Show success notification
+        Swal.fire({
+          title: "Success",
+          text: "Beneficiary has been successfully updated!",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+      } else
+        Swal.fire({
+          title: "Error",
+          text: result.message,
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+    } catch (error) {
+      console.error("Error updating beneficiary:", error);
+
+      // Show error notification
+      Swal.fire({
+        title: "Error",
+        text: "An error occurred while updating the beneficiary. Please try again.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    } finally {
+      // Close modal or perform any final cleanup
+      onClose();
+    }
   };
 
   const fields = [
@@ -212,7 +288,7 @@ const UserFormModal: React.FC<ModalProps> = ({ data, onClose }) => {
           {/* Button to open the camera modal */}
           <div>
             <label htmlFor="cost" className="block text-sm font-medium mb-2">
-              Capture Proof of Claiming
+              Claimants picture with valid ID
             </label>
             <button
               type="button"
