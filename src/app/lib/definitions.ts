@@ -138,3 +138,13 @@ export interface UserProfile {
   status: string;
   password: string;
 }
+
+export interface UserData {
+  calamityName: string;
+  calamityType?: string;
+  dateCreated: { seconds: number; nanoseconds: number };
+  familyMembers: { name: string; relation: string }[];
+  firstName: string;
+  lastName: string;
+  middleName: string;
+}

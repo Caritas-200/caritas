@@ -7,11 +7,12 @@ import DonorTable from "@/app/components/donor/Table";
 import AddDonorModal from "@/app/components/donor/modal/AddDonorModal";
 import { fetchDonors } from "@/app/lib/api/donor/data";
 import { DonorFormData } from "@/app/lib/definitions";
+import { MainLayout } from "@/app/layouts/MainLayout";
 
 const DonorList: React.FC = () => {
   const [showAddDonorModal, setShowAddDonorModal] = useState(false);
-  const [donors, setDonors] = useState<DonorFormData[]>([]); // State to hold donor data
-  const [loading, setLoading] = useState(true); // State to handle loading
+  const [donors, setDonors] = useState<DonorFormData[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Fetch donor data when component mounts
   useEffect(() => {
@@ -38,31 +39,35 @@ const DonorList: React.FC = () => {
   };
 
   return (
-    <div className="h-screen">
-      <Header />
-      <div className="flex flex-row flex-1 bg-gray-700">
-        <LeftNav />
-        <div className="bg-gray-700 min-h-screen w-full">
-          <div className="flex flex-col px-10 pt-10 gap-4 pb-6">
-            <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold">List of Donors</h1>
-              <button
-                className="bg-blue-500 text-white py-2 px-4 rounded-lg"
-                onClick={handleOpenModal} // Open the modal on click
-              >
-                Add Donor
-              </button>
+    <MainLayout>
+      <div className="h-screen overflow-clip">
+        <Header />
+        <div className="flex flex-row flex-1 bg-gray-700">
+          <LeftNav />
+          <div className="w-full overflow-y-auto h-lvh">
+            <div className="bg-gray-700 h-full w-full">
+              <div className="flex flex-col px-4 pt-10 gap-4 pb-24">
+                <div className="flex justify-between items-center">
+                  <h1 className="text-2xl font-bold">List of Donors</h1>
+                  <button
+                    className="bg-blue-500 text-white py-2 px-4 rounded-lg"
+                    onClick={handleOpenModal}
+                  >
+                    Add Donor
+                  </button>
+                </div>
+                {loading ? (
+                  <p className="text-white">Loading donors...</p>
+                ) : (
+                  <DonorTable donors={donors} />
+                )}
+              </div>
             </div>
-            {loading ? (
-              <p className="text-white">Loading donors...</p>
-            ) : (
-              <DonorTable donors={donors} />
-            )}
           </div>
+          {showAddDonorModal && <AddDonorModal onClose={handleCloseModal} />}
         </div>
       </div>
-      {showAddDonorModal && <AddDonorModal onClose={handleCloseModal} />}
-    </div>
+    </MainLayout>
   );
 };
 

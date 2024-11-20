@@ -11,7 +11,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { db, storage } from "@/app/services/firebaseConfig";
-import { BeneficiaryForm } from "@/app/lib/definitions";
+import { BeneficiaryForm, UserData } from "@/app/lib/definitions";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export const addBeneficiary = async (
@@ -263,6 +263,117 @@ export const deleteBeneficiary = async (
       throw error;
     } else {
       throw new Error("Unknown error occurred while deleting beneficiary");
+    }
+  }
+};
+
+export const verifyRecipient = async (
+  brgyName: string,
+  beneficiaryId: string
+): Promise<{
+  found: boolean;
+  beneficiaryData: Partial<UserData> | null;
+}> => {
+  try {
+    // Reference to the specific beneficiary document using the provided ID
+    const beneficiaryDocRef = doc(
+      db,
+      `barangay/${brgyName}/recipients/${beneficiaryId}`
+    );
+
+    // Fetch the document snapshot, but only select specific fields
+    const docSnapshot = await getDoc(beneficiaryDocRef);
+
+    if (docSnapshot.exists()) {
+      // Select only the necessary fields
+      const beneficiaryData = {
+        firstName: docSnapshot.data()?.firstName,
+        middleName: docSnapshot.data()?.middleName,
+        lastName: docSnapshot.data()?.lastName,
+        familyMembers: docSnapshot.data()?.familyMembers,
+        dateCreated: docSnapshot.data()?.dateCreated,
+        calamityType: docSnapshot.data()?.calamity,
+        calamityName: docSnapshot.data()?.calamityName,
+      } as Partial<UserData>;
+
+      return { found: true, beneficiaryData };
+    } else {
+      return { found: false, beneficiaryData: null };
+    }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error verifying beneficiary: ", error.message);
+      throw error;
+    } else {
+      throw new Error("Unknown error occurred while verifying beneficiary");
+    }
+  }
+};
+
+export const updateVerifiedBeneficiary = async (
+  beneficiaryId: string,
+  newFields: Record<string, any>,
+  brgyName: string,
+  newStatus: string,
+  imageFile: File | null
+): Promise<{ success: boolean; message?: string }> => {
+  try {
+    // Reference to the specific beneficiary document
+    const beneficiaryDocRef = doc(
+      db,
+      `barangay/${brgyName}/recipients`,
+      beneficiaryId
+    );
+
+    // Fetch the existing beneficiary data
+    const beneficiaryDoc = await getDoc(beneficiaryDocRef);
+
+    if (!beneficiaryDoc.exists()) {
+      return { success: false, message: "Beneficiary does not exist." };
+    }
+
+    // Check if the status is already 'claimed'
+    const existingData = beneficiaryDoc.data();
+    if (existingData?.status === "claimed") {
+      return { success: false, message: "Benefits are already claimed." };
+    }
+
+    let imageUrl: string | null = null;
+
+    // Upload image if present using a promise
+    if (imageFile) {
+      const storageRef = ref(
+        storage,
+        `claimantImage/${beneficiaryId}/${imageFile.name}`
+      );
+      imageUrl = await new Promise<string>((resolve, reject) => {
+        uploadBytes(storageRef, imageFile)
+          .then(async () => {
+            const url = await getDownloadURL(storageRef);
+            resolve(url); // Resolve with the image URL
+          })
+          .catch((error) => reject(error)); // Handle any upload errors
+      });
+    }
+
+    // Prepare the update data, including the image URL if available
+    const updateData = {
+      ...newFields,
+      status: newStatus,
+      dateUpdated: Timestamp.now(),
+      claimantImage: imageUrl, // Save the image URL as claimantImage
+    };
+
+    // Update the document with the new data
+    await updateDoc(beneficiaryDocRef, updateData);
+
+    return { success: true, message: "Beneficiary updated successfully." };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error updating beneficiary: ", error.message);
+      return { success: false, message: error.message };
+    } else {
+      return { success: false, message: "Unknown error updating beneficiary" };
     }
   }
 };
