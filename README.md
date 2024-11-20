@@ -30,7 +30,11 @@ To get started with this project, follow these steps:
 
 `pnpm install`
 
-2. **Run Development**
+3. **create environment file**
+   Note: copy this file to the root of the file with the name ".env" to enable firebase features like database.
+   `https://drive.google.com/file/d/11JRlSoLSHpdhVQt1R9ZbCTxqgdgiO7cA/view?usp=drive_link`
+
+4. **Run Development**
 
 `pnpm dev`
 
