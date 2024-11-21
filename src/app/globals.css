@@ -31,3 +31,19 @@ body {
     text-wrap: balance;
   }
 }
+
+@keyframes border-rgb {
+  0% {
+    border-color: #2294f2; /* Blue */
+  }
+  33% {
+    border-color: #ffffff; /* Green */
+  }
+  100% {
+    border-color: #2294f2; /* Blue */
+  }
+}
+
+.animate-border-rgb {
+  animation: border-rgb 3s linear infinite;
+}

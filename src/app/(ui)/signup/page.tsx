@@ -78,120 +78,127 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-full py-10 bg-gray-100">
-      <div className="w-full max-w-3xl bg-white p-8 rounded-lg shadow-md">
-        <h1 className="text-3xl text-gray-700 font-bold text-center mb-4">
-          SIGN-UP
-        </h1>
-        <h2 className="text-lg text-gray-700 font-semibold text-center mb-8">
-          Fill in your personal details
-        </h2>
+    <div
+      style={{ backgroundImage: "url('/bg/bg.png')" }}
+      className="h-screen bg-contain  bg-center"
+    >
+      <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center">
+        <div className="w-full max-w-3xl bg-white p-8 rounded-xl shadow-2xl border-4 border-blue-200 animate-border-rgb">
+          <h1 className="text-3xl text-gray-700 font-bold text-center mb-4">
+            SIGN-UP
+          </h1>
+          <h2 className="text-lg text-gray-700 font-semibold text-center mb-8">
+            Fill in your personal details
+          </h2>
 
-        <form onSubmit={handleRegister}>
-          <div className="flex flex-wrap -mx-2">
-            {inputFieldsSignUp.map((field, index) => (
-              <div key={index} className="w-full md:w-1/2 px-2 mb-4">
+          <form onSubmit={handleRegister}>
+            <div className="flex flex-wrap -mx-2">
+              {inputFieldsSignUp.map((field, index) => (
+                <div key={index} className="w-full md:w-1/2 px-2 mb-4">
+                  <label
+                    htmlFor={field.name}
+                    className="block text-gray-700 font-semibold mb-2"
+                  >
+                    {field.label}
+                  </label>
+                  <input
+                    type={field.type}
+                    id={field.name}
+                    name={field.name}
+                    value={formData[field.name as keyof typeof formData]}
+                    onChange={handleChange}
+                    className={`w-full text-gray-500 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                      errors[field.name]
+                        ? "border-red-500"
+                        : "focus:ring-blue-500"
+                    }`}
+                    required={field.required}
+                  />
+                  {errors[field.name] && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors[field.name]}
+                    </p>
+                  )}
+                </div>
+              ))}
+
+              {/* Status Dropdown */}
+              <div className="w-full md:w-1/2 px-2 mb-4">
                 <label
-                  htmlFor={field.name}
+                  htmlFor="status"
                   className="block text-gray-700 font-semibold mb-2"
                 >
-                  {field.label}
+                  Status
                 </label>
-                <input
-                  type={field.type}
-                  id={field.name}
-                  name={field.name}
-                  value={formData[field.name as keyof typeof formData]}
+                <select
+                  id="status"
+                  name="status"
+                  value={formData.status}
                   onChange={handleChange}
                   className={`w-full text-gray-500 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                    errors[field.name]
-                      ? "border-red-500"
-                      : "focus:ring-blue-500"
+                    errors.status ? "border-red-500" : "focus:ring-blue-500"
                   }`}
-                  required={field.required}
-                />
-                {errors[field.name] && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors[field.name]}
-                  </p>
+                >
+                  <option value="">Select Status</option>
+                  {statusOptionsSignUp.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                {errors.status && (
+                  <p className="text-red-500 text-sm mt-1">{errors.status}</p>
                 )}
               </div>
-            ))}
 
-            {/* Status Dropdown */}
-            <div className="w-full md:w-1/2 px-2 mb-4">
-              <label
-                htmlFor="status"
-                className="block text-gray-700 font-semibold mb-2"
-              >
-                Status
-              </label>
-              <select
-                id="status"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                className={`w-full text-gray-500 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                  errors.status ? "border-red-500" : "focus:ring-blue-500"
-                }`}
-              >
-                <option value="">Select Status</option>
-                {statusOptionsSignUp.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              {errors.status && (
-                <p className="text-red-500 text-sm mt-1">{errors.status}</p>
-              )}
+              {/* Gender Dropdown */}
+              <div className="w-full md:w-1/2 px-2 mb-4">
+                <label
+                  htmlFor="gender"
+                  className="block text-gray-700 font-semibold mb-2"
+                >
+                  Gender
+                </label>
+                <select
+                  id="gender"
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                  className={`w-full text-gray-500 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                    errors.gender ? "border-red-500" : "focus:ring-blue-500"
+                  }`}
+                >
+                  <option value="">Select Gender</option>
+                  {genderOptionsSignUp.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                {errors.gender && (
+                  <p className="text-red-500 text-sm mt-1">{errors.gender}</p>
+                )}
+              </div>
             </div>
 
-            {/* Gender Dropdown */}
-            <div className="w-full md:w-1/2 px-2 mb-4">
-              <label
-                htmlFor="gender"
-                className="block text-gray-700 font-semibold mb-2"
+            <div className="mb-4 text-center">
+              <button
+                type="submit"
+                className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300"
               >
-                Gender
-              </label>
-              <select
-                id="gender"
-                name="gender"
-                value={formData.gender}
-                onChange={handleChange}
-                className={`w-full text-gray-500 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                  errors.gender ? "border-red-500" : "focus:ring-blue-500"
-                }`}
-              >
-                <option value="">Select Gender</option>
-                {genderOptionsSignUp.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              {errors.gender && (
-                <p className="text-red-500 text-sm mt-1">{errors.gender}</p>
-              )}
+                Register
+              </button>
             </div>
-          </div>
+          </form>
 
-          <div className="mb-4 text-center">
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300"
-            >
-              Register
-            </button>
+          <div className="text-center">
+            <span className="text-gray-700">
+              Already have an account? Login{" "}
+            </span>
+            <Link href="/">
+              <button className="text-blue-500 hover:underline">Here</button>
+            </Link>
           </div>
-        </form>
-
-        <div className="text-center">
-          <span className="text-gray-700">Already have an account? Login </span>
-          <Link href="/">
-            <button className="text-blue-500 hover:underline">Here</button>
-          </Link>
         </div>
       </div>
     </div>
