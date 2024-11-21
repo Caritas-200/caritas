@@ -149,7 +149,7 @@ const Profile: React.FC = () => {
   return (
     <MainLayout>
       <Header />
-      <div className="flex flex-row flex-1 bg-gray-700">
+      <div className="flex flex-row flex-1 bg-gray-700 text-gray-100">
         <LeftNav />
         <div className="w-full overflow-y-auto h-lvh ">
           <div className="w-full overflow-y-auto h-svh pb-24">

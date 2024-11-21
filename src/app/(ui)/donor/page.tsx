@@ -40,7 +40,7 @@ const DonorList: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="h-screen overflow-clip">
+      <div className="h-screen overflow-clip text-gray-100">
         <Header />
         <div className="flex flex-row flex-1 bg-gray-700">
           <LeftNav />

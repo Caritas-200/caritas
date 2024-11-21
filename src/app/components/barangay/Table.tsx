@@ -182,7 +182,7 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
 
   return (
     <>
-      <div className="bg-gray-800 p-4 rounded-lg shadow-md">
+      <div className="bg-gray-800 p-4 rounded-lg shadow-md text-gray-100">
         <div className="flex flex-col md:flex-row items-center mb-4 space-y-4 md:space-y-0 md:space-x-4">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
