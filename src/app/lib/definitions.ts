@@ -63,6 +63,11 @@ export type BeneficiaryForm = {
   qrCode: string;
   calamity: string;
   calamityName: string;
+  donationType?: string;
+  dateClaimed?: Timestamp;
+  cost?: string;
+  quantity?: string;
+  claimantImage?: string;
 };
 
 export type FamilyMember = {

@@ -360,7 +360,7 @@ export const updateVerifiedBeneficiary = async (
     const updateData = {
       ...newFields,
       status: newStatus,
-      dateUpdated: Timestamp.now(),
+      dateClaimed: Timestamp.now(),
       claimantImage: imageUrl, // Save the image URL as claimantImage
     };
 
