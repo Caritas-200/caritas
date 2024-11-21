@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { countries, formFields, dropDownFields } from "@/app/config/donors";
+import { formFields, dropDownFields, donationType } from "@/app/config/donors";
 import { DonorFormData, DonorType } from "@/app/lib/definitions";
 import { validateDonorForm } from "@/app/util/validateDonorForm";
 import { SelectField } from "../SelectedField";
@@ -16,9 +16,7 @@ const AddDonorModal: React.FC<{
 }> = ({ onClose, initialFormData = null, isEditing = false }) => {
   const [formData, setFormData] = useState<DonorFormData>({
     dateCreated: Timestamp.now(),
-    firstName: "",
-    middleName: "",
-    lastName: "",
+    donorName: "",
     mobileNumber: "",
     age: "",
     address: "",
@@ -31,8 +29,7 @@ const AddDonorModal: React.FC<{
     email: "",
     id: "",
     status: "",
-    suffix: "",
-    donationType: "",
+    donationType: [],
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -54,11 +51,31 @@ const AddDonorModal: React.FC<{
     }));
   };
 
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+
+    setFormData((prevData) => {
+      const updatedDonationType = checked
+        ? [...prevData.donationType, value] // Add value if checked
+        : prevData.donationType.filter((item) => item !== value); // Remove value if unchecked
+
+      return {
+        ...prevData,
+        donationType: updatedDonationType,
+      };
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Run validation
     const validationErrors = validateDonorForm(formData);
+
+    // Check if donationType is empty
+    if (formData.donationType.length === 0) {
+      validationErrors.donationType = "Donation type is required.";
+    }
 
     // Check if there are any validation errors
     if (Object.keys(validationErrors).length > 0) {
@@ -94,7 +111,7 @@ const AddDonorModal: React.FC<{
           ✖
         </button>
 
-        <h2 className="text-xl font-bold mb-4 text-center text-gray-900">
+        <h2 className="text-xl font-bold mb-6 text-center text-gray-900">
           {isEditing ? "Edit Donor" : "Add New Donor"}
         </h2>
 
@@ -131,19 +148,31 @@ const AddDonorModal: React.FC<{
                 )}
               </div>
             ))}
-            <div>
-              <SelectField
-                id="country"
-                name="country"
-                value={formData.country}
-                options={countries}
-                onChange={handleChange}
-                label="Country"
-              />
-              {errors.country && (
-                <p className="text-red-500 text-sm">{errors.country}</p>
-              )}
+          </div>
+          {/* Donation Type Checkbox Group */}
+          <div className="text-gray-700 mt-4">
+            <label className="text-gray-700">Donation Type:</label>{" "}
+            <span className="text-red-500">*</span>
+            <div className="gap-2 mt-2">
+              <div className="grid grid-cols-3 lg:grid-cols-4 gap-4 bg-gray-50 border-2 p-4 rounded-md shadow-inner">
+                {donationType.map((option) => (
+                  <label key={option} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      name="donationType"
+                      value={option}
+                      checked={formData.donationType.includes(option)}
+                      onChange={handleCheckboxChange}
+                      className="form-checkbox"
+                    />
+                    <span>{option}</span>
+                  </label>
+                ))}
+              </div>
             </div>
+            {errors.donationType && (
+              <p className="text-red-500 text-sm">{errors.donationType}</p>
+            )}
           </div>
 
           <div className="flex justify-center mt-4">
