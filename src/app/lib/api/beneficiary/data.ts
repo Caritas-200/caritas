@@ -19,15 +19,42 @@ export const addBeneficiary = async (
   brgyName: string
 ): Promise<string> => {
   try {
-    const recipientsCollectionRef = collection(
-      db,
-      `barangay/${brgyName}/recipients`
-    );
+    const barangayCollectionRef = collection(db, "barangay");
 
-    // Check if houseNumber is filled
+    // Fetch all barangay names
+    const barangaySnapshot = await getDocs(barangayCollectionRef);
+    if (barangaySnapshot.empty) {
+      throw new Error("No barangay found.");
+    }
+
+    // Check across all barangays for duplicate name and email
+    for (const barangayDoc of barangaySnapshot.docs) {
+      const brgy = barangayDoc.id; // Get the barangay name (document ID)
+      const recipientsCollectionRef = collection(
+        db,
+        `barangay/${brgy}/recipients`
+      );
+
+      const duplicateQuery = query(
+        recipientsCollectionRef,
+        where("firstName", "==", formData.firstName),
+        where("lastName", "==", formData.lastName),
+        where("email", "==", formData.email)
+      );
+
+      const querySnapshot = await getDocs(duplicateQuery);
+
+      if (!querySnapshot.empty) {
+        throw new Error(
+          `A beneficiary with the same name and email already exists in barangay ${brgy}.`
+        );
+      }
+    }
+
+    // Check if houseNumber is filled and check for house number duplication
     if (formData.houseNumber) {
       const houseNumberQuery = query(
-        recipientsCollectionRef,
+        collection(db, `barangay/${brgyName}/recipients`),
         where("houseNumber", "==", formData.houseNumber)
       );
       const houseNumberSnapshot = await getDocs(houseNumberQuery);
@@ -36,21 +63,12 @@ export const addBeneficiary = async (
       }
     }
 
-    // Check for name duplication
-    const duplicateQuery = query(
-      recipientsCollectionRef,
-      where("firstName", "==", formData.firstName),
-      where("lastName", "==", formData.lastName),
-      where("middleName", "==", formData.middleName)
+    // Generate a new document reference for the new beneficiary
+    const newBeneficiaryRef = doc(
+      collection(db, `barangay/${brgyName}/recipients`)
     );
-    const querySnapshot = await getDocs(duplicateQuery);
-    if (!querySnapshot.empty) {
-      throw new Error("A beneficiary with the same name already exists.");
-    }
 
-    // Generate a new document reference and save the data (without QR code for now)
-    const newBeneficiaryRef = doc(recipientsCollectionRef);
-
+    // Include all form data including the ID and dateCreated
     const formDataWithId = {
       ...formData,
       id: newBeneficiaryRef.id,
@@ -58,6 +76,7 @@ export const addBeneficiary = async (
       dateCreated: Timestamp.now(),
     };
 
+    // Save the new beneficiary document
     await setDoc(newBeneficiaryRef, formDataWithId);
 
     // Return the newly created document ID
