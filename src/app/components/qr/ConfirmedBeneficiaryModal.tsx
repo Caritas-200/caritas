@@ -107,7 +107,7 @@ const UserFormModal: React.FC<ModalProps> = ({
         // Show success notification
         Swal.fire({
           title: "Success",
-          text: "Beneficiary has been successfully updated!",
+          text: "Benefits successfully released!",
           icon: "success",
           confirmButtonText: "OK",
         });
