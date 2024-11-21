@@ -80,21 +80,31 @@ const Profile: React.FC = () => {
         return;
       }
 
+      // Call the password update function
       const result = await updateUserPassword(password);
+
       hideLoading();
       Swal.fire({
         title: "Success",
-        text: "Password updated successfully.",
+        text: result.message, // Use the message from the function's return
         icon: "success",
         confirmButtonText: "OK",
       });
-      if (result.status == 200) {
+
+      if (result.status === 200) {
         await logoutUser();
         router.push("/");
       }
-    } catch (error) {
+    } catch (error: any) {
       hideLoading();
-      Swal.fire("Error", "Failed to update password.", "error");
+
+      // Display a specific error message if available, or a default one
+      Swal.fire(
+        "Error",
+        error.message ||
+          "An unexpected error occurred. Please try again later.",
+        "error"
+      );
     }
   };
 

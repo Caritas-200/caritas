@@ -54,19 +54,55 @@ export const updateUserPassword = async (newPassword: string) => {
   try {
     const user = auth.currentUser;
 
-    if (user) {
-      await updatePassword(user, newPassword);
-
-      return {
-        message: "Password update success! You have been logged out.",
-        error: false,
-        status: 200,
-      };
-    } else {
+    if (!user) {
       throw new Error("No user is currently signed in.");
     }
-  } catch (error) {
-    console.log(error);
+
+    // Function to add a timeout to the updatePassword operation
+    const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
+      return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(
+            new Error(
+              "Request timed out. Please check your internet connection and try again."
+            )
+          );
+        }, ms);
+
+        promise
+          .then((result) => {
+            clearTimeout(timeout);
+            resolve(result);
+          })
+          .catch((error) => {
+            clearTimeout(timeout);
+            reject(error);
+          });
+      });
+    };
+
+    // Add a timeout of 15 seconds (or your desired duration)
+    await withTimeout(updatePassword(user, newPassword), 15000);
+
+    return {
+      message: "Password update success! You have been logged out.",
+      error: false,
+      status: 200,
+    };
+  } catch (error: any) {
+    console.error(error);
+
+    // Customize error messages for better feedback
+    if (error.message.includes("timed out")) {
+      throw new Error(
+        "The password update process took too long. Please try again later."
+      );
+    } else if (error.message.includes("auth/requires-recent-login")) {
+      throw new Error(
+        "You need to reauthenticate before changing your password. Please log out and log back in."
+      );
+    }
+
     throw new Error("Something went wrong, please try again later.");
   }
 };
