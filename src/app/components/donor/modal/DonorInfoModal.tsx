@@ -1,6 +1,7 @@
 import React from "react";
 import { DonorFormData } from "@/app/lib/definitions";
 import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
+import { toSentenceCase } from "@/app/util/toSentenceCase";
 
 interface DonorModalProps {
   donor: DonorFormData;
@@ -76,16 +77,31 @@ const DonorInfoModal: React.FC<DonorModalProps> = ({ donor, onClose }) => {
             </svg>
           </button>
         </div>
-        <h2 className="text-3xl font-semibold mb-4">
-          {donor.firstName} {donor.middleName} {donor.lastName} {donor.suffix}
-        </h2>
+        <h2 className="text-3xl font-semibold mb-4">{donor.donorName}</h2>
 
-        {donorArray.map((item, index) => (
-          <div key={index} className="grid grid-cols-2 mb-3 ">
-            <div className="text-gray-700 font-semibold">{item.label}:</div>
-            <div className="text-gray-900">{item.value}</div>
-          </div>
-        ))}
+        {donorArray.map(
+          (item, index) =>
+            item.value && (
+              <div key={index} className="grid grid-cols-2 mb-3">
+                <div className="text-gray-700 font-semibold">{item.label}:</div>
+                <div className="text-gray-600 p-2 bg-gray-100 shadow-inner rounded-md">
+                  {Array.isArray(item.value) ? ( // Check if the value is an array
+                    <ul className="list-decimal list-inside">
+                      {item.value.map((val, i) => (
+                        <li key={i} className="text-gray-700">
+                          {val}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : typeof item.value === "string" ? (
+                    toSentenceCase(item.value)
+                  ) : (
+                    item.value
+                  )}
+                </div>
+              </div>
+            )
+        )}
       </div>
     </div>
   );

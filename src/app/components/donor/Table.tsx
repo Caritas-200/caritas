@@ -39,14 +39,14 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
   const filteredDonors = useMemo(() => {
     let filtered = localDonors.filter(
       (donor) =>
-        `${donor.firstName} ${donor.lastName}`
+        `${donor.donorName} `
           .toLowerCase()
           .includes(searchQuery.toLowerCase()) ||
         donor.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return filtered;
-  }, [searchQuery, localDonors, statusFilter]);
+  }, [searchQuery, localDonors]);
 
   // Pagination logic
   const paginatedDonors = useMemo(() => {
@@ -83,7 +83,7 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
   const handleDelete = (donor: DonorFormData) => {
     Swal.fire({
       title: "Are you sure?",
-      text: `Do you want to delete ${donor.firstName} ${donor.lastName}?`,
+      text: `Do you want to delete ${donor.donorName} ?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -144,11 +144,9 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
                 #
               </th>
               <th className="border-b border-gray-500 py-2 px-4 text-left">
-                Last Name
+                Donor Name
               </th>
-              <th className="border-b border-gray-500 py-2 px-4 text-left">
-                First Name
-              </th>
+
               <th className="border-b border-gray-500 py-2 px-4 text-left">
                 Email
               </th>
@@ -168,11 +166,9 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
                     {index + 1 + (currentPage - 1) * itemsPerPage}
                   </td>
                   <td className="border-b border-gray-500 py-2 px-4">
-                    {toSentenceCase(donor.lastName)}
+                    {toSentenceCase(donor.donorName)}
                   </td>
-                  <td className="border-b border-gray-500 py-2 px-4">
-                    {toSentenceCase(donor.firstName)}
-                  </td>
+
                   <td className="border-b border-gray-500 py-2 px-4">
                     {donor.email}
                   </td>

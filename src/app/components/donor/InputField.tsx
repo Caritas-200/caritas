@@ -20,7 +20,9 @@ export const InputField: React.FC<{
   <div>
     <label htmlFor={id} className="block text-gray-700">
       {label}
-      {name !== "middleName" && <span className="text-red-500">*</span>}
+      {!["age", "work"].includes(name) && (
+        <span className="text-red-500">*</span>
+      )}
     </label>
     <input
       type={type}

@@ -148,7 +148,8 @@ export const familyInfoFields = [
     label: "Relation",
     name: "relation",
     options: [
-      "Children",
+      "Daughter",
+      "Son",
       "Spouse",
       "Mother",
       "Mother in Law",

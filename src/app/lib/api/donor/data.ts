@@ -26,13 +26,12 @@ export const addDonor = async (formData: DonorFormData): Promise<string> => {
       throw new Error("A donor with the same email already exists.");
     }
 
-    // Check for donor name duplication (firstName, middleName, lastName)
+    // Check for donor name duplication
     const duplicateNameQuery = query(
       donorsCollectionRef,
-      where("firstName", "==", formData.firstName),
-      where("middleName", "==", formData.middleName),
-      where("lastName", "==", formData.lastName)
+      where("donorName", "==", formData.donorName)
     );
+
     const nameSnapshot = await getDocs(duplicateNameQuery);
     if (!nameSnapshot.empty) {
       throw new Error("A donor with the same name already Exist");

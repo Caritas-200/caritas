@@ -6,18 +6,12 @@ export const validateDonorForm = (formData: DonorFormData) => {
 
   // Check for required fields
   const requiredFields: (keyof DonorFormData)[] = [
-    "firstName",
-    "lastName",
+    "donorName",
     "mobileNumber",
-    "age",
     "address",
     "country",
-    "gender",
-    "work",
-    "civilStatus",
     "email",
     "language",
-    "religion",
     "donationType",
   ];
 
