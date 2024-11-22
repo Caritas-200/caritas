@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Table from "@/app/components/barangay/Table";
 import BeneficiaryModal from "@/app/components/barangay/modal/BeneficiaryForm";
@@ -17,9 +17,58 @@ const Recipient: React.FC = () => {
   const { barangayName } = params;
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const tableRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = () => {
-    window.print();
+    if (tableRef.current) {
+      const table = tableRef.current.querySelector("table");
+      if (!table) return;
+
+      // Clone the table to manipulate for printing
+      const clonedTable = table.cloneNode(true) as HTMLTableElement;
+
+      Array.from(clonedTable.rows).forEach((row) => {
+        // Remove the last column (example)
+        if (row.cells.length > 2) {
+          row.deleteCell(row.cells.length - 1);
+        }
+      });
+
+      // Create the print window
+      const printWindow = window.open("", "_blank");
+      if (printWindow) {
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>Print Table</title>
+              <style>
+                body {
+                  font-family: Arial, sans-serif;
+                  margin: 20px;
+                }
+                table {
+                  width: 100%;
+                  border-collapse: collapse;
+                }
+                table, th, td {
+                  border: 1px solid black;
+                }
+                th, td {
+                  padding: 8px;
+                  text-align: left;
+                }
+                /* Add custom print styles if needed */
+              </style>
+            </head>
+            <body>
+              ${clonedTable.outerHTML} <!-- Insert the modified table -->
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+      }
+    }
   };
 
   const handleOpenModal = () => {
@@ -31,9 +80,7 @@ const Recipient: React.FC = () => {
   };
 
   const handleSubmit = (data: BeneficiaryForm) => {
-    // // Handle form submission here
-    // console.log("Submitted data:", data);
-    // // You can also update the state or make API calls here
+    // Handle form submission here
   };
 
   return (
@@ -63,7 +110,11 @@ const Recipient: React.FC = () => {
       <h2 className="text-2xl font-bold mb-4">
         List of Beneficiaries in Barangay {barangayName.toUpperCase()}
       </h2>
-      <Table brgyName={barangayName} />
+
+      {/* Add a ref to this div */}
+      <div ref={tableRef}>
+        <Table brgyName={barangayName} />
+      </div>
 
       {/* Render the modal conditionally */}
       {isModalOpen && (
