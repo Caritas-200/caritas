@@ -64,8 +64,10 @@ const Documentation: React.FC = () => {
     router.push(`/documentation/${folderId}/media`);
   };
 
-  const filteredFolders = folders.filter((folder) =>
-    folder.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredFolders = folders.filter(
+    (folder) =>
+      folder.name &&
+      folder.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
