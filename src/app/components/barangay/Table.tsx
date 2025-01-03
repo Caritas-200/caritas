@@ -187,16 +187,6 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
           <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="p-2 border rounded-lg text-gray-700"
-          >
-            <option value="all">All</option>
-            <option value="claimed">Claimed</option>
-            <option value="unclaimed">Unclaimed</option>
-          </select>
-
-          <select
             value={calamityNameFilter}
             onChange={(e) => setCalamityNameFilter(e.target.value)}
             className="p-2 border rounded-lg text-gray-700"
@@ -261,9 +251,6 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
                     Date Created
                   </th>
                   <th className="border-b border-gray-500 py-2 px-4 text-left">
-                    Status
-                  </th>
-                  <th className="border-b border-gray-500 py-2 px-4 text-left">
                     Action
                   </th>
                 </tr>
@@ -288,16 +275,6 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
                     </td>
                     <td className="border-b border-gray-500 py-2 px-4">
                       {convertFirebaseTimestamp(beneficiary.dateCreated)}
-                    </td>
-                    <td
-                      className={classNames(
-                        "border-b border-gray-500 py-2 px-4 font-semibold",
-                        beneficiary.status === "claimed"
-                          ? "text-green-500"
-                          : "text-orange-500"
-                      )}
-                    >
-                      {toSentenceCase(beneficiary.status)}
                     </td>
 
                     <td className="flex gap-2 border-b border-gray-500 py-2 px-4">
