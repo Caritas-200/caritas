@@ -18,8 +18,6 @@ export const validateFields = (
     "occupation",
     "ethnicity",
     "monthlyNetIncome",
-    "calamity",
-    "calamityName",
   ];
 
   // Validate required fields

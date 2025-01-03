@@ -71,8 +71,6 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
     Email: beneficiary.email,
     "Beneficiary 4Ps": beneficiary.beneficiary4Ps,
     "Monthly Net Income": formatToPHP(+beneficiary.monthlyNetIncome),
-    "Housing Condition": beneficiary.housingCondition.join(", "),
-    Casualty: beneficiary.casualty.join(", "),
     "Health Condition": beneficiary.healthCondition.join(", "),
     "Ownership/Rental Type": beneficiary.ownershipRentalType.join(", "),
     Code: beneficiary.code.join(", "),
