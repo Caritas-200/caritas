@@ -13,7 +13,6 @@ import municipalities from "@/json/municipality.json";
 import barangays from "@/json/barangay.json";
 import DropdownAddress from "../button/DropDownAddress";
 import ProgressBar from "../../ProgressBar";
-import CalamityDropdown from "../button/DropDownCalamity";
 
 interface ModalProps {
   onClose: () => void;
@@ -138,43 +137,6 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
             <ProgressBar currentStep={1} />
             <form className="overflow-y-auto" onSubmit={handleNext}>
               {/* Calamity Dropdown */}
-              <div className="grid grid-cols-2 gap-4 border-b-2 pb-2 mb-4">
-                <CalamityDropdown
-                  calamity={formData.calamity}
-                  onChange={handleChange}
-                  errors={errors}
-                />
-
-                {BeneficiaryInputFields.filter(
-                  (field) => field.name === "calamityName"
-                ).map((field) => (
-                  <div key={field.name} className="flex flex-col">
-                    <label className="mb-1 font-semibold text-gray-800">
-                      {field.label}
-                      {!field.optional && (
-                        <span className="text-red-500">*</span>
-                      )}
-                    </label>
-
-                    <input
-                      name={field.name}
-                      type="text"
-                      value={(formData as any)[field.name]}
-                      onChange={handleChange}
-                      className={`p-2 border border-gray-300 rounded text-gray-700 ${
-                        errors[field.name] ? "border-red-500" : ""
-                      }`}
-                      placeholder={`Please enter ${field.label.toLowerCase()}`}
-                    />
-
-                    {errors[field.name] && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors[field.name]}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {BeneficiaryInputFields.filter(
