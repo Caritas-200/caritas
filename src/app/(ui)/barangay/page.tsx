@@ -61,6 +61,17 @@ const BarangayList: React.FC = () => {
     folder.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const groupedFolders = filteredFolders.reduce((acc, folder) => {
+    const firstLetter = folder.name[0].toUpperCase();
+    if (!acc[firstLetter]) {
+      acc[firstLetter] = [];
+    }
+    acc[firstLetter].push(folder);
+    return acc;
+  }, {} as Record<string, typeof filteredFolders>);
+
+  const sortedKeys = Object.keys(groupedFolders).sort();
+
   return (
     <MainLayout>
       <Header />
@@ -71,7 +82,7 @@ const BarangayList: React.FC = () => {
             <h2 className="p-8 text-3xl font-bold mb-4 text-center">
               List of Barangays
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 border-b border-gray-500 mb-4">
               <div className="mb-4 flex gap-4 w-full">
                 <button
                   className="bg-blue-500 text-white py-2 px-4 rounded-lg whitespace-nowrap"
@@ -97,14 +108,21 @@ const BarangayList: React.FC = () => {
                 />
               </div>
             </div>
-            <h1 className="mt-2">Barangays:</h1>
-            <div className="grid mt-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {filteredFolders.map((folder) => (
-                <Folder
-                  key={folder.id}
-                  name={folder.name}
-                  onDelete={() => handleDeleteFolder(folder.id)}
-                />
+
+            <div className="flex flex-col gap-4 gap-y-4">
+              {sortedKeys.map((letter) => (
+                <div key={letter}>
+                  <h1 className="mb-4 text-xl">{letter}</h1>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                    {groupedFolders[letter].map((folder) => (
+                      <Folder
+                        key={folder.id}
+                        name={folder.name}
+                        onDelete={() => handleDeleteFolder(folder.id)}
+                      />
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
