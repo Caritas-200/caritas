@@ -20,6 +20,26 @@ export const validateFields = (
     "monthlyNetIncome",
   ];
 
+  // Nested validation for the 'address' field
+  if (formData.address) {
+    const { region, province, cityMunicipality, barangay } = formData.address;
+
+    if (!region || !region.region_id) {
+      newErrors["address.region"] = "Region is required.";
+    }
+    if (!province || !province.province_id) {
+      newErrors["address.province"] = "Province is required.";
+    }
+    if (!cityMunicipality || !cityMunicipality.municipality_id) {
+      newErrors["address.cityMunicipality"] = "City/Municipality is required.";
+    }
+    if (!barangay || !barangay.barangay_id) {
+      newErrors["address.barangay"] = "Barangay is required.";
+    }
+  } else {
+    newErrors["address"] = "Complete address is required.";
+  }
+
   // Validate required fields
   requiredFields.forEach((field) => {
     if (!formData[field]) {
@@ -27,25 +47,6 @@ export const validateFields = (
       console.error(`Validation error: ${field} is required but is missing.`);
     }
   });
-
-  // Nested validation for the 'address' field
-  if (formData.address) {
-    const { region, province, cityMunicipality, barangay } = formData.address;
-    if (!region) {
-      newErrors["address.region"] = "Region is required.";
-    }
-    if (!province) {
-      newErrors["address.province"] = "Province is required.";
-    }
-    if (!cityMunicipality) {
-      newErrors["address.cityMunicipality"] = "City/Municipality is required.";
-    }
-    if (!barangay) {
-      newErrors["address.barangay"] = "Barangay is required.";
-    }
-  } else {
-    newErrors["address"] = "Address is required.";
-  }
 
   // Validate email format
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

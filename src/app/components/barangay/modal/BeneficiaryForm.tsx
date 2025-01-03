@@ -96,6 +96,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
 
   const handleNext = (e: React.FormEvent) => {
     e.preventDefault();
+
     if (validateFields(formData, setErrors)) {
       setShowSecondModal(true);
     }
