@@ -38,9 +38,6 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!formData.healthCondition.length) {
-      newErrors.healthCondition = "Health Condition is required.";
-    }
     if (!formData.code.length) {
       newErrors.code = "Code is required.";
     }

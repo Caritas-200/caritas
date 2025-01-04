@@ -27,28 +27,9 @@ export const genderOptionsSignUp = ["Male", "Female", "Other"];
 
 export const radioGroups = [
   {
-    label: "Ownership/Rental Type",
-    name: "ownershipRentalType" as keyof BeneficiaryForm,
-    options: [
-      "House & lot owner",
-      "Rented house & Lot",
-      "House owner & Lot Rental",
-      "House owner, rent-free lot with owner's consent",
-      "House owner, rent-free lot without owner's consent",
-      "Rent-free house & lot with owner's consent",
-      "Rent-free house & lot without owner's consent",
-    ],
-  },
-  {
     label: "4Ps Beneficiary",
     name: "beneficiary4Ps" as keyof BeneficiaryForm,
     options: ["Yes", "No"],
-  },
-
-  {
-    label: "Health Condition",
-    name: "healthCondition" as keyof BeneficiaryForm,
-    options: ["With Illness", "Without Illness"],
   },
   {
     label: "Code",
@@ -60,6 +41,19 @@ export const radioGroups = [
       "Pregnant Woman",
       "Solo Parent",
       "PWD (Person with Disability)",
+    ],
+  },
+  {
+    label: "Ownership/Rental Type",
+    name: "ownershipRentalType" as keyof BeneficiaryForm,
+    options: [
+      "House & lot owner",
+      "Rented house & Lot",
+      "House owner & Lot Rental",
+      "House owner, rent-free lot with owner's consent",
+      "House owner, rent-free lot without owner's consent",
+      "Rent-free house & lot with owner's consent",
+      "Rent-free house & lot without owner's consent",
     ],
   },
 ];

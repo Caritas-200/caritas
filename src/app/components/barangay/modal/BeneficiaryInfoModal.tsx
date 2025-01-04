@@ -69,6 +69,8 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
     Ethnicity: beneficiary.ethnicity,
     Religion: beneficiary.religion,
     Email: beneficiary.email,
+    "Housing Condition": beneficiary.housingCondition.join(", "),
+    Casualty: beneficiary.casualty.join(", "),
     "Beneficiary 4Ps": beneficiary.beneficiary4Ps,
     "Monthly Net Income": formatToPHP(+beneficiary.monthlyNetIncome),
     "Health Condition": beneficiary.healthCondition.join(", "),
@@ -172,14 +174,17 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
 
         {/* Map over the remaining details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-x-12 gap-2 ">
-          {Object.entries(fields).map(([key, value]) => (
-            <div key={key} className="grid grid-cols-2 mb-1">
-              <div className="text-gray-700 font-semibold">{key}:</div>
-              <div className="text-gray-900 p-2 bg-gray-100 shadow-inner rounded-md">
-                {typeof value === "string" ? toSentenceCase(value) : value}
-              </div>
-            </div>
-          ))}
+          {Object.entries(fields).map(
+            ([key, value]) =>
+              value && (
+                <div key={key} className="grid grid-cols-2 mb-1">
+                  <div className="text-gray-700 font-semibold">{key}:</div>
+                  <div className="text-gray-900 p-2 bg-gray-100 shadow-inner rounded-md">
+                    {typeof value === "string" ? toSentenceCase(value) : value}
+                  </div>
+                </div>
+              )
+          )}
         </div>
       </div>
     </div>
