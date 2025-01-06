@@ -24,11 +24,11 @@ const UserFormModal: React.FC<ModalProps> = ({
 }) => {
   const [formData] = useState<UserData>(data);
   const [benefitForm, setBenefitForm] = useState<{
-    donationType: string;
+    donationType: string[];
     quantity: string;
     cost: string;
   }>({
-    donationType: "",
+    donationType: [],
     quantity: "",
     cost: "",
   });
@@ -37,6 +37,19 @@ const UserFormModal: React.FC<ModalProps> = ({
   const [isCameraOpen, setIsCameraOpen] = useState<boolean>(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const webcamRef = React.useRef<Webcam>(null);
+
+  const donationOptions = [
+    "Monetary Donations",
+    "Food and Water",
+    "Clothing",
+    "Medical Supplies",
+    "Hygiene Kits",
+    "Shelter Materials",
+    "Volunteering Services",
+    "Educational Supplies",
+    "Pet Supplies",
+    "Transportation Assistance",
+  ];
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -58,6 +71,16 @@ const UserFormModal: React.FC<ModalProps> = ({
     const { value } = e.target;
     setCustomCost(value);
     setBenefitForm((prev) => ({ ...prev, cost: value }));
+  };
+
+  const handleCheckboxChange = (option: string) => {
+    setBenefitForm((prev) => {
+      const { donationType } = prev;
+      const newDonationType = donationType.includes(option)
+        ? donationType.filter((item) => item !== option)
+        : [...donationType, option];
+      return { ...prev, donationType: newDonationType };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
@@ -190,64 +213,66 @@ const UserFormModal: React.FC<ModalProps> = ({
 
         {/* Display form data */}
         <div className="grid grid-cols-3 gap-4 mb-4">
-          {fields.map(({ label, value }) => (
-            <div key={label}>
-              <span className="block text-sm font-medium">{label}</span>
-              <p className="mt-1 p-2 border rounded bg-gray-100">{value}</p>
-            </div>
-          ))}
+          {fields.map(
+            ({ label, value }) =>
+              value && (
+                <div key={label}>
+                  <span className="block text-sm font-medium">{label}</span>
+                  <p className="mt-1 p-2 border rounded bg-gray-100">{value}</p>
+                </div>
+              )
+          )}
         </div>
         <div className="border-b-2 mb-4">
-          <label
-            htmlFor="donationType"
-            className="block text-sm font-medium pb-2"
-          >
-            List of Family Members
-          </label>
-          <ol className="list-decimal list-inside mb-2 p-2 border rounded bg-gray-100">
-            {formData.familyMembers.map(({ name, relation }, index) => (
-              <li key={index}>
-                {toSentenceCase(name) +
-                  " (" +
-                  toSentenceCase(relation === "Children" ? "child" : relation) +
-                  ")"}
-              </li>
-            ))}
-          </ol>
+          {formData.familyMembers.length != 0 && (
+            <>
+              <label
+                htmlFor="donationType"
+                className="block text-sm font-medium pb-2"
+              >
+                List of Family Members
+              </label>
+
+              <ol className="list-decimal list-inside mb-2 p-2 border rounded bg-gray-100">
+                {formData.familyMembers.map(({ name, relation }, index) => (
+                  <li key={index}>
+                    {toSentenceCase(name) +
+                      " (" +
+                      toSentenceCase(
+                        relation === "Children" ? "child" : relation
+                      ) +
+                      ")"}
+                  </li>
+                ))}
+              </ol>
+            </>
+          )}
         </div>
 
         {/* Benefit Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="donationType" className="block text-sm font-medium">
+            <label
+              htmlFor="donationType"
+              className="block text-sm font-medium pb-2"
+            >
               Type of Benefits
             </label>
-            <select
-              id="donationType"
-              name="donationType"
-              value={benefitForm.donationType}
-              onChange={handleChange}
-              className="mt-1 block w-full p-2 border rounded"
-              required
-            >
-              <option value="">Select</option>
-              {[
-                "Monetary Donations",
-                "Food and Water",
-                "Clothing",
-                "Medical Supplies",
-                "Hygiene Kits",
-                "Shelter Materials",
-                "Volunteering Services",
-                "Educational Supplies",
-                "Pet Supplies",
-                "Transportation Assistance",
-              ].map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
+
+            <div id="donationType" className="grid grid-cols-2 gap-2">
+              {donationOptions.map((option) => (
+                <label key={option} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    name="donationType"
+                    value={option}
+                    checked={benefitForm.donationType.includes(option)}
+                    onChange={() => handleCheckboxChange(option)}
+                  />
+                  <span>{option}</span>
+                </label>
               ))}
-            </select>
+            </div>
           </div>
 
           {renderInputField(
