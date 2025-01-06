@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx"; // For conditional class names
 import Image from "next/image";
-import { VerifyBeneficiary } from "./qr/verifyBeneficiary";
+import { VerifyBeneficiary } from "./qr/subComponent/verifyBeneficiary";
 
 // Define the type for each navigation item
 interface NavItem {
