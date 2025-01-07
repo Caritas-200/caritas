@@ -1,14 +1,13 @@
-/* eslint-disable react/no-unescaped-entities */
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { UserData } from "@/app/lib/definitions";
 import { updateVerifiedBeneficiary } from "@/app/lib/api/beneficiary/data";
 import Swal from "sweetalert2";
 import WebcamCapture from "./subComponent/WebcamCapture";
 import DonationForm from "./subComponent/DonationForm";
 import BeneficiaryDetails from "./subComponent/BeneficiaryDetails";
-import Webcam from "react-webcam";
 import { convertBase64ToFile } from "@/app/util/convertBase64ToFile";
-import Image from "next/image";
+import Dropdown from "./button/dropdown";
+import { radioGroups } from "@/app/config/qrFormConfig";
 
 interface DecodedData {
   id: string;
@@ -26,7 +25,7 @@ const UserFormModal: React.FC<ModalProps> = ({
   onClose,
   decodedData,
 }) => {
-  const [formData] = useState<UserData>(data);
+  const [formData, setFormData] = useState<UserData>(data);
   const [benefitForm, setBenefitForm] = useState({
     donationType: [] as string[],
     quantity: "",
@@ -36,7 +35,13 @@ const UserFormModal: React.FC<ModalProps> = ({
   const [isCustomCost, setIsCustomCost] = useState(false);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
-  const webcamRef = useRef<Webcam>(null);
+
+  const handleDropdownChange = (name: keyof UserData, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +68,10 @@ const UserFormModal: React.FC<ModalProps> = ({
         benefitForm,
         decodedData.brgyName,
         "claimed",
-        imageFile
+        imageFile,
+        formData.healthCondition,
+        formData.housingCondition,
+        formData.casualty
       );
 
       Swal.fire({
@@ -106,6 +114,20 @@ const UserFormModal: React.FC<ModalProps> = ({
 
         {/* Benefit Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex justify-between gap-4 flex-col-3 ">
+            {/* Dropdowns */}
+            {radioGroups.map((group) => (
+              <Dropdown
+                key={group.name}
+                label={group.label}
+                name={group.name}
+                options={group.options}
+                value={formData[group.name] as string}
+                onChange={handleDropdownChange}
+              />
+            ))}
+          </div>
+
           <DonationForm
             benefitForm={benefitForm}
             setBenefitForm={setBenefitForm}
@@ -118,8 +140,8 @@ const UserFormModal: React.FC<ModalProps> = ({
           <WebcamCapture
             setIsCameraOpen={setIsCameraOpen}
             setCapturedImage={setCapturedImage}
-            capturedImage={capturedImage}
             isCameraOpen={isCameraOpen}
+            capturedImage={capturedImage}
           />
 
           <div className="flex justify-end space-x-2">

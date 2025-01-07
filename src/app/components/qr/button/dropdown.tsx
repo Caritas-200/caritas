@@ -1,11 +1,11 @@
 import React from "react";
-
+import { UserData } from "@/app/lib/definitions";
 interface DropdownProps {
   label: string;
-  name: string;
+  name: keyof UserData;
   options: string[];
   value: string;
-  onChange: (name: string, value: string) => void;
+  onChange: (name: keyof UserData, value: string) => void;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -16,10 +16,10 @@ const Dropdown: React.FC<DropdownProps> = ({
   onChange,
 }) => {
   return (
-    <div className="mb-4">
+    <div className="mb-4 w-full">
       <label
         htmlFor={name}
-        className="block text-sm font-medium text-gray-700 mb-2"
+        className="block text-sm font-medium text-gray-700 mb-2 "
       >
         {label}
       </label>

@@ -11,10 +11,9 @@ export const radioGroups = [
     name: "housingCondition" as keyof UserData,
     options: ["Partially Damaged", "Totally Damaged"],
   },
+  {
+    label: "Casualty",
+    name: "casualty" as keyof UserData,
+    options: ["None", "Dead", "Injured", "Missing"],
+  },
 ];
-
-export const checkboxGroup = {
-  label: "Casualty",
-  name: "casualty" as keyof UserData,
-  options: ["None", "Dead", "Injured", "Missing"],
-};

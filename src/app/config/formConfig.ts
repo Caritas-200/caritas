@@ -44,12 +44,6 @@ export const radioGroups = [
     name: "beneficiary4Ps" as keyof BeneficiaryForm,
     options: ["Yes", "No"],
   },
-
-  {
-    label: "Health Condition",
-    name: "healthCondition" as keyof BeneficiaryForm,
-    options: ["With Illness", "Without Illness"],
-  },
   {
     label: "Code",
     name: "code" as keyof BeneficiaryForm,
