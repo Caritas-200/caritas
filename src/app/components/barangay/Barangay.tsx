@@ -39,7 +39,7 @@ const Folder: React.FC<FolderProps> = ({ name, onDelete }) => {
 
   return (
     <div
-      className="relative bg-gray-500  hover:bg-blue-500 p-4 rounded-lg shadow-md cursor-pointer"
+      className="relative bg-gray-500  hover:bg-blue-500 p-4 rounded-lg shadow-md cursor-pointer "
       onClick={handleNavigate}
     >
       <h3 className="text-lg font-semibold">{name.toUpperCase()}</h3>

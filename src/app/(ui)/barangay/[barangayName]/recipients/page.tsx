@@ -19,58 +19,6 @@ const Recipient: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const handlePrint = () => {
-    if (tableRef.current) {
-      const table = tableRef.current.querySelector("table");
-      if (!table) return;
-
-      // Clone the table to manipulate for printing
-      const clonedTable = table.cloneNode(true) as HTMLTableElement;
-
-      Array.from(clonedTable.rows).forEach((row) => {
-        // Remove the last column (example)
-        if (row.cells.length > 2) {
-          row.deleteCell(row.cells.length - 1);
-        }
-      });
-
-      // Create the print window
-      const printWindow = window.open("", "_blank");
-      if (printWindow) {
-        printWindow.document.write(`
-          <html>
-            <head>
-              <title>Print Table</title>
-              <style>
-                body {
-                  font-family: Arial, sans-serif;
-                  margin: 20px;
-                }
-                table {
-                  width: 100%;
-                  border-collapse: collapse;
-                }
-                table, th, td {
-                  border: 1px solid black;
-                }
-                th, td {
-                  padding: 8px;
-                  text-align: left;
-                }
-                /* Add custom print styles if needed */
-              </style>
-            </head>
-            <body>
-              ${clonedTable.outerHTML} <!-- Insert the modified table -->
-            </body>
-          </html>
-        `);
-        printWindow.document.close();
-        printWindow.print();
-      }
-    }
-  };
-
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -98,12 +46,6 @@ const Recipient: React.FC = () => {
             onClick={handleOpenModal} // Open the modal on click
           >
             Add New Beneficiary
-          </button>
-          <button
-            className="bg-green-500 text-white py-2 px-4 rounded-lg"
-            onClick={handlePrint}
-          >
-            Print
           </button>
         </div>
       </div>

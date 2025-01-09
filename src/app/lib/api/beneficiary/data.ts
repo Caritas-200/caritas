@@ -334,7 +334,10 @@ export const updateVerifiedBeneficiary = async (
   newFields: Record<string, any>,
   brgyName: string,
   newStatus: string,
-  imageFile: File | null
+  imageFile: File | null,
+  housingCondition: string,
+  casualty: string,
+  healthCondition: string
 ): Promise<{ success: boolean; message?: string }> => {
   try {
     // Reference to the specific beneficiary document
@@ -380,7 +383,10 @@ export const updateVerifiedBeneficiary = async (
       ...newFields,
       status: newStatus,
       dateClaimed: Timestamp.now(),
-      claimantImage: imageUrl, // Save the image URL as claimantImage
+      claimantImage: imageUrl,
+      housingCondition,
+      casualty,
+      healthCondition,
     };
 
     // Update the document with the new data

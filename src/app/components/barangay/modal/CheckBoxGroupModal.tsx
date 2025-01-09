@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { BeneficiaryForm, FamilyMember } from "@/app/lib/definitions";
-import { checkboxGroup, radioGroups } from "@/app/config/formConfig";
+import { BeneficiaryForm } from "@/app/lib/definitions";
+import { radioGroups } from "@/app/config/formConfig";
 import FamilyListModal from "./FamilyListForm";
 import ProgressBar from "../../ProgressBar";
 
@@ -35,46 +35,17 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
     setErrors({ ...errors, [name]: "" });
   };
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, checked } = e.target;
-    const key = name as keyof BeneficiaryForm;
-
-    if (value === "None" && checked) {
-      onChange({
-        ...formData,
-        [key]: ["None"],
-      });
-    } else {
-      onChange({
-        ...formData,
-        [key]: checked
-          ? [
-              ...(formData[key] as string[]).filter((item) => item !== "None"),
-              value,
-            ]
-          : (formData[key] as string[]).filter((item) => item !== value),
-      });
-    }
-    setErrors({ ...errors, [name]: "" });
-  };
-
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!formData.housingCondition.length) {
-      newErrors.housingCondition = "Housing Condition is required.";
-    }
-    if (!formData.healthCondition.length) {
-      newErrors.healthCondition = "Health Condition is required.";
-    }
     if (!formData.code.length) {
       newErrors.code = "Code is required.";
     }
     if (!formData.ownershipRentalType.length) {
       newErrors.ownershipRentalType = "Ownership/Rental Type is required.";
     }
-    if (!formData.casualty.length) {
-      newErrors.casualty = "Casualty is required.";
+    if (!formData.beneficiary4Ps.length) {
+      newErrors.beneficiary4Ps = "4Ps Beneficiary value is required.";
     }
 
     setErrors(newErrors);
@@ -105,9 +76,12 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
 
             <ProgressBar currentStep={2} />
             <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex flex-col gap-6">
                 {radioGroups.map((group) => (
-                  <div className="col-span-2 md:col-span-1" key={group.name}>
+                  <div
+                    className="col-span-2 md:col-span-1 h-fit"
+                    key={group.name}
+                  >
                     <label className="block mb-2 font-semibold text-gray-800">
                       {group.label} <span className="text-red-500">*</span>
                     </label>
@@ -140,46 +114,6 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
                     )}
                   </div>
                 ))}
-
-                <div className="col-span-2 md:col-span-1">
-                  <label className="block mb-2 font-semibold text-gray-800">
-                    {checkboxGroup.label}{" "}
-                    <span className="text-red-500">*</span>
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {checkboxGroup.options.map((option) => (
-                      <label
-                        key={option}
-                        className="flex items-center gap-2 text-gray-800"
-                      >
-                        <input
-                          name={checkboxGroup.name as string}
-                          type="checkbox"
-                          value={option}
-                          checked={(
-                            formData[checkboxGroup.name] as string[]
-                          ).includes(option)}
-                          disabled={
-                            option !== "None" &&
-                            (formData[checkboxGroup.name] as string[]).includes(
-                              "None"
-                            )
-                          }
-                          onChange={handleCheckboxChange}
-                          className={`form-checkbox ${
-                            errors[checkboxGroup.name] ? "border-red-500" : ""
-                          }`}
-                        />
-                        {option}
-                      </label>
-                    ))}
-                  </div>
-                  {errors[checkboxGroup.name] && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors[checkboxGroup.name]}
-                    </p>
-                  )}
-                </div>
               </div>
               <div className="mt-8 flex justify-center gap-4">
                 <button

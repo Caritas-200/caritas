@@ -55,9 +55,9 @@ export type BeneficiaryForm = {
   religion: string;
   email: string;
   beneficiary4Ps: string;
-  housingCondition: string[];
-  casualty: string[];
-  healthCondition: string[];
+  housingCondition: string;
+  casualty: string;
+  healthCondition: string;
   ownershipRentalType: string[];
   code: string[];
   qrCode: string;
@@ -146,4 +146,7 @@ export interface UserData {
   firstName: string;
   lastName: string;
   middleName: string;
+  housingCondition: string;
+  casualty: string;
+  healthCondition: string;
 }

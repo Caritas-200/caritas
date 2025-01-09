@@ -5,9 +5,9 @@ import { QrReader } from "react-qr-reader";
 import Image from "next/image";
 import { verifyRecipient } from "@/app/lib/api/beneficiary/data";
 import clsx from "clsx";
-import { showLoading, hideLoading } from "../loading";
+import { showLoading, hideLoading } from "../../loading";
 import { UserData } from "@/app/lib/definitions";
-import UserFormModal from "./ConfirmedBeneficiaryModal";
+import UserFormModal from "../ConfirmedBeneficiaryModal";
 
 interface ModalProps {
   onClose: () => void;
