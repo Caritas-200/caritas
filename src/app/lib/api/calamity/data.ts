@@ -4,6 +4,7 @@ import {
   doc,
   getDocs,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "@/app/services/firebaseConfig";
 
@@ -29,6 +30,7 @@ export const getAllCalamity = async () => {
     const Calamity = snapshot.docs.map((doc) => ({
       id: doc.id,
       name: doc.data().name,
+      calamityType: doc.data().calamityType,
       ...doc.data(),
     }));
 
@@ -44,5 +46,18 @@ export const deleteCalamity = async (calamityId: string) => {
     await deleteDoc(doc(db, "calamity", calamityId));
   } catch (error) {
     console.error("Error deleting calamity: ", error);
+  }
+};
+
+export const updateQualificationStatus = async (
+  id: string,
+  isQualified: boolean
+) => {
+  try {
+    const docRef = doc(db, "beneficiaries", id);
+    await updateDoc(docRef, { isQualified });
+  } catch (error) {
+    console.error("Error updating qualification status:", error);
+    throw error;
   }
 };
