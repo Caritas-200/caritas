@@ -14,8 +14,8 @@ import { MainLayout } from "@/app/layouts/MainLayout";
 
 interface Folder {
   id: string;
+  calamityType: string;
   name: string;
-  calamityType?: string;
 }
 
 const calamityTypes = [
@@ -47,6 +47,7 @@ const Calamity: React.FC = () => {
     //add calamity here to db
     await addCalamity(newFolder.name, {
       name: newFolder.name,
+      calamityType: newFolder.calamityType,
     });
 
     setFolders([...folders, newFolder]);
@@ -61,7 +62,7 @@ const Calamity: React.FC = () => {
   };
 
   const filteredFolders = folders.filter((folder) =>
-    folder.name.toLowerCase().includes(searchTerm.toLowerCase())
+    folder.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const groupedFolders = filteredFolders.reduce((acc, folder) => {
@@ -173,7 +174,7 @@ const Calamity: React.FC = () => {
                         <Folder
                           key={folder.id}
                           name={folder.name}
-                          // calamityType={folder.calamityType}
+                          calamityType={folder.calamityType}
                           onDelete={() => handleDeleteFolder(folder.id)}
                         />
                       ))}
