@@ -16,9 +16,10 @@ interface NavItem {
 // Navigation items array
 const navItems: NavItem[] = [
   { name: "Home", href: "/home", icon: "/icon/home.svg" },
-  { name: "List of Barangays", href: "/barangay", icon: "/icon/list.svg" },
-  { name: "Documentation", href: "/documentation", icon: "/icon/doc.svg" },
-  { name: "Donors", href: "/donor", icon: "/icon/donor.svg" },
+  { name: "Barangay", href: "/barangay", icon: "/icon/list.svg" },
+  { name: "Calamity", href: "/calamity", icon: "/icon/doc.svg" },
+  { name: "Donor", href: "/donor", icon: "/icon/donor.svg" },
+  { name: "Document", href: "/documentation", icon: "/icon/doc.svg" },
   { name: "Profile", href: "/profile", icon: "/icon/profile.svg" },
 ];
 
