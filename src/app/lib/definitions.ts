@@ -68,6 +68,8 @@ export type BeneficiaryForm = {
   cost?: string;
   quantity?: string;
   claimantImage?: string;
+  isQualified?: boolean;
+  dateVerified?: Timestamp;
 };
 
 export type FamilyMember = {

@@ -72,8 +72,9 @@ export const addBeneficiary = async (
     const formDataWithId = {
       ...formData,
       id: newBeneficiaryRef.id,
-      status: "unclaimed",
+      isClaimed: false,
       dateCreated: Timestamp.now(),
+      isQualified: false,
     };
 
     // Save the new beneficiary document

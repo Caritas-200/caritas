@@ -5,6 +5,7 @@ import {
   getDocs,
   deleteDoc,
   updateDoc,
+  Timestamp,
 } from "firebase/firestore";
 import { db } from "@/app/services/firebaseConfig";
 
@@ -51,11 +52,15 @@ export const deleteCalamity = async (calamityId: string) => {
 
 export const updateQualificationStatus = async (
   id: string,
+  selectedBarangay: string,
   isQualified: boolean
 ) => {
   try {
-    const docRef = doc(db, "beneficiaries", id);
-    await updateDoc(docRef, { isQualified });
+    const docRef = doc(db, `barangay/${selectedBarangay}/recipients`, id);
+    await updateDoc(docRef, {
+      isQualified,
+      dateVerified: Timestamp.now(),
+    });
   } catch (error) {
     console.error("Error updating qualification status:", error);
     throw error;
