@@ -75,16 +75,12 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
             .includes(searchTerm.toLowerCase()) ||
           beneficiary.lastName.toLowerCase().includes(searchTerm.toLowerCase());
 
-        // Match status
-        const matchesStatus =
-          statusFilter === "all" || beneficiary.status === statusFilter;
-
         // Match calamity name
         const matchesCalamityName =
           calamityNameFilter === "" ||
           beneficiary.calamityName === calamityNameFilter;
 
-        return matchesSearchTerm && matchesStatus && matchesCalamityName;
+        return matchesSearchTerm && matchesCalamityName;
       });
 
       // Sorting logic

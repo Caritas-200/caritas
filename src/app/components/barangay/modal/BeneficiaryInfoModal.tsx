@@ -77,7 +77,7 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
     "Ownership/Rental Type": beneficiary.ownershipRentalType.join(", "),
     Code: beneficiary.code.join(", "),
     "Date Created": convertFirebaseTimestamp(beneficiary.dateCreated),
-    Status: beneficiary.status,
+    Status: beneficiary.isClaimed,
     Calamity: beneficiary.calamity,
     "Calamity Name": beneficiary.calamityName,
   };

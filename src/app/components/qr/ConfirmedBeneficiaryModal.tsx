@@ -67,7 +67,7 @@ const UserFormModal: React.FC<ModalProps> = ({
         decodedData.id,
         benefitForm,
         decodedData.brgyName,
-        "claimed",
+        true,
         imageFile,
         formData.healthCondition,
         formData.housingCondition,

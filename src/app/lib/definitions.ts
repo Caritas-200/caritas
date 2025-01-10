@@ -48,7 +48,7 @@ export type BeneficiaryForm = {
   gender: string;
   occupation: string;
   civilStatus: string;
-  status: string;
+  isClaimed: boolean;
   monthlyNetIncome: string;
   ethnicity: string;
   dateCreated: Timestamp;

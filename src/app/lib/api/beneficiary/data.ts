@@ -334,7 +334,7 @@ export const updateVerifiedBeneficiary = async (
   beneficiaryId: string,
   newFields: Record<string, any>,
   brgyName: string,
-  newStatus: string,
+  isClaimed: boolean,
   imageFile: File | null,
   housingCondition: string,
   casualty: string,
@@ -357,7 +357,7 @@ export const updateVerifiedBeneficiary = async (
 
     // Check if the status is already 'claimed'
     const existingData = beneficiaryDoc.data();
-    if (existingData?.status === "claimed") {
+    if (existingData?.isClaimed) {
       return { success: false, message: "Benefits are already claimed." };
     }
 
@@ -382,7 +382,7 @@ export const updateVerifiedBeneficiary = async (
     // Prepare the update data, including the image URL if available
     const updateData = {
       ...newFields,
-      status: newStatus,
+      isclaimed: isClaimed,
       dateClaimed: Timestamp.now(),
       claimantImage: imageUrl,
       housingCondition,
