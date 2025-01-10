@@ -3,7 +3,6 @@
 import React, { useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Table from "@/app/components/calamity/Table";
-import { BeneficiaryForm } from "@/app/lib/definitions";
 
 // Define the type for the params object returned by useParams
 interface Params {
@@ -16,10 +15,6 @@ const Recipient: React.FC = () => {
   const { barangayName } = params;
 
   const tableRef = useRef<HTMLDivElement>(null);
-
-  const handleSubmit = (data: BeneficiaryForm) => {
-    // Handle form submission here
-  };
 
   return (
     <div className="p-20 bg-gray-700 min-h-screen text-gray-100">

@@ -44,7 +44,6 @@ const Folder: React.FC<FolderProps> = ({ name, onDelete, calamityType }) => {
       onClick={handleNavigate}
     >
       <h3 className="text-lg font-semibold">{name.toUpperCase()}</h3>
-      {/* <h3 className="text-lg font-semibold">{calamityType?.toUpperCase()}</h3> */}
       <button
         onClick={(e) => {
           e.stopPropagation();

@@ -193,7 +193,10 @@ const Table: React.FC = () => {
                   First Name
                 </th>
                 <th className="border border-gray-500 py-2 px-4 text-left">
-                  Date Created
+                  Calamity
+                </th>
+                <th className="border border-gray-500 py-2 px-4 text-left">
+                  Date Verified
                 </th>
                 <th className="border border-gray-500 py-2 px-4 text-left">
                   Status
@@ -219,7 +222,16 @@ const Table: React.FC = () => {
                     {toSentenceCase(beneficiary.firstName)}
                   </td>
                   <td className="border border-gray-500 py-2 px-4">
-                    {convertFirebaseTimestamp(beneficiary.dateCreated)}
+                    {beneficiary.calamity
+                      ? toSentenceCase(
+                          beneficiary.calamity + " " + beneficiary.calamityName
+                        )
+                      : "N/A"}
+                  </td>
+                  <td className="border border-gray-500 py-2 px-4">
+                    {beneficiary.dateVerified
+                      ? convertFirebaseTimestamp(beneficiary.dateVerified)
+                      : "N/A"}
                   </td>
                   <td
                     className={`border border-gray-500 py-2 px-4 ${
