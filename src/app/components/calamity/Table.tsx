@@ -25,6 +25,19 @@ const Table: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [calamityData, setCalamityData] = useState<{
+    name: string;
+    calamityType: string;
+  } | null>(null);
+
+  useEffect(() => {
+    // Retrieve state from sessionStorage
+    const data = sessionStorage.getItem("calamityData");
+    if (data) {
+      setCalamityData(JSON.parse(data));
+    }
+  }, []);
+
   useEffect(() => {
     const loadBarangays = async () => {
       try {
@@ -82,7 +95,8 @@ const Table: React.FC = () => {
     id: string,
     selectedBarangay: string,
     status: boolean,
-    beneficiaryName: string
+    beneficiaryName: string,
+    calamityData: { name: string; calamityType: string } | null
   ) => {
     try {
       // Show confirmation modal with adjusted message
@@ -100,14 +114,44 @@ const Table: React.FC = () => {
       });
 
       if (result.isConfirmed) {
-        // Optimistically update the UI
+        // Optimistically update the UI for both qualification status and calamity column
         setIsQualified((prev) => ({
           ...prev,
           [id]: status,
         }));
 
+        // Optimistically update calamity column if qualifying
+        if (status && calamityData) {
+          setBeneficiaries((prev) =>
+            prev.map((beneficiary) =>
+              beneficiary.id === id
+                ? {
+                    ...beneficiary,
+                    calamity: `${calamityData.calamityType} ${calamityData.name}`,
+                  }
+                : beneficiary
+            )
+          );
+        } else if (!status) {
+          setBeneficiaries((prev) =>
+            prev.map((beneficiary) =>
+              beneficiary.id === id
+                ? {
+                    ...beneficiary,
+                    calamity: "",
+                  }
+                : beneficiary
+            )
+          );
+        }
+
         // Call the API to update the qualification status in the database
-        await updateQualificationStatus(id, selectedBarangay, status);
+        await updateQualificationStatus(
+          id,
+          selectedBarangay,
+          status,
+          calamityData
+        );
 
         // Show success message
         await Swal.fire({
@@ -127,6 +171,20 @@ const Table: React.FC = () => {
         ...prev,
         [id]: !status,
       }));
+
+      if (status) {
+        // Reset calamity value to N/A on failure
+        setBeneficiaries((prev) =>
+          prev.map((beneficiary) =>
+            beneficiary.id === id
+              ? {
+                  ...beneficiary,
+                  calamity: "N/A",
+                }
+              : beneficiary
+          )
+        );
+      }
 
       // Show error message
       await Swal.fire({
@@ -222,11 +280,13 @@ const Table: React.FC = () => {
                     {toSentenceCase(beneficiary.firstName)}
                   </td>
                   <td className="border border-gray-500 py-2 px-4">
-                    {beneficiary.calamity
-                      ? toSentenceCase(
-                          beneficiary.calamity + " " + beneficiary.calamityName
-                        )
-                      : "N/A"}
+                    {beneficiary.calamity ? (
+                      toSentenceCase(
+                        beneficiary.calamity + " " + beneficiary.calamityName
+                      )
+                    ) : (
+                      <span className="uppercase">N/A</span>
+                    )}
                   </td>
                   <td className="border border-gray-500 py-2 px-4">
                     {beneficiary.dateVerified
@@ -247,7 +307,7 @@ const Table: React.FC = () => {
                       : "N/A"}
                   </td>
 
-                  <td className="border border-gray-500 py-2 px-4">
+                  <td className="border border-gray-500 py-2 px-4 whitespace-nowrap">
                     <button
                       className={`mr-2 px-2 py-1 rounded ${
                         isQualified[beneficiary.id] === true
@@ -260,7 +320,8 @@ const Table: React.FC = () => {
                           beneficiary.id,
                           selectedBarangay,
                           true,
-                          beneficiary.firstName
+                          beneficiary.firstName,
+                          calamityData
                         )
                       }
                     >
@@ -278,7 +339,8 @@ const Table: React.FC = () => {
                           beneficiary.id,
                           selectedBarangay,
                           false,
-                          beneficiary.firstName
+                          beneficiary.firstName,
+                          calamityData
                         )
                       }
                     >

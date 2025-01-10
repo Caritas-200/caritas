@@ -231,49 +231,56 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
             <table className="min-w-full bg-gray-800 border border-gray-500 rounded-lg">
               <thead>
                 <tr>
-                  <th className="border-b border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-gray-500 py-2 px-4 text-left">
+                    #
+                  </th>
+                  <th className="border border-gray-500 py-2 px-4 text-left">
                     Last Name
                   </th>
-                  <th className="border-b border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-gray-500 py-2 px-4 text-left">
                     First Name
                   </th>
-                  <th className="border-b border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-gray-500 py-2 px-4 text-left">
                     Calamity
                   </th>
-                  <th className="border-b border-gray-500 py-2 px-4 text-left">
-                    Calamity Name
-                  </th>
-                  <th className="border-b border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-gray-500 py-2 px-4 text-left">
                     Date Created
                   </th>
-                  <th className="border-b border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-gray-500 py-2 px-4 text-left">
                     Action
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {currentItems.map((beneficiary) => (
+                {currentItems.map((beneficiary, index) => (
                   <tr
                     key={beneficiary.id}
                     className="hover:bg-gray-700 transition-colors"
                   >
-                    <td className="border-b border-gray-500 py-2 px-4">
+                    <td className="border border-gray-500 py-2 px-4">
+                      {index + 1}
+                    </td>
+                    <td className="border border-gray-500 py-2 px-4">
                       {toSentenceCase(beneficiary.lastName)}
                     </td>
-                    <td className="border-b border-gray-500 py-2 px-4">
+                    <td className="border border-gray-500 py-2 px-4">
                       {toSentenceCase(beneficiary.firstName)}
                     </td>
-                    <td className="border-b border-gray-500 py-2 px-4">
-                      {toSentenceCase(beneficiary.calamity)}
+                    <td className="border border-gray-500 py-2 px-4">
+                      {beneficiary.calamity
+                        ? toSentenceCase(
+                            beneficiary.calamity +
+                              " " +
+                              beneficiary.calamityName
+                          )
+                        : "N/A"}
                     </td>
-                    <td className="border-b border-gray-500 py-2 px-4">
-                      {toSentenceCase(beneficiary.calamityName)}
-                    </td>
-                    <td className="border-b border-gray-500 py-2 px-4">
+
+                    <td className="border border-gray-500 py-2 px-4">
                       {convertFirebaseTimestamp(beneficiary.dateCreated)}
                     </td>
 
-                    <td className="flex gap-2 border-b border-gray-500 py-2 px-4">
+                    <td className="flex border gap-2 border-gray-500 py-2 px-4">
                       <button
                         onClick={() => handleViewInfo(beneficiary.id)}
                         className="bg-blue-500 text-white px-2 py-1 rounded "
