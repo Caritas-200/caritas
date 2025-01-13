@@ -382,7 +382,7 @@ export const updateVerifiedBeneficiary = async (
     // Prepare the update data, including the image URL if available
     const updateData = {
       ...newFields,
-      isclaimed: isClaimed,
+      isClaimed: isClaimed,
       dateClaimed: Timestamp.now(),
       claimantImage: imageUrl,
       housingCondition,

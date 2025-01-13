@@ -17,7 +17,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { name: "Home", href: "/home", icon: "/icon/home.svg" },
   { name: "Barangay", href: "/barangay", icon: "/icon/list.svg" },
-  { name: "Calamity", href: "/calamity", icon: "/icon/doc.svg" },
+  { name: "Calamity", href: "/calamity", icon: "/icon/calamity.svg" },
   { name: "Donor", href: "/donor", icon: "/icon/donor.svg" },
   { name: "Document", href: "/documentation", icon: "/icon/doc.svg" },
   { name: "Profile", href: "/profile", icon: "/icon/profile.svg" },
