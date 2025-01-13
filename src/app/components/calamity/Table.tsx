@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import SearchBar from "../barangay/SearchBar";
+import SearchBar from "../SearchBar";
 import Pagination from "../Pagination";
 import { fetchBeneficiaries } from "@/app/lib/api/beneficiary/data";
 import { getAllBarangays } from "@/app/lib/api/barangay/data";
@@ -29,67 +29,6 @@ const Table: React.FC = () => {
     name: string;
     calamityType: string;
   } | null>(null);
-
-  useEffect(() => {
-    // Retrieve state from sessionStorage
-    const data = sessionStorage.getItem("calamityData");
-    if (data) {
-      setCalamityData(JSON.parse(data));
-    }
-  }, []);
-
-  useEffect(() => {
-    const loadBarangays = async () => {
-      try {
-        const data = await getAllBarangays();
-        setBarangays(data);
-      } catch (err) {
-        console.error("Error fetching barangays:", err);
-      }
-    };
-    loadBarangays();
-  }, []);
-
-  useEffect(() => {
-    if (!selectedBarangay) return;
-
-    const loadBeneficiaries = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchBeneficiaries(selectedBarangay);
-        setBeneficiaries(data);
-        setFilteredData(data);
-
-        // Map initial status from the fetched data
-        const initialStatus = data.reduce((acc, item) => {
-          acc[item.id] = item.isQualified ?? null; // Use null if isQualified is undefined
-          return acc;
-        }, {} as { [key: string]: boolean | null });
-        setIsQualified(initialStatus);
-      } catch (err: unknown) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Unknown error occurred while fetching beneficiaries."
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadBeneficiaries();
-  }, [selectedBarangay]);
-
-  useEffect(() => {
-    const filtered = beneficiaries.filter((beneficiary) =>
-      [beneficiary.firstName, beneficiary.lastName]
-        .join(" ")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-    );
-    setFilteredData(filtered);
-    setCurrentPage(1);
-  }, [searchTerm, beneficiaries]);
 
   const handleQualification = async (
     id: string,
@@ -195,6 +134,67 @@ const Table: React.FC = () => {
       });
     }
   };
+
+  useEffect(() => {
+    // Retrieve state from sessionStorage
+    const data = sessionStorage.getItem("calamityData");
+    if (data) {
+      setCalamityData(JSON.parse(data));
+    }
+  }, []);
+
+  useEffect(() => {
+    const loadBarangays = async () => {
+      try {
+        const data = await getAllBarangays();
+        setBarangays(data);
+      } catch (err) {
+        console.error("Error fetching barangays:", err);
+      }
+    };
+    loadBarangays();
+  }, []);
+
+  useEffect(() => {
+    if (!selectedBarangay) return;
+
+    const loadBeneficiaries = async () => {
+      setLoading(true);
+      try {
+        const data = await fetchBeneficiaries(selectedBarangay);
+        setBeneficiaries(data);
+        setFilteredData(data);
+
+        // Map initial status from the fetched data
+        const initialStatus = data.reduce((acc, item) => {
+          acc[item.id] = item.isQualified ?? null; // Use null if isQualified is undefined
+          return acc;
+        }, {} as { [key: string]: boolean | null });
+        setIsQualified(initialStatus);
+      } catch (err: unknown) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Unknown error occurred while fetching beneficiaries."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadBeneficiaries();
+  }, [selectedBarangay]);
+
+  useEffect(() => {
+    const filtered = beneficiaries.filter((beneficiary) =>
+      [beneficiary.firstName, beneficiary.lastName]
+        .join(" ")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    );
+    setFilteredData(filtered);
+    setCurrentPage(1);
+  }, [searchTerm, beneficiaries]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;

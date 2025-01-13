@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import classNames from "classnames";
-import SearchBar from "./SearchBar";
+import SearchBar from "../SearchBar";
 import Pagination from "../Pagination";
 import {
   fetchBeneficiaries,

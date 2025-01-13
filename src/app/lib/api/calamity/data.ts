@@ -6,8 +6,11 @@ import {
   deleteDoc,
   updateDoc,
   Timestamp,
+  query,
+  where,
 } from "firebase/firestore";
 import { db } from "@/app/services/firebaseConfig";
+import { BeneficiaryForm } from "../../definitions";
 
 // Function to add a new calamity
 export const addCalamity = async (calamityId: string, calamityData: any) => {
@@ -79,5 +82,58 @@ export const updateQualificationStatus = async (
   } catch (error) {
     console.error("Error updating qualification status:", error);
     throw error;
+  }
+};
+
+export const fetchBeneficiariesByCalamity = async (
+  calamityName: string,
+  calamity: string
+): Promise<BeneficiaryForm[]> => {
+  try {
+    const barangayCollectionRef = collection(db, "barangay");
+
+    // Fetch all barangay documents
+    const barangaySnapshot = await getDocs(barangayCollectionRef);
+
+    const allBeneficiaries: BeneficiaryForm[] = [];
+
+    // Iterate over each barangay
+    for (const barangayDoc of barangaySnapshot.docs) {
+      const barangayName = barangayDoc.id;
+
+      // Reference the recipients subcollection
+      const recipientsCollectionRef = collection(
+        db,
+        `barangay/${barangayName}/recipients`
+      );
+
+      // Query recipients based on calamityName and calamityType
+      const q = query(
+        recipientsCollectionRef,
+        where("calamity", "==", calamity),
+        where("calamityName", "==", calamityName)
+      );
+
+      const recipientsSnapshot = await getDocs(q);
+
+      // Map the documents to the beneficiaries list
+      const beneficiaries = recipientsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        barangayName, // Include barangayName for context
+        ...doc.data(),
+      })) as unknown as BeneficiaryForm[];
+
+      allBeneficiaries.push(...beneficiaries);
+    }
+
+    return allBeneficiaries;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching beneficiaries: ", error.message);
+      throw error; // Re-throw to handle it in the UI
+    } else {
+      console.error("Unknown error occurred");
+      throw new Error("Unknown error occurred");
+    }
   }
 };

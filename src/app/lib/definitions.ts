@@ -54,6 +54,7 @@ export type BeneficiaryForm = {
   dateCreated: Timestamp;
   religion: string;
   email: string;
+  familyMembers?: string[];
   beneficiary4Ps: string;
   housingCondition: string;
   casualty: string;
