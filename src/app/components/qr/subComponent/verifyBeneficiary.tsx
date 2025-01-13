@@ -6,16 +6,11 @@ import Image from "next/image";
 import { verifyRecipient } from "@/app/lib/api/beneficiary/data";
 import clsx from "clsx";
 import { showLoading, hideLoading } from "../../loading";
-import { UserData } from "@/app/lib/definitions";
+import { UserData, DecodedData } from "@/app/lib/definitions";
 import UserFormModal from "../ConfirmedBeneficiaryModal";
 
 interface ModalProps {
   onClose: () => void;
-}
-
-interface DecodedData {
-  id: string;
-  brgyName: string;
 }
 
 export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {

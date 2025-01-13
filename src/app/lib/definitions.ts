@@ -153,3 +153,8 @@ export interface UserData {
   casualty: string;
   healthCondition: string;
 }
+
+export interface DecodedData {
+  id: string;
+  brgyName: string;
+}

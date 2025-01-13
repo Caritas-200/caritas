@@ -7,7 +7,8 @@ import { BeneficiaryForm } from "@/app/lib/definitions";
 import { fetchBeneficiariesByCalamity } from "@/app/lib/api/calamity/data";
 import SkeletonTable from "../animation/tableSkeleton";
 import BeneficiaryIdQr from "../../barangay/modal/BeneficiaryIdQr";
-import { generateQrPayload } from "@/app/util/generateQrPayload";
+import UserFormModal from "../../qr/ConfirmedBeneficiaryModal";
+import { UserData, DecodedData } from "@/app/lib/definitions";
 
 interface ModalProps {
   isOpen: boolean;
@@ -32,6 +33,36 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   const [activeModal, setActiveModal] = useState<"info" | "qr" | null>(null); // Manage which modal is open
   const [selectedBeneficiary, setSelectedBeneficiary] =
     useState<BeneficiaryForm | null>(null);
+  const [decodedData, setDecodedData] = useState<DecodedData | null>({
+    id: selectedBeneficiary?.id || "",
+    brgyName: selectedBeneficiary?.address?.barangay?.barangay_name || "",
+  });
+
+  const [userData, setUserData] = useState<UserData>({
+    calamity: selectedBeneficiary?.calamity || "",
+    calamityName: selectedBeneficiary?.calamityName || "",
+    dateCreated: selectedBeneficiary?.dateCreated || {
+      seconds: 0,
+      nanoseconds: 0,
+    },
+    familyMembers:
+      Array.isArray(selectedBeneficiary?.familyMembers) &&
+      selectedBeneficiary?.familyMembers.every(
+        (member) =>
+          typeof member === "object" &&
+          member !== null &&
+          "name" in member &&
+          "relation" in member
+      )
+        ? selectedBeneficiary.familyMembers
+        : [{ name: "", relation: "" }],
+    firstName: selectedBeneficiary?.firstName || "",
+    lastName: selectedBeneficiary?.lastName || "",
+    middleName: selectedBeneficiary?.middleName || "",
+    housingCondition: selectedBeneficiary?.housingCondition || "",
+    casualty: selectedBeneficiary?.casualty || "",
+    healthCondition: selectedBeneficiary?.healthCondition || "",
+  });
 
   const closeModals = () => {
     setActiveModal(null);
@@ -77,6 +108,11 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   const handleViewInfo = (beneficiary: BeneficiaryForm) => {
     setSelectedBeneficiary(beneficiary);
     setActiveModal("info");
+
+    setDecodedData({
+      id: beneficiary.id,
+      brgyName: beneficiary.address.barangay.barangay_name,
+    });
   };
 
   const handleViewQR = (beneficiary: BeneficiaryForm) => {
@@ -224,18 +260,16 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
         )}
       </div>
       {/* Dynamic Modal Rendering */}
-      {activeModal === "info" && selectedBeneficiary && (
+      {activeModal === "info" && selectedBeneficiary && decodedData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
-          {/* <UserFormModal
+          <UserFormModal
             onClose={closeModals}
-            data={selectedBeneficiary}
-            decodedData={
-              (selectedBeneficiary.id,
-              selectedBeneficiary.address.barangay.barangay_name)
-            }
-          /> */}
+            data={userData}
+            decodedData={decodedData}
+          />
         </div>
       )}
+
       {activeModal === "qr" && selectedBeneficiary && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
           <BeneficiaryIdQr
