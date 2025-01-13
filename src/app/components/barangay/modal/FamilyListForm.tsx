@@ -136,35 +136,28 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
       setPrintData(JSON.stringify(beneficiaryData));
 
       if (isEditing) {
-        // Use updateBeneficiary if editing
+        // Update logic
         await updateBeneficiary(beneficiaryData.id, beneficiaryData, brgyName);
-
-        Swal.fire({
-          icon: "success",
-          title: "Success!",
-          text: "Beneficiary updated successfully.",
-        }).then(() => {
-          onClose(); // Close the modal on success
-        });
       } else {
-        // If not editing, add a new beneficiary
+        // Add new beneficiary
         const newBeneficiaryId = await addBeneficiary(
           beneficiaryData,
           brgyName
         );
 
-        // Generate the QR code payload using the generated ID
-        const qrPayload = {
+        // Generate QR payload
+        const generateQrPayload = JSON.stringify({
           id: newBeneficiaryId,
           lastName: beneficiaryData.lastName,
           brgyName,
-        };
-        setQrData(JSON.stringify(qrPayload)); // Set QR data
+        });
 
-        // Wait for the QR code image to be generated
+        setQrData(generateQrPayload); // Update QR data
+
+        // Wait for QR code to be rendered
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         const qrImage = await generateQrImage(qrCodeRef);
-
-        // Upload the QR code image and save the QR code URL in Firestore
         await updateBeneficiaryWithQrCode(newBeneficiaryId, qrImage, brgyName);
 
         Swal.fire({
@@ -172,7 +165,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
           title: "Success!",
           text: "Beneficiary added successfully.",
         }).then(() => {
-          setShowQRModal(true); // Show the QR code modal for new beneficiaries
+          setShowQRModal(true); // Show modal
         });
       }
     } catch (error: unknown) {
@@ -287,10 +280,13 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
         </form>
 
         {/* Hidden QR Code */}
-        <div style={{ display: "none" }}>
-          <div ref={qrCodeRef}>
-            <QRCode value={qrData} size={200} />
-          </div>
+
+        <div className="flex-none">
+          {qrData && (
+            <div ref={qrCodeRef}>
+              <QRCode value={qrData} size={150} />
+            </div>
+          )}
         </div>
       </div>
 
@@ -300,6 +296,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
           beneficiaryData={printData}
           qrData={qrData}
           onClose={onClose}
+          from="barangay"
         />
       )}
     </div>
