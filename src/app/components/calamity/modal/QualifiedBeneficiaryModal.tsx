@@ -192,7 +192,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                     Status
                   </th>
                   <th className="border border-gray-500 py-2 px-4 text-left">
-                    Action
+                    Action/Status
                   </th>
                 </tr>
               </thead>
@@ -234,18 +234,26 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                       {beneficiary.isQualified ? "Qualified" : "Unqualified"}
                     </td>
                     <td className="border border-gray-500 py-2 px-4 whitespace-nowrap">
-                      <button
-                        className="mr-2 px-2 py-1 rounded bg-blue-500 hover:bg-blue-600"
-                        onClick={() => handleViewInfo(beneficiary)}
-                      >
-                        View Info
-                      </button>
-                      <button
-                        className="px-2 py-1 rounded bg-purple-500 hover:bg-purple-600"
-                        onClick={() => handleViewQR(beneficiary)}
-                      >
-                        View QR
-                      </button>
+                      {beneficiary.isClaimed ? (
+                        <h1 className="text-green-500 font-bold uppercase">
+                          Claimed
+                        </h1>
+                      ) : (
+                        <>
+                          <button
+                            className="mr-2 px-2 py-1 rounded bg-blue-500 hover:bg-blue-600"
+                            onClick={() => handleViewInfo(beneficiary)}
+                          >
+                            View Info
+                          </button>
+                          <button
+                            className="px-2 py-1 rounded bg-purple-500 hover:bg-purple-600"
+                            onClick={() => handleViewQR(beneficiary)}
+                          >
+                            View QR
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}

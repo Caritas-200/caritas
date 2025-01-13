@@ -257,10 +257,10 @@ const Table: React.FC = () => {
                   Date Verified
                 </th>
                 <th className="border border-gray-500 py-2 px-4 text-left">
-                  Status
+                  Qualification
                 </th>
                 <th className="border border-gray-500 py-2 px-4 text-left">
-                  Action
+                  Action/Status
                 </th>
               </tr>
             </thead>
@@ -308,44 +308,53 @@ const Table: React.FC = () => {
                   </td>
 
                   <td className="border border-gray-500 py-2 px-4 whitespace-nowrap">
-                    <button
-                      className={`mr-2 px-2 py-1 rounded ${
-                        isQualified[beneficiary.id] === true
-                          ? "bg-gray-500"
-                          : "bg-green-500"
-                      }`}
-                      disabled={isQualified[beneficiary.id] === true}
-                      onClick={() =>
-                        handleQualification(
-                          beneficiary.id,
-                          selectedBarangay,
-                          true,
-                          beneficiary.firstName,
-                          calamityData
-                        )
-                      }
-                    >
-                      Qualify
-                    </button>
-                    <button
-                      className={`px-2 py-1 rounded ${
-                        isQualified[beneficiary.id] === false
-                          ? "bg-gray-500"
-                          : "bg-red-500"
-                      }`}
-                      disabled={isQualified[beneficiary.id] === false}
-                      onClick={() =>
-                        handleQualification(
-                          beneficiary.id,
-                          selectedBarangay,
-                          false,
-                          beneficiary.firstName,
-                          calamityData
-                        )
-                      }
-                    >
-                      Unqualify
-                    </button>
+                    {beneficiary.isClaimed ? (
+                      <h1 className="text-green-500 font-bold uppercase">
+                        Claimed
+                      </h1>
+                    ) : (
+                      <>
+                        {" "}
+                        <button
+                          className={`mr-2 px-2 py-1 rounded ${
+                            isQualified[beneficiary.id] === true
+                              ? "bg-gray-500"
+                              : "bg-green-500"
+                          }`}
+                          disabled={isQualified[beneficiary.id] === true}
+                          onClick={() =>
+                            handleQualification(
+                              beneficiary.id,
+                              selectedBarangay,
+                              true,
+                              beneficiary.firstName,
+                              calamityData
+                            )
+                          }
+                        >
+                          Qualify
+                        </button>
+                        <button
+                          className={`px-2 py-1 rounded ${
+                            isQualified[beneficiary.id] === false
+                              ? "bg-gray-500"
+                              : "bg-red-500"
+                          }`}
+                          disabled={isQualified[beneficiary.id] === false}
+                          onClick={() =>
+                            handleQualification(
+                              beneficiary.id,
+                              selectedBarangay,
+                              false,
+                              beneficiary.firstName,
+                              calamityData
+                            )
+                          }
+                        >
+                          Unqualify
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
