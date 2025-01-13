@@ -33,7 +33,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     useState<BeneficiaryForm | null>(null);
 
   const closeModals = () => {
-    setActiveModal(null); // Close both modals
+    setActiveModal(null);
   };
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70"
-      onClick={handleOutsideClick}
+      // onClick={handleOutsideClick}
     >
       <div className="bg-gray-800 p-4 rounded-lg shadow-md text-gray-100 w-[90%] max-w-7xl">
         <div className="flex justify-between items-center mb-4">
@@ -125,7 +125,12 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
         </div>
 
         {loading ? (
-          <SkeletonTable />
+          <>
+            <h1 className="mb-2 text-green-500">
+              Please wait while we fetch the data from all of the Barangays ...
+            </h1>
+            <SkeletonTable />
+          </>
         ) : error ? (
           <p>Error: {error}</p>
         ) : (
@@ -169,7 +174,11 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                     </td>
                     <td className="border border-gray-500 py-2 px-4">
                       {beneficiary.calamity
-                        ? toSentenceCase(beneficiary.calamity)
+                        ? toSentenceCase(
+                            beneficiary.calamity +
+                              " " +
+                              beneficiary.calamityName
+                          )
                         : "N/A"}
                     </td>
                     <td className="border border-gray-500 py-2 px-4">
@@ -215,22 +224,26 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
 
       {/* Dynamic Modal Rendering */}
       {activeModal === "info" && selectedBeneficiary && (
-        <UserFormModal
-          onClose={closeModals}
-          data={selectedBeneficiary}
-          decodedData={
-            (selectedBeneficiary.id,
-            selectedBeneficiary.address.barangay.barangay_name)
-          }
-        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+          <UserFormModal
+            onClose={closeModals}
+            data={selectedBeneficiary}
+            decodedData={
+              (selectedBeneficiary.id,
+              selectedBeneficiary.address.barangay.barangay_name)
+            }
+          />
+        </div>
       )}
 
       {activeModal === "qr" && selectedBeneficiary && (
-        <BeneficiaryIdQr
-          beneficiaryData={JSON.stringify(selectedBeneficiary)}
-          qrData={selectedBeneficiary.id}
-          onClose={closeModals}
-        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <BeneficiaryIdQr
+            beneficiaryData={JSON.stringify(selectedBeneficiary)}
+            qrData={selectedBeneficiary.id}
+            onClose={closeModals}
+          />
+        </div>
       )}
     </div>
   );

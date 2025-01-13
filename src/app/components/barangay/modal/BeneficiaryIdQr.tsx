@@ -115,8 +115,8 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
   };
 
   return (
-    <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="modal-content bg-white p-10 rounded-lg w-full h-[90%] max-w-screen-lg relative">
+    <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center ">
+      <div className="modal-content bg-white p-10 rounded-lg w-full h-[60%] max-w-5xl relative">
         <button
           onClick={handleClose}
           className="modal-close-button absolute top-2 right-2 text-gray-700"
@@ -142,10 +142,10 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
         {/* Print Area */}
         <div
           id="printArea"
-          className="print-area grid grid-cols-2 gap-8 text-gray-700"
+          className="print-area flex flex-row gap-8 text-gray-700 w-full justify-between items-center "
         >
           {/* Front of the ID */}
-          <div className="id-front border-2 p-4 id-front-container">
+          <div className="id-front border-2 p-4 id-front-container w-2/3 h-[300px]">
             <div className="id-front-content grid grid-cols-2">
               {/* 1x1 image placeholder */}
               <div className="id-front-photo flex w-full justify-center items-center">
@@ -160,7 +160,7 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
               </div>
             </div>
 
-            <p className="id-front-name font-bold text-xl pt-6">
+            <p className="id-front-name font-bold text-xl pt-6 uppercase">
               {newObject.firstName +
                 " " +
                 newObject.middleName +
@@ -184,7 +184,7 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
           </div>
 
           {/* Back of the ID */}
-          <div className="id-back border-2 p-4 id-back-container">
+          <div className="id-back border-2 p-4 id-back-container w-2/3 h-[300px]">
             <div className="id-back-address mt-2">
               <p className="address-label font-bold">Address/Tirahan:</p>
               <p className="address-value">Brgy. {fullAddress || "N/A"}</p>
