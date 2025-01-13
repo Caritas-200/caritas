@@ -10,7 +10,7 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
 }) => {
   const fields = [
     { label: "Calamity Name", value: formData.calamityName },
-    { label: "Calamity Type", value: formData.calamityType },
+    { label: "Calamity Type", value: formData.calamity },
     {
       label: "Date Created",
       value: new Date(formData.dateCreated.seconds * 1000).toLocaleString(),

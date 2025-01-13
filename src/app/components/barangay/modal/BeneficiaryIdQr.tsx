@@ -26,19 +26,7 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
 
   // Function to handle closing the modal
   const handleClose = () => {
-    Swal.fire({
-      title: "Reminder",
-      text: "Don't forget to print the Beneficiary ID. This will be needed for smooth claiming of benefits",
-      icon: "info",
-      confirmButtonText: "Close",
-      cancelButtonText: "Back",
-      showCancelButton: true,
-      cancelButtonColor: "#d33",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        onClose();
-      }
-    });
+    onClose();
   };
 
   // Data to display on the ID
@@ -181,14 +169,17 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
             </p>
 
             <div className="id-front-details mt-4 grid grid-cols-2">
-              {dataItems.map((item) => (
-                <p key={item.label} className="detail-item">
-                  <span className="detail-label font-semibold">
-                    {item.label}:{" "}
-                  </span>
-                  {item.value}
-                </p>
-              ))}
+              {dataItems.map(
+                (item) =>
+                  item.value && (
+                    <p key={item.label} className="detail-item">
+                      <span className="detail-label font-semibold">
+                        {item.label}:{" "}
+                      </span>
+                      {item.value}
+                    </p>
+                  )
+              )}
             </div>
           </div>
 

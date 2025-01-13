@@ -142,8 +142,8 @@ export interface UserProfile {
 }
 
 export interface UserData {
+  calamity: string;
   calamityName: string;
-  calamityType?: string;
   dateCreated: { seconds: number; nanoseconds: number };
   familyMembers: { name: string; relation: string }[];
   firstName: string;

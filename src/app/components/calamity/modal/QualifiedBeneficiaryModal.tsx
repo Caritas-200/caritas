@@ -7,6 +7,7 @@ import { BeneficiaryForm } from "@/app/lib/definitions";
 import { fetchBeneficiariesByCalamity } from "@/app/lib/api/calamity/data";
 import SkeletonTable from "../animation/tableSkeleton";
 import UserFormModal from "../../qr/ConfirmedBeneficiaryModal";
+import BeneficiaryIdQr from "../../barangay/modal/BeneficiaryIdQr";
 
 interface ModalProps {
   isOpen: boolean;
@@ -27,14 +28,12 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [isViewInfoOpen, setIsViewInfoOpen] = useState(false);
-  const [isViewQROpen, setIsViewQROpen] = useState(false);
+  const [activeModal, setActiveModal] = useState<"info" | "qr" | null>(null); // Manage which modal is open
   const [selectedBeneficiary, setSelectedBeneficiary] =
     useState<BeneficiaryForm | null>(null);
 
   const closeModals = () => {
-    setIsViewInfoOpen(false);
-    setIsViewQROpen(false);
+    setActiveModal(null); // Close both modals
   };
 
   useEffect(() => {
@@ -80,12 +79,12 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
 
   const handleViewInfo = (beneficiary: BeneficiaryForm) => {
     setSelectedBeneficiary(beneficiary);
-    setIsViewInfoOpen(true);
+    setActiveModal("info");
   };
 
   const handleViewQR = (beneficiary: BeneficiaryForm) => {
     setSelectedBeneficiary(beneficiary);
-    setIsViewQROpen(true);
+    setActiveModal("qr");
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -98,7 +97,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70"
-      // onClick={handleOutsideClick}
+      onClick={handleOutsideClick}
     >
       <div className="bg-gray-800 p-4 rounded-lg shadow-md text-gray-100 w-[90%] max-w-7xl">
         <div className="flex justify-between items-center mb-4">
@@ -214,10 +213,10 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
         )}
       </div>
 
-      {/* View Info Modal */}
-      {isViewInfoOpen && selectedBeneficiary && (
+      {/* Dynamic Modal Rendering */}
+      {activeModal === "info" && selectedBeneficiary && (
         <UserFormModal
-          onClose={onClose}
+          onClose={closeModals}
           data={selectedBeneficiary}
           decodedData={
             (selectedBeneficiary.id,
@@ -226,20 +225,12 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
         />
       )}
 
-      {/* View QR Modal */}
-      {isViewQROpen && selectedBeneficiary && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
-          <div className="bg-gray-800 p-4 rounded-lg shadow-md text-gray-100 w-[90%] max-w-lg">
-            <h2 className="text-xl font-bold mb-4">QR Code Details</h2>
-
-            <button
-              className="mt-4 px-4 py-2 bg-red-500 hover:bg-red-600 rounded"
-              onClick={closeModals}
-            >
-              Close
-            </button>
-          </div>
-        </div>
+      {activeModal === "qr" && selectedBeneficiary && (
+        <BeneficiaryIdQr
+          beneficiaryData={JSON.stringify(selectedBeneficiary)}
+          qrData={selectedBeneficiary.id}
+          onClose={closeModals}
+        />
       )}
     </div>
   );
