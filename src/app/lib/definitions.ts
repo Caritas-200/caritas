@@ -36,6 +36,19 @@ export type Address = {
   };
 };
 
+export type FamilyMember = {
+  name: string;
+  relation: string;
+  age: string;
+  gender: string;
+  civilStatus: string;
+  education: string;
+  skills: string;
+  remarks?: string;
+};
+
+type FirebaseTimestamp = Timestamp | { seconds: number; nanoseconds: number };
+
 export type BeneficiaryForm = {
   id: string;
   firstName: string;
@@ -51,10 +64,10 @@ export type BeneficiaryForm = {
   isClaimed: boolean;
   monthlyNetIncome: string;
   ethnicity: string;
-  dateCreated: Timestamp;
+  dateCreated: FirebaseTimestamp;
   religion: string;
   email: string;
-  familyMembers?: string[];
+  familyMembers?: FamilyMember[];
   beneficiary4Ps: string;
   housingCondition: string;
   casualty: string;
@@ -65,24 +78,27 @@ export type BeneficiaryForm = {
   calamity: string;
   calamityName: string;
   donationType?: string;
-  dateClaimed?: Timestamp;
+  dateClaimed?: FirebaseTimestamp;
   cost?: string;
   quantity?: string;
   claimantImage?: string;
   isQualified?: boolean;
-  dateVerified?: Timestamp;
+  dateVerified?: FirebaseTimestamp;
 };
 
-export type FamilyMember = {
-  name: string;
-  relation: string;
-  age: string;
-  gender: string;
-  civilStatus: string;
-  education: string;
-  skills: string;
-  remarks?: string;
-};
+export type UserData = Pick<
+  BeneficiaryForm,
+  | "calamity"
+  | "calamityName"
+  | "dateCreated"
+  | "familyMembers"
+  | "firstName"
+  | "lastName"
+  | "middleName"
+  | "housingCondition"
+  | "casualty"
+  | "healthCondition"
+>;
 
 export type DonorFormData = {
   id: string;
@@ -139,19 +155,6 @@ export interface UserProfile {
   position: string;
   status: string;
   password: string;
-}
-
-export interface UserData {
-  calamity: string;
-  calamityName: string;
-  dateCreated: { seconds: number; nanoseconds: number };
-  familyMembers: { name: string; relation: string }[];
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  housingCondition: string;
-  casualty: string;
-  healthCondition: string;
 }
 
 export interface DecodedData {

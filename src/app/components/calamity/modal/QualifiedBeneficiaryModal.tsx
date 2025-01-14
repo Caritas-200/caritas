@@ -45,17 +45,17 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
       seconds: 0,
       nanoseconds: 0,
     },
-    familyMembers:
-      Array.isArray(selectedBeneficiary?.familyMembers) &&
-      selectedBeneficiary?.familyMembers.every(
-        (member) =>
-          typeof member === "object" &&
-          member !== null &&
-          "name" in member &&
-          "relation" in member
-      )
-        ? selectedBeneficiary.familyMembers
-        : [{ name: "", relation: "" }],
+    familyMembers: selectedBeneficiary?.familyMembers || [
+      {
+        name: "",
+        relation: "",
+        age: "",
+        gender: "",
+        civilStatus: "",
+        education: "",
+        skills: "",
+      },
+    ],
     firstName: selectedBeneficiary?.firstName || "",
     lastName: selectedBeneficiary?.lastName || "",
     middleName: selectedBeneficiary?.middleName || "",
@@ -113,6 +113,8 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
       id: beneficiary.id,
       brgyName: beneficiary.address.barangay.barangay_name,
     });
+
+    setUserData(beneficiary);
   };
 
   const handleViewQR = (beneficiary: BeneficiaryForm) => {
@@ -221,7 +223,8 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                     </td>
                     <td className="border border-gray-500 py-2 px-4">
                       {beneficiary.dateVerified
-                        ? convertFirebaseTimestamp(beneficiary.dateVerified)
+                        ? beneficiary.dateVerified &&
+                          convertFirebaseTimestamp(beneficiary.dateVerified)
                         : "N/A"}
                     </td>
                     <td
