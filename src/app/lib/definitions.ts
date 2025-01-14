@@ -61,7 +61,7 @@ export type BeneficiaryForm = {
   gender: string;
   occupation: string;
   civilStatus: string;
-  isClaimed: boolean;
+  isClaimed?: boolean;
   monthlyNetIncome: string;
   ethnicity: string;
   dateCreated: FirebaseTimestamp;

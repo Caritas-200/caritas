@@ -33,7 +33,6 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     initialFormData || {
       id: "",
       dateCreated: Timestamp.now(),
-      status: "",
       firstName: "",
       middleName: "",
       lastName: "",
