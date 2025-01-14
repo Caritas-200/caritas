@@ -13,6 +13,7 @@ import { generateQrImage } from "@/app/util/generateQRImage";
 import QRCode from "react-qr-code";
 import BeneficiaryIdQr from "./BeneficiaryIdQr";
 import ProgressBar from "../../ProgressBar";
+import { hideLoading } from "../../loading";
 
 interface FamilyModalProps {
   onClose: () => void;
@@ -137,7 +138,29 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
 
       if (isEditing) {
         // Update logic
-        await updateBeneficiary(beneficiaryData.id, beneficiaryData, brgyName);
+        const result = await updateBeneficiary(
+          beneficiaryData.id,
+          beneficiaryData,
+          brgyName
+        );
+
+        if (!result)
+          Swal.fire({
+            icon: "success",
+            title: "Success!",
+            text: "Beneficiary updated successfully.",
+          }).then(() => {
+            hideLoading();
+          });
+        else {
+          Swal.fire({
+            icon: "error",
+            title: "Error!",
+            text: "Beneficiary update failed.",
+          }).then(() => {
+            hideLoading();
+          });
+        }
       } else {
         // Add new beneficiary
         const newBeneficiaryId = await addBeneficiary(
