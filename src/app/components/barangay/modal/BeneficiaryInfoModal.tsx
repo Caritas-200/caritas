@@ -77,7 +77,7 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
     "Ownership/Rental Type": beneficiary.ownershipRentalType.join(", "),
     Code: beneficiary.code.join(", "),
     "Date Created": convertFirebaseTimestamp(beneficiary.dateCreated),
-    Status: beneficiary.status,
+    Status: beneficiary.isClaimed,
     Calamity: beneficiary.calamity,
     "Calamity Name": beneficiary.calamityName,
   };
@@ -139,7 +139,7 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
           </h3>
         </div>
 
-        {beneficiary.donationType && beneficiary.claimantImage && (
+        {beneficiary.isClaimed && beneficiary.claimantImage && (
           <div className="relative grid grid-cols-4 mb-6 p-4 border-4 rounded-lg border-green-500  gap-x-12 gap-6 shadow-md">
             <h1 className="absolute top-[-0] right-4 text-green-600 rounded-lg bg-white px-2 -mt-3.5 font-bold">
               CLAIMED

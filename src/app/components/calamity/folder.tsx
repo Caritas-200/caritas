@@ -7,12 +7,13 @@ import { useRouter } from "next/navigation";
 
 interface FolderProps {
   name: string;
+  calamityType: string;
   onDelete: () => void;
 }
 
 const MySwal = withReactContent(Swal);
 
-const Folder: React.FC<FolderProps> = ({ name, onDelete }) => {
+const Folder: React.FC<FolderProps> = ({ name, onDelete, calamityType }) => {
   const router = useRouter();
 
   const handleDelete = () => {
@@ -32,15 +33,18 @@ const Folder: React.FC<FolderProps> = ({ name, onDelete }) => {
     });
   };
 
-  const handleNavigate = () => {
-    // Navigate to the recipient page for the clicked barangay
-    router.push(`/barangay/${name}/recipients`);
+  const handleNavigate = (name: string, calamityType: string) => {
+    const data = { name, calamityType };
+    sessionStorage.setItem("calamityData", JSON.stringify(data));
+
+    // Navigate to the next page
+    router.push(`/calamity/${name}/beneficiary`);
   };
 
   return (
     <div
       className="relative bg-gray-500  hover:bg-blue-500 p-4 rounded-lg shadow-md cursor-pointer "
-      onClick={handleNavigate}
+      onClick={() => handleNavigate(name, calamityType)}
     >
       <h3 className="text-lg font-semibold">{name.toUpperCase()}</h3>
       <button

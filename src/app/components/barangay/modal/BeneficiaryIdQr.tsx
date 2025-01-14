@@ -1,51 +1,43 @@
-import React from "react";
+import react, { useState } from "react";
 import QRCode from "react-qr-code";
-import Swal from "sweetalert2"; // Assuming you're using Swal2 for notifications
+import Image from "next/image";
+import { BeneficiaryForm } from "@/app/lib/definitions";
 
 interface QRModalProps {
   beneficiaryData: string;
   qrData: string;
   onClose: () => void;
+  from: string;
 }
 
 const BeneficiaryIdQr: React.FC<QRModalProps> = ({
   beneficiaryData,
   qrData,
   onClose,
+  from,
 }) => {
   const newObject = JSON.parse(beneficiaryData);
+  const [beneficiary, setBeneficiary] = useState<BeneficiaryForm>(newObject);
 
   // Safely extract address fields and construct the full address
   const fullAddress = [
-    newObject.address?.barangay?.barangay_name,
-    newObject.address?.cityMunicipality?.municipality_name,
-    newObject.address?.province?.province_name,
+    beneficiary.address?.barangay?.barangay_name,
+    beneficiary.address?.cityMunicipality?.municipality_name,
+    beneficiary.address?.province?.province_name,
   ]
     .filter(Boolean)
     .join(", ");
 
   // Function to handle closing the modal
   const handleClose = () => {
-    Swal.fire({
-      title: "Reminder",
-      text: "Don't forget to print the Beneficiary ID. This will be needed for smooth claiming of benefits",
-      icon: "info",
-      confirmButtonText: "Close",
-      cancelButtonText: "Back",
-      showCancelButton: true,
-      cancelButtonColor: "#d33",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        onClose();
-      }
-    });
+    onClose();
   };
 
   // Data to display on the ID
   const dataItems = [
-    { label: "House #", value: newObject.houseNumber },
-    { label: "Age", value: newObject.age },
-    { label: "Gender", value: newObject.gender },
+    { label: "House #", value: beneficiary.houseNumber },
+    { label: "Age", value: beneficiary.age },
+    { label: "Gender", value: beneficiary.gender },
   ];
 
   // Print function
@@ -127,8 +119,8 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
   };
 
   return (
-    <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="modal-content bg-white p-10 rounded-lg w-full h-[90%] max-w-screen-lg relative">
+    <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center ">
+      <div className="modal-content bg-white p-10 rounded-lg w-full h-[60%] max-w-5xl relative">
         <button
           onClick={handleClose}
           className="modal-close-button absolute top-2 right-2 text-gray-700"
@@ -144,20 +136,22 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
         </h2>
 
         {/* Print Button */}
-        <button
-          onClick={handlePrint}
-          className="print-button mt-4 mb-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Print ID
-        </button>
+        <div className="flex w-full justify-end">
+          <button
+            onClick={handlePrint}
+            className="print-button mt-4 mb-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Print ID
+          </button>
+        </div>
 
         {/* Print Area */}
         <div
           id="printArea"
-          className="print-area grid grid-cols-2 gap-8 text-gray-700"
+          className="print-area flex flex-row gap-8 text-gray-700 w-full justify-between items-center "
         >
           {/* Front of the ID */}
-          <div className="id-front border-2 p-4 id-front-container">
+          <div className="id-front border-2 p-4 id-front-container w-2/3 h-[300px]">
             <div className="id-front-content grid grid-cols-2">
               {/* 1x1 image placeholder */}
               <div className="id-front-photo flex w-full justify-center items-center">
@@ -168,32 +162,44 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
 
               {/* QR Code */}
               <div className="id-front-qr flex justify-end">
-                <QRCode value={qrData} size={150} />
+                {from === "calamity" ? (
+                  <Image
+                    src={beneficiary.qrCode}
+                    alt="gg"
+                    width={150}
+                    height={150}
+                  />
+                ) : (
+                  <QRCode value={qrData} size={150} />
+                )}
               </div>
             </div>
 
-            <p className="id-front-name font-bold text-xl pt-6">
-              {newObject.firstName +
+            <p className="id-front-name font-bold text-xl pt-6 uppercase">
+              {beneficiary.firstName +
                 " " +
-                newObject.middleName +
+                beneficiary.middleName +
                 " " +
-                newObject.lastName}
+                beneficiary.lastName}
             </p>
 
             <div className="id-front-details mt-4 grid grid-cols-2">
-              {dataItems.map((item) => (
-                <p key={item.label} className="detail-item">
-                  <span className="detail-label font-semibold">
-                    {item.label}:{" "}
-                  </span>
-                  {item.value}
-                </p>
-              ))}
+              {dataItems.map(
+                (item) =>
+                  item.value && (
+                    <p key={item.label} className="detail-item">
+                      <span className="detail-label font-semibold">
+                        {item.label}:{" "}
+                      </span>
+                      {item.value}
+                    </p>
+                  )
+              )}
             </div>
           </div>
 
           {/* Back of the ID */}
-          <div className="id-back border-2 p-4 id-back-container">
+          <div className="id-back border-2 p-4 id-back-container w-2/3 h-[300px]">
             <div className="id-back-address mt-2">
               <p className="address-label font-bold">Address/Tirahan:</p>
               <p className="address-value">Brgy. {fullAddress || "N/A"}</p>
@@ -204,11 +210,13 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
                 Allowed Family Members to Claim:
               </p>
               <ul className="family-list list-disc list-inside">
-                {newObject.familyMembers?.map((member: any, index: number) => (
-                  <p key={index} className="family-member">
-                    <strong>{index + 1 + "."}</strong> {member.name}
-                  </p>
-                ))}
+                {beneficiary.familyMembers?.map(
+                  (member: any, index: number) => (
+                    <p key={index} className="family-member">
+                      <strong>{index + 1 + "."}</strong> {member.name}
+                    </p>
+                  )
+                )}
               </ul>
             </div>
           </div>

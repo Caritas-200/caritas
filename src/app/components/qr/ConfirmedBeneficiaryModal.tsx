@@ -67,7 +67,7 @@ const UserFormModal: React.FC<ModalProps> = ({
         decodedData.id,
         benefitForm,
         decodedData.brgyName,
-        "claimed",
+        true,
         imageFile,
         formData.healthCondition,
         formData.housingCondition,
@@ -95,7 +95,7 @@ const UserFormModal: React.FC<ModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 text-gray-700">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl max-h-[90%] overflow-y-auto">
         <div className="flex justify-between items-center mb-4 border-b-2 pb-2 font-semibold">
           <h1 className="uppercase text-xl">

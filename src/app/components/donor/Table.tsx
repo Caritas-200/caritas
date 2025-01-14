@@ -140,20 +140,18 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
         <table className="min-w-full bg-gray-800 border border-gray-500 rounded-lg">
           <thead>
             <tr>
-              <th className="border-b border-gray-500 py-2 px-4 text-left">
-                #
-              </th>
-              <th className="border-b border-gray-500 py-2 px-4 text-left">
+              <th className="border border-gray-500 py-2 px-4 text-left">#</th>
+              <th className="border border-gray-500 py-2 px-4 text-left">
                 Donor Name
               </th>
 
-              <th className="border-b border-gray-500 py-2 px-4 text-left">
+              <th className="border border-gray-500 py-2 px-4 text-left">
                 Email
               </th>
-              <th className="border-b border-gray-500 py-2 px-4 text-left">
+              <th className="border border-gray-500 py-2 px-4 text-left">
                 Date Created
               </th>
-              <th className="border-b border-gray-500 py-2 px-4 text-left">
+              <th className="border border-gray-500 py-2 px-4 text-left">
                 Action
               </th>
             </tr>
@@ -162,20 +160,20 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
             {paginatedDonors.length > 0 ? (
               paginatedDonors.map((donor, index) => (
                 <tr key={index} className="hover:bg-gray-700 transition-colors">
-                  <td className="border-b border-gray-500 py-2 px-4">
+                  <td className="border border-gray-500 py-2 px-4">
                     {index + 1 + (currentPage - 1) * itemsPerPage}
                   </td>
-                  <td className="border-b border-gray-500 py-2 px-4">
+                  <td className="border border-gray-500 py-2 px-4">
                     {toSentenceCase(donor.donorName)}
                   </td>
 
-                  <td className="border-b border-gray-500 py-2 px-4">
+                  <td className="border border-gray-500 py-2 px-4">
                     {donor.email}
                   </td>
-                  <td className="border-b border-gray-500 py-2 px-4">
+                  <td className="border border-gray-500 py-2 px-4">
                     {convertFirebaseTimestamp(donor?.dateCreated)}
                   </td>
-                  <td className="flex gap-2 border-b border-gray-500 py-2 px-4">
+                  <td className="flex gap-2 border border-gray-500 py-2 px-4">
                     <button
                       onClick={() => handleView(donor)}
                       className="bg-blue-500 text-white px-2 py-1 rounded "
