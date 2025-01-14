@@ -107,9 +107,12 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
             : (b.calamityName || "").localeCompare(a.calamityName || "")
         );
       } else if (sortOrder === "date") {
-        sorted.sort(
-          (a, b) => b.dateCreated.toMillis() - a.dateCreated.toMillis()
-        );
+        sorted.sort((a, b) => {
+          if (a.dateCreated && b.dateCreated) {
+            return b.dateCreated.seconds - a.dateCreated.seconds;
+          }
+          return 0;
+        });
       }
 
       setFilteredData(sorted);
