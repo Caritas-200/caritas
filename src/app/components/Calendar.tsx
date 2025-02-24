@@ -156,13 +156,13 @@ const Calendar: React.FC = () => {
             key={day.toString()}
             className={`p-2 border md:min-h-20 lg:min-h-32 hover:bg-blue-500 cursor-pointer ${
               !isSameMonth(day, monthStart) ? "text-gray-400" : ""
-            } ${isSameDay(day, selectedDate) ? "bg-blue-500" : ""}`}
+            } ${isSameDay(day, selectedDate) ? "" : ""}`}
             onClick={() => onDateClick(cloneDay)}
           >
             <div className="relative">
               <span>{formattedDate}</span>
               {isSameDay(day, today) && (
-                <div className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">
+                <div className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-2 py-1">
                   Today
                 </div>
               )}
