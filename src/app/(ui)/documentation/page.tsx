@@ -92,26 +92,26 @@ const Documentation: React.FC = () => {
               Documentation
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4  border-b border-gray-500 mb-4">
-              <div className="mb-4 flex gap-4 w-full">
-                <button
-                  className="bg-blue-500 text-white py-2 px-4 rounded-lg whitespace-nowrap"
-                  onClick={handleAddFolder}
-                >
-                  <span className="font-extrabold text-xl">＋</span> Folder
-                </button>
+              <div className="mb-4 flex w-full justify-between  text-gray-700 bg-gray-100 border overflow-hidden  rounded-lg shadow-inner">
                 <input
                   type="text"
                   placeholder="Folder name..."
-                  className="w-full text-gray-700 bg-gray-100 p-2 border rounded-lg shadow-inner"
+                  className=" bg-transparent px-4 w-full outline-none"
                   value={newFolderName}
                   onChange={(e) => setNewFolderName(e.target.value)}
                 />
+                <button
+                  className="bg-blue-500 hover:bg-blue-600 text-white -m-[1px] py-2 px-4  whitespace-nowrap"
+                  onClick={handleAddFolder}
+                >
+                  <span className="font-extrabold text-2xl">＋</span>
+                </button>
               </div>
               <div className="flex mb-4 w-full">
                 <input
                   type="text"
                   placeholder="Search for folder..."
-                  className="w-full text-gray-700 bg-gray-100 p-2 border rounded-lg shadow-inner"
+                  className="w-full text-gray-700 bg-gray-100 p-2 border rounded-lg shadow-inner outline-none"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />

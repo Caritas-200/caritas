@@ -110,7 +110,7 @@ const Calamity: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Search for Calamity..."
-                    className="w-1/2 text-gray-700 bg-gray-100 p-2 border rounded-lg shadow-inner"
+                    className="w-1/2 text-gray-700 bg-gray-100 p-2 border rounded-lg shadow-inner outline-none"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -139,10 +139,12 @@ const Calamity: React.FC = () => {
                       </select>
                     </div>
                     <div className="mb-4">
-                      <label className="block mb-2">Calamity Name</label>
+                      <label className="block mb-2 outline-none">
+                        Calamity Name
+                      </label>
                       <input
                         type="text"
-                        className="w-full p-2 bg-gray-100 border rounded-lg text-gray-500"
+                        className="w-full p-2 bg-gray-100 border rounded-lg text-gray-500 outline-none"
                         value={newFolderName}
                         onChange={(e) => setNewFolderName(e.target.value)}
                         placeholder="Calamity name..."

@@ -143,8 +143,8 @@ const Profile: React.FC = () => {
           type={type}
           className={`${
             field === "email"
-              ? "bg-gray-800 text-gray-500 py-2 px-4 rounded-lg w-full"
-              : "bg-gray-600 text-white py-2 px-4 rounded-lg w-full"
+              ? "bg-gray-800 text-gray-500 py-2 px-4 rounded-lg w-full outline-none"
+              : "bg-gray-600 text-white py-2 px-4 rounded-lg w-full outline-none"
           } `}
           value={profile[field]}
           onChange={(e) => handleInputChange(field, e.target.value)}
@@ -168,7 +168,7 @@ const Profile: React.FC = () => {
                 <h1 className="text-2xl font-bold">User Profile</h1>
               </div>
 
-              <div className="flex flex-wrap">
+              <div className="flex flex-wrap ">
                 {renderInputField("Email", "email", "email")}
                 {renderInputField("First Name", "firstName")}
                 {renderInputField("Middle Name", "middleName")}
@@ -201,7 +201,7 @@ const Profile: React.FC = () => {
                 <label className="text-white">Change Password:</label>
                 <input
                   type="password"
-                  className="bg-gray-600 text-white py-2 px-4 rounded-lg w-full"
+                  className="bg-gray-600 text-white py-2 px-4 rounded-lg w-full outline-none"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />

@@ -121,7 +121,7 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
           value={searchQuery}
           onChange={handleSearch}
           placeholder="Search Donor here..."
-          className="p-2 border w-1/2 rounded-lg text-gray-700"
+          className="p-2 border w-1/2 rounded-lg text-gray-700 outline-none"
         />
 
         {/* Items per page */}

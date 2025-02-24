@@ -224,7 +224,7 @@ const Table: React.FC = () => {
           ))}
         </select>
         <div className="flex flex-row w-full gap-4 justify-end">
-          <div className="w-1/3">
+          <div className="w-1/3 ">
             <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           </div>
           <select
