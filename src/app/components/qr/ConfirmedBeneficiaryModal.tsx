@@ -28,7 +28,7 @@ const UserFormModal: React.FC<ModalProps> = ({
   const [formData, setFormData] = useState<UserData>(data);
   const [benefitForm, setBenefitForm] = useState({
     donationType: [] as string[],
-    quantity: "",
+    description: "",
     cost: "",
   });
   const [customCost, setCustomCost] = useState("");
@@ -43,19 +43,35 @@ const UserFormModal: React.FC<ModalProps> = ({
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (
-      !benefitForm.donationType.length ||
-      !benefitForm.cost ||
-      !capturedImage
-    ) {
+  const validateBenefitForm = () => {
+    if (!benefitForm.donationType.length) {
       Swal.fire({
         title: "Missing Required Fields",
-        text: "Please fill out all required fields (Donation Type, Monetary Value) and ensure an image is captured before submitting.",
+        text: "Please select at least one donation type.",
         icon: "warning",
         confirmButtonText: "OK",
       });
+      return false;
+    }
+    return true;
+  };
+
+  const validateCapturedImage = () => {
+    if (!capturedImage) {
+      Swal.fire({
+        title: "Missing Required Fields",
+        text: "Please capture an image before submitting.",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateBenefitForm() || !validateCapturedImage()) {
       return;
     }
 
