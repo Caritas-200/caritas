@@ -242,10 +242,7 @@ export const donationType = [
   "Medical Supplies",
   "Hygiene Kits",
   "Shelter Materials",
-  "Volunteering Services",
   "Educational Supplies",
-  "Pet Supplies",
-  "Transportation Assistance",
 ];
 
 export const formFields = [
