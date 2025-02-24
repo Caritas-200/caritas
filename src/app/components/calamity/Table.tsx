@@ -8,6 +8,7 @@ import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
 import { updateQualificationStatus } from "@/app/lib/api/calamity/data";
 import Swal from "sweetalert2";
+import BeneficiaryInfoModal from "./modal/BeneficiaryInfoModal";
 
 const Table: React.FC = () => {
   const [barangays, setBarangays] = useState<{ id: string; name: string }[]>(
@@ -24,6 +25,9 @@ const Table: React.FC = () => {
   const [itemsPerPage, setItemsPerPage] = useState<number>(5);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedBeneficiaryId, setSelectedBeneficiaryId] = useState<
+    string | null
+  >(null);
 
   const [calamityData, setCalamityData] = useState<{
     name: string;
@@ -201,6 +205,10 @@ const Table: React.FC = () => {
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
+  const handleCloseModal = () => {
+    setSelectedBeneficiaryId(null);
+  };
+
   return (
     <div className="bg-gray-800 p-4 rounded-lg shadow-md text-gray-100">
       <div className="flex flex-col mb-4 space-y-4 md:flex-row md:items-center md:space-y-0 md:space-x-4">
@@ -262,6 +270,9 @@ const Table: React.FC = () => {
                 <th className="border border-gray-500 py-2 px-4 text-left">
                   Action/Status
                 </th>
+                <th className="border border-gray-500 py-2 px-4 text-left">
+                  Info
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -306,7 +317,6 @@ const Table: React.FC = () => {
                       ? "Unqualified"
                       : "N/A"}
                   </td>
-
                   <td className="border border-gray-500 py-2 px-4 whitespace-nowrap">
                     {beneficiary.isClaimed ? (
                       <h1 className="text-green-500 font-bold uppercase">
@@ -314,7 +324,6 @@ const Table: React.FC = () => {
                       </h1>
                     ) : (
                       <>
-                        {" "}
                         <button
                           className={`mr-2 px-2 py-1 rounded ${
                             isQualified[beneficiary.id] === true
@@ -356,6 +365,14 @@ const Table: React.FC = () => {
                       </>
                     )}
                   </td>
+                  <td className="border border-gray-500 py-2 px-4 whitespace-nowrap">
+                    <button
+                      className="px-2 py-1 rounded bg-blue-500 text-white"
+                      onClick={() => setSelectedBeneficiaryId(beneficiary.id)}
+                    >
+                      View
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -366,6 +383,14 @@ const Table: React.FC = () => {
             setCurrentPage={setCurrentPage}
           />
         </div>
+      )}
+
+      {selectedBeneficiaryId && (
+        <BeneficiaryInfoModal
+          brgyName="test"
+          beneficiaryId={selectedBeneficiaryId}
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );

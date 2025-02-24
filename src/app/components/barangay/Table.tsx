@@ -244,7 +244,7 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
                     First Name
                   </th>
                   <th className="border border-gray-500 py-2 px-4 text-left">
-                    Calamity
+                    Mobile Number
                   </th>
                   <th className="border border-gray-500 py-2 px-4 text-left">
                     Date Created
@@ -270,13 +270,7 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
                       {toSentenceCase(beneficiary.firstName)}
                     </td>
                     <td className="border border-gray-500 py-2 px-4">
-                      {beneficiary.calamity
-                        ? toSentenceCase(
-                            beneficiary.calamity +
-                              " " +
-                              beneficiary.calamityName
-                          )
-                        : "N/A"}
+                      {toSentenceCase(beneficiary.mobileNumber)}
                     </td>
 
                     <td className="border border-gray-500 py-2 px-4">
@@ -288,7 +282,7 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
                         onClick={() => handleViewInfo(beneficiary.id)}
                         className="bg-blue-500 text-white px-2 py-1 rounded "
                       >
-                        View Info
+                        View
                       </button>
 
                       <button

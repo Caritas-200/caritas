@@ -149,7 +149,7 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
                 Email
               </th>
               <th className="border border-gray-500 py-2 px-4 text-left">
-                Date Created
+                Date Added
               </th>
               <th className="border border-gray-500 py-2 px-4 text-left">
                 Action
@@ -178,7 +178,7 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
                       onClick={() => handleView(donor)}
                       className="bg-blue-500 text-white px-2 py-1 rounded "
                     >
-                      View Info
+                      View
                     </button>
                     <button
                       onClick={() => handleEdit(donor)}

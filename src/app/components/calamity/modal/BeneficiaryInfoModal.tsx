@@ -139,6 +139,42 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
           </h3>
         </div>
 
+        {beneficiary.isClaimed && beneficiary.claimantImage && (
+          <div className="relative grid grid-cols-4 mb-6 p-4 border-4 rounded-lg border-green-500  gap-x-12 gap-6 shadow-md">
+            <h1 className="absolute top-[-0] right-4 text-green-600 rounded-lg bg-white px-2 -mt-3.5 font-bold">
+              CLAIMED
+            </h1>
+
+            <div>
+              <div className="text-gray-700 font-semibold mb-2 w-full whitespace-nowrap">
+                Claimant Image:
+              </div>
+              <Image
+                className="rounded-lg border-4 w-full"
+                src={beneficiary.claimantImage}
+                width={200}
+                height={200}
+                alt="image"
+              />
+            </div>
+            {claimedDetails &&
+              claimedDetails.filter(Boolean).map((field, index) => (
+                <div className="flex flex-col gap-2 w-full" key={index}>
+                  <div className="text-gray-700 font-semibold mb-1">
+                    {field.label}
+                  </div>
+                  <div className="text-gray-900 p-2 bg-gray-100 shadow-inner rounded-md">
+                    {Array.isArray(field.value)
+                      ? field.value.map((item, idx) => (
+                          <div key={idx}>{`${idx + 1}. ${item}`}</div>
+                        ))
+                      : field.value}
+                  </div>
+                </div>
+              ))}
+          </div>
+        )}
+
         {/* Map over the remaining details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-x-12 gap-2 ">
           {Object.entries(fields).map(
@@ -146,7 +182,7 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
               value && (
                 <div key={key} className="grid grid-cols-2 mb-1">
                   <div className="text-gray-700 font-semibold">{key}:</div>
-                  <div className="text-gray-900 p-2 bg-gray-50 rounded-md">
+                  <div className="text-gray-900 p-2 bg-gray-100 shadow-inner rounded-md">
                     {typeof value === "string" ? toSentenceCase(value) : value}
                   </div>
                 </div>
