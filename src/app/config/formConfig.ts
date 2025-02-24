@@ -44,6 +44,9 @@ export const radioGroups = [
     name: "beneficiary4Ps" as keyof BeneficiaryForm,
     options: ["Yes", "No"],
   },
+];
+
+export const codeChecklist = [
   {
     label: "Code",
     name: "code" as keyof BeneficiaryForm,

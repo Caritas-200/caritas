@@ -8,6 +8,11 @@ import BeneficiaryDetails from "./subComponent/BeneficiaryDetails";
 import { convertBase64ToFile } from "@/app/util/convertBase64ToFile";
 import Dropdown from "./button/dropdown";
 import { radioGroups } from "@/app/config/qrFormConfig";
+import {
+  validateBenefitForm,
+  validateCapturedImage,
+  validateConditions,
+} from "@/app/util/validationQRForm";
 
 interface DecodedData {
   id: string;
@@ -43,35 +48,13 @@ const UserFormModal: React.FC<ModalProps> = ({
     }));
   };
 
-  const validateBenefitForm = () => {
-    if (!benefitForm.donationType.length) {
-      Swal.fire({
-        title: "Missing Required Fields",
-        text: "Please select at least one donation type.",
-        icon: "warning",
-        confirmButtonText: "OK",
-      });
-      return false;
-    }
-    return true;
-  };
-
-  const validateCapturedImage = () => {
-    if (!capturedImage) {
-      Swal.fire({
-        title: "Missing Required Fields",
-        text: "Please capture an image before submitting.",
-        icon: "warning",
-        confirmButtonText: "OK",
-      });
-      return false;
-    }
-    return true;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateBenefitForm() || !validateCapturedImage()) {
+    if (
+      !validateBenefitForm(benefitForm) ||
+      !validateCapturedImage(capturedImage) ||
+      !validateConditions(formData)
+    ) {
       return;
     }
 

@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { BeneficiaryForm } from "@/app/lib/definitions";
-import { radioGroups } from "@/app/config/formConfig";
-import FamilyListModal from "./FamilyListForm";
+import { codeChecklist } from "@/app/config/formConfig";
 import ProgressBar from "../../ProgressBar";
+import FamilyListModal from "./FamilyListForm";
+import { radioGroups } from "@/app/config/formConfig";
 
 interface CheckboxGroupModalProps {
   formData: BeneficiaryForm;
   onChange: (formData: BeneficiaryForm) => void;
-  onSubmit: (data: BeneficiaryForm) => void;
   onClose: () => void;
   onBack: () => void;
   brgyName: string;
-  isEditing?: boolean;
+  isEditing: boolean;
 }
 
 const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
@@ -25,12 +25,20 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showFamilyModal, setShowFamilyModal] = useState(false); // State to show FamilyModal
 
-  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, checked } = e.target;
     const key = name as keyof BeneficiaryForm;
+    let newValue = [...(formData[key] as string[])];
+
+    if (checked) {
+      newValue.push(value);
+    } else {
+      newValue = newValue.filter((item) => item !== value);
+    }
+
     onChange({
       ...formData,
-      [key]: [value],
+      [key]: newValue,
     });
     setErrors({ ...errors, [name]: "" });
   };
@@ -98,7 +106,7 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
                             checked={(
                               formData[group.name] as string[]
                             ).includes(option)}
-                            onChange={handleRadioChange}
+                            onChange={handleCheckboxChange}
                             className={`form-radio ${
                               errors[group.name] ? "border-red-500" : ""
                             }`}
@@ -114,6 +122,37 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
                     )}
                   </div>
                 ))}
+
+                {/* Checkbox for code field */}
+                <div className="col-span-2 md:col-span-1 h-fit">
+                  <label className="block mb-2 font-semibold text-gray-800">
+                    {codeChecklist[0].label}{" "}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {codeChecklist[0].options.map((option) => (
+                      <label
+                        key={option}
+                        className="flex items-center gap-2 text-gray-800"
+                      >
+                        <input
+                          name={codeChecklist[0].name as string}
+                          type="checkbox"
+                          value={option}
+                          checked={formData.code.includes(option)}
+                          onChange={handleCheckboxChange}
+                          className={`form-checkbox ${
+                            errors.code ? "border-red-500" : ""
+                          }`}
+                        />
+                        {option}
+                      </label>
+                    ))}
+                  </div>
+                  {errors.code && (
+                    <p className="text-red-500 text-sm mt-1">{errors.code}</p>
+                  )}
+                </div>
               </div>
               <div className="mt-8 flex justify-center gap-4">
                 <button

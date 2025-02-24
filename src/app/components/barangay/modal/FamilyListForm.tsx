@@ -303,8 +303,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
         </form>
 
         {/* Hidden QR Code */}
-
-        <div className="flex-none">
+        <div className="flex-none hidden">
           {qrData && (
             <div ref={qrCodeRef}>
               <QRCode value={qrData} size={150} />
