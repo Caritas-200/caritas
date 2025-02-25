@@ -258,7 +258,7 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
                 {currentItems.map((beneficiary, index) => (
                   <tr
                     key={beneficiary.id}
-                    className="hover:bg-blue-500 hover:text-white-primary transition-colors"
+                    className="hover:bg-button-hover-bg-color hover:text-white-primary transition-colors"
                   >
                     <td className="border border-border-color py-2 px-4">
                       {index + 1}

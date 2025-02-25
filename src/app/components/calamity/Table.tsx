@@ -210,11 +210,11 @@ const Table: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-md text-gray-100">
+    <div className="bg-white-primary p-4 rounded-lg shadow-md text-text-color">
       <div className="flex flex-col mb-4 space-y-4 md:flex-row md:items-center md:space-y-0 md:space-x-4">
         <select
           onChange={(e) => setSelectedBarangay(e.target.value)}
-          className="p-2 border rounded-lg text-gray-700"
+          className="p-2 border rounded-lg "
         >
           <option value="">Select Barangay</option>
           {barangays.map((barangay) => (
@@ -246,31 +246,31 @@ const Table: React.FC = () => {
         <p>Error: {error}</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-gray-800 border border-gray-500 rounded-lg">
+          <table className="min-w-full  border border-border-color rounded-lg">
             <thead>
               <tr>
-                <th className="border border-gray-500 py-2 px-4 text-left">
+                <th className="border border-border-color py-2 px-4 text-left">
                   #
                 </th>
-                <th className="border border-gray-500 py-2 px-4 text-left">
+                <th className="border border-border-color py-2 px-4 text-left">
                   Last Name
                 </th>
-                <th className="border border-gray-500 py-2 px-4 text-left">
+                <th className="border border-border-color py-2 px-4 text-left">
                   First Name
                 </th>
-                <th className="border border-gray-500 py-2 px-4 text-left">
+                <th className="border border-border-color py-2 px-4 text-left">
                   Calamity
                 </th>
-                <th className="border border-gray-500 py-2 px-4 text-left">
+                <th className="border border-border-color py-2 px-4 text-left">
                   Date Verified
                 </th>
-                <th className="border border-gray-500 py-2 px-4 text-left">
+                <th className="border border-border-color py-2 px-4 text-left">
                   Qualification
                 </th>
-                <th className="border border-gray-500 py-2 px-4 text-left">
+                <th className="border border-border-color py-2 px-4 text-left">
                   Action/Status
                 </th>
-                <th className="border border-gray-500 py-2 px-4 text-left">
+                <th className="border border-border-color py-2 px-4 text-left">
                   Info
                 </th>
               </tr>
@@ -279,18 +279,18 @@ const Table: React.FC = () => {
               {currentItems.map((beneficiary, index) => (
                 <tr
                   key={beneficiary.id}
-                  className="hover:bg-gray-700 transition-colors"
+                  className="hover:bg-button-hover-bg-color hover:text-bg-color transition-colors"
                 >
-                  <td className="border border-gray-500 py-2 px-4">
+                  <td className="border border-border-color py-2 px-4">
                     {index + 1}
                   </td>
-                  <td className="border border-gray-500 py-2 px-4">
+                  <td className="border border-border-color py-2 px-4">
                     {toSentenceCase(beneficiary.lastName)}
                   </td>
-                  <td className="border border-gray-500 py-2 px-4">
+                  <td className="border border-border-color py-2 px-4">
                     {toSentenceCase(beneficiary.firstName)}
                   </td>
-                  <td className="border border-gray-500 py-2 px-4">
+                  <td className="border border-border-color py-2 px-4">
                     {beneficiary.calamity ? (
                       toSentenceCase(
                         beneficiary.calamity + " " + beneficiary.calamityName
@@ -299,13 +299,13 @@ const Table: React.FC = () => {
                       <span className="uppercase">N/A</span>
                     )}
                   </td>
-                  <td className="border border-gray-500 py-2 px-4">
+                  <td className="border border-border-color py-2 px-4">
                     {beneficiary.dateVerified
                       ? convertFirebaseTimestamp(beneficiary.dateVerified)
                       : "N/A"}
                   </td>
                   <td
-                    className={`border border-gray-500 py-2 px-4 ${
+                    className={`border border-border-color py-2 px-4 ${
                       isQualified[beneficiary.id] === true
                         ? "text-green-500 font-bold"
                         : ""
@@ -317,15 +317,15 @@ const Table: React.FC = () => {
                       ? "Unqualified"
                       : "N/A"}
                   </td>
-                  <td className="border border-gray-500 py-2 px-4 whitespace-nowrap">
+                  <td className="border border-border-color py-2 px-4 whitespace-nowrap">
                     {beneficiary.isClaimed ? (
-                      <h1 className="text-green-500 font-bold uppercase">
+                      <h1 className="text-green-500 font-bold uppercase ">
                         Claimed
                       </h1>
                     ) : (
                       <>
                         <button
-                          className={`mr-2 px-2 py-1 rounded ${
+                          className={`mr-2 px-2 py-1 rounded text-white ${
                             isQualified[beneficiary.id] === true
                               ? "bg-gray-500"
                               : "bg-green-500"
@@ -344,7 +344,7 @@ const Table: React.FC = () => {
                           Qualify
                         </button>
                         <button
-                          className={`px-2 py-1 rounded ${
+                          className={`px-2 py-1 rounded text-white ${
                             isQualified[beneficiary.id] === false
                               ? "bg-gray-500"
                               : "bg-red-500"
@@ -365,7 +365,7 @@ const Table: React.FC = () => {
                       </>
                     )}
                   </td>
-                  <td className="border border-gray-500 py-2 px-4 whitespace-nowrap">
+                  <td className="border border-border-color py-2 px-4 whitespace-nowrap">
                     <button
                       className="px-2 py-1 rounded bg-blue-500 text-white"
                       onClick={() => setSelectedBeneficiaryId(beneficiary.id)}

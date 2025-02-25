@@ -138,8 +138,8 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
-      <div className="bg-gray-800 p-4 rounded-lg shadow-md text-gray-100 w-[90%] max-w-7xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+      <div className="bg-white-primary p-4 rounded-lg shadow-md text-text-color w-[90%] max-w-7xl">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Qualified Beneficiaries</h2>
           <button
@@ -175,25 +175,25 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
           <p>Error: {error}</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full bg-gray-800 border border-gray-500 rounded-lg">
+            <table className="min-w-full  border border-border-color rounded-lg">
               <thead>
                 <tr>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     #
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Name
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Calamity
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Date Verified
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Status
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Action/Status
                   </th>
                 </tr>
@@ -202,17 +202,17 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                 {currentItems.map((beneficiary, index) => (
                   <tr
                     key={beneficiary.id}
-                    className="hover:bg-gray-700 transition-colors"
+                    className="hover:bg-button-hover-bg-color hover:text-white-primary transition-colors"
                   >
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {index + 1}
                     </td>
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {toSentenceCase(
                         beneficiary.lastName + " " + beneficiary.firstName
                       )}
                     </td>
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {beneficiary.calamity
                         ? toSentenceCase(
                             beneficiary.calamity +
@@ -221,22 +221,22 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                           )
                         : "N/A"}
                     </td>
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {beneficiary.dateVerified
                         ? beneficiary.dateVerified &&
                           convertFirebaseTimestamp(beneficiary.dateVerified)
                         : "N/A"}
                     </td>
                     <td
-                      className={`border border-gray-500 py-2 px-4 ${
+                      className={`border border-border-color py-2 px-4 ${
                         beneficiary.isQualified
-                          ? "text-green-500 font-bold"
+                          ? "text-green-500 font-bold "
                           : ""
                       }`}
                     >
                       {beneficiary.isQualified ? "Qualified" : "Unqualified"}
                     </td>
-                    <td className="border border-gray-500 py-2 px-4 whitespace-nowrap">
+                    <td className="border border-border-color py-2 px-4 whitespace-nowrap">
                       {beneficiary.isClaimed ? (
                         <h1 className="text-green-500 font-bold uppercase">
                           Claimed
@@ -244,13 +244,13 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                       ) : (
                         <>
                           <button
-                            className="mr-2 px-2 py-1 rounded bg-blue-500 hover:bg-blue-600"
+                            className="mr-2 px-2 py-1 rounded bg-blue-500 text-white-primary hover:bg-blue-600"
                             onClick={() => handleViewInfo(beneficiary)}
                           >
                             View Info
                           </button>
                           <button
-                            className="px-2 py-1 rounded bg-purple-500 hover:bg-purple-600"
+                            className="px-2 py-1 rounded bg-purple-500 text-white-primary hover:bg-purple-600"
                             onClick={() => handleViewQR(beneficiary)}
                           >
                             View QR
