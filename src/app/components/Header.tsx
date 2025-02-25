@@ -22,7 +22,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="flex justify-between items-center bg-blue-500 p-4 text-white">
+    <header className="flex justify-between items-center bg-bg-color shadow-sm p-4 text-white">
       <div className="flex items-center gap-2">
         <Image
           src="/mswdologo.png"
@@ -36,24 +36,24 @@ const Header: React.FC = () => {
 
       <div className="relative">
         <button
-          className="text-blue-500 bg-slate-200 p-2 rounded-full"
+          className=""
           onClick={toggleDropdown} // Toggle dropdown on click
         >
           <Image
-            src="/profile.svg"
+            src="/p2.svg"
             alt="Profile"
-            width={32}
-            height={32}
-            className="rounded-full"
+            width={50}
+            height={50}
+            className="rounded-full shadow-md"
           />
         </button>
 
         {/* Dropdown Menu */}
         {isDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded-md shadow-lg z-10">
+          <div className="absolute right-0 w-fit mt-2  bg-white  rounded-md shadow-lg z-10 overflow-hidden">
             <button
               onClick={handleLogout} // Call handleLogout on click
-              className="block w-full text-left px-4 py-2 hover:bg-gray-200"
+              className="block w-fit text-left px-4 text-black py-2 hover:bg-red-500 hover:text-white hover:font-bold"
             >
               Logout
             </button>

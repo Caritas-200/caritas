@@ -32,7 +32,7 @@ const Nav: React.FC = () => {
   };
   return (
     <>
-      <div className="bg-bg-color text-text-color">
+      <div className="bg-bg-color text-text-color m-2 rounded-md">
         <nav className="flex flex-col h-full justify-between p-1 pt-2 pr-2 w-[220px]">
           <ul className="space-y-4">
             {navItems.map((item) => {

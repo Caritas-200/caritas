@@ -5,5 +5,5 @@ interface DefaultLayoutTypes {
 }
 
 export const MainLayout: React.FC<DefaultLayoutTypes> = ({ children }) => {
-  return <div className="h-dvh overflow-clip">{children}</div>;
+  return <div className="h-dvh overflow-clip bg-bg-color">{children}</div>;
 };
