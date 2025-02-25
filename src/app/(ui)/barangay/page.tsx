@@ -72,7 +72,7 @@ const BarangayList: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="flex border-l border-opacity-50 flex-row flex-1 bg-bg-color">
+      <div className="flex border-opacity-50 flex-row flex-1 bg-bg-color">
         <div className="p-4 w-full  ">
           <h2 className="p-8 text-3xl font-bold mb-4 text-center">
             List of Barangays
