@@ -14,10 +14,10 @@ import Image from "next/image";
 
 // Skeleton Loader Component
 const SkeletonLoader: React.FC = () => (
-  <div className="animate-pulse flex flex-col space-y-4 p-4 bg-gray-600 rounded-lg">
-    <div className="bg-gray-500 h-40 rounded-md"></div>
-    <div className="h-4 bg-gray-500 rounded"></div>
-    <div className="h-4 bg-gray-500 rounded w-3/4"></div>
+  <div className="animate-pulse flex flex-col space-y-4 p-4 bg-white-primary rounded-lg">
+    <div className="bg-gray-200 h-40 rounded-md"></div>
+    <div className="h-4 bg-gray-200 rounded"></div>
+    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
   </div>
 );
 
@@ -179,7 +179,7 @@ const Media: React.FC = () => {
   };
 
   return (
-    <div className="p-20 bg-gray-700 min-h-screen text-gray-100">
+    <div className="p-20 bg-bg-color min-h-screen text-text-color">
       <div className="flex justify-between items-center mb-4">
         <button
           className="bg-blue-500 text-white py-2 px-4 rounded-lg"
@@ -191,11 +191,17 @@ const Media: React.FC = () => {
           <select
             value={viewingOption}
             onChange={handleViewingOptionChange}
-            className="bg-gray-600 text-white py-2 px-4 rounded-lg"
+            className="bg-blue-500 text-white py-2 px-4 rounded-lg outline-none"
           >
-            <option value="Large">Large</option>
-            <option value="Medium">Medium</option>
-            <option value="Small">Small</option>
+            <option className="bg-white-primary text-text-color " value="Large">
+              Large
+            </option>
+            <option className="bg-white-primary text-text-color" value="Medium">
+              Medium
+            </option>
+            <option className="bg-white-primary text-text-color" value="Small">
+              Small
+            </option>
           </select>
         </div>
       </div>

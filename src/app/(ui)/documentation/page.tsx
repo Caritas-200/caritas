@@ -83,58 +83,54 @@ const Documentation: React.FC = () => {
 
   return (
     <MainLayout>
-      <Header />
-      <div className="flex flex-row flex-1 bg-gray-700 text-gray-100">
-        <LeftNav />
-        <div className="w-full overflow-y-auto p-4 h-svh pb-24 ">
-          <div className="p-4 w-full bg-gray-700 ">
-            <h2 className="p-8 text-3xl font-bold mb-4 text-center text-white">
-              Documentation
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4  border-b border-gray-500 mb-4">
-              <div className="mb-4 flex w-full justify-between  text-gray-700 bg-gray-100 border overflow-hidden  rounded-lg shadow-inner">
-                <input
-                  type="text"
-                  placeholder="Folder name..."
-                  className=" bg-transparent px-4 w-full outline-none"
-                  value={newFolderName}
-                  onChange={(e) => setNewFolderName(e.target.value)}
-                />
-                <button
-                  className="bg-blue-500 hover:bg-blue-600 text-white -m-[1px] py-2 px-4  whitespace-nowrap"
-                  onClick={handleAddFolder}
-                >
-                  <span className="font-extrabold text-2xl">＋</span>
-                </button>
-              </div>
-              <div className="flex mb-4 w-full">
-                <input
-                  type="text"
-                  placeholder="Search for folder..."
-                  className="w-full text-gray-700 bg-gray-100 p-2 border rounded-lg shadow-inner outline-none"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
+      <div className="w-full overflow-y-auto p-4 pb-24 ">
+        <div className="p-4 w-full bg-bg-color text-text-color ">
+          <h2 className="p-8 text-3xl font-bold mb-4 text-center ">
+            Documentation
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4  border-b border-gray-200 mb-4">
+            <div className="mb-4 flex w-full justify-between  text-gray-700 bg-gray-100 border overflow-hidden  rounded-lg shadow-inner">
+              <input
+                type="text"
+                placeholder="Folder name..."
+                className=" px-4 w-full outline-none"
+                value={newFolderName}
+                onChange={(e) => setNewFolderName(e.target.value)}
+              />
+              <button
+                className="bg-blue-500 hover:bg-blue-600 text-white-primary -m-[1px] py-2 px-4  whitespace-nowrap"
+                onClick={handleAddFolder}
+              >
+                <span className="font-extrabold text-2xl">＋</span>
+              </button>
             </div>
+            <div className="flex mb-4 w-full">
+              <input
+                type="text"
+                placeholder="Search for folder..."
+                className="w-full text-gray-700  p-2 border rounded-lg shadow-inner outline-none"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
 
-            <div className="flex flex-col gap-4 gap-y-4">
-              {sortedKeys.map((letter) => (
-                <div key={letter}>
-                  <h1 className="mb-4 text-xl">{letter}</h1>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-                    {groupedFolders[letter].map((folder) => (
-                      <Folder
-                        key={folder.id}
-                        name={folder.name}
-                        onDelete={() => handleDeleteFolder(folder.id)}
-                        onClick={() => handleFolderClick(folder.name)}
-                      />
-                    ))}
-                  </div>
+          <div className="flex flex-col gap-4 gap-y-4">
+            {sortedKeys.map((letter) => (
+              <div key={letter}>
+                <h1 className="mb-4 text-xl">{letter}</h1>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                  {groupedFolders[letter].map((folder) => (
+                    <Folder
+                      key={folder.id}
+                      name={folder.name}
+                      onDelete={() => handleDeleteFolder(folder.id)}
+                      onClick={() => handleFolderClick(folder.name)}
+                    />
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
