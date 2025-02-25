@@ -32,8 +32,8 @@ const Nav: React.FC = () => {
   };
   return (
     <>
-      <div className="bg-bg-color text-text-color rounded-md gap-20">
-        <nav className="flex flex-col h-full justify-between p-1 pt-2 pr-2 w-[220px]">
+      <div className="bg-bg-color text-text-color rounded-md h-full">
+        <nav className="flex flex-col gap-10 h-full justify-between  p-4 w-[220px] ">
           <ul className="space-y-4">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
@@ -79,7 +79,7 @@ const Nav: React.FC = () => {
             </h1>
           </div>
           <div className="flex flex-col gap-10">
-            <footer className="flex flex-col justify-between items-center w-full italic opacity-50 p-4  mb-10">
+            <footer className="flex flex-col justify-between items-center w-full italic opacity-50 p-4">
               <h1 className="text-center text-xs">
                 Caritas 2024 <span className="">|</span> All Rights Reserved
               </h1>

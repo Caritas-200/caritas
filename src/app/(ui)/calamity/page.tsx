@@ -90,98 +90,94 @@ const Calamity: React.FC = () => {
 
   return (
     <MainLayout>
-      <div className="h-screen overflow-clip text-gray-100">
-        <div className="flex flex-row flex-1 bg-gray-700">
-          <div className="w-full overflow-y-auto p-4 h-svh pb-24">
-            <div className="p-4 w-full bg-gray-700">
-              <h2 className="p-8 text-3xl font-bold mb-4 text-center">
-                List of Calamity
-              </h2>
-              <div className="flex flex-row whitespace-nowrap gap-4 border-b border-gray-500">
-                <div className="mb-4 flex gap-4 w-full justify-between">
-                  <button
-                    className="bg-blue-500 text-white py-2 px-4 rounded-lg whitespace-nowrap"
-                    onClick={() => setIsAddingFolder(true)}
-                  >
-                    <span className="font-extrabold text-xl">＋</span> Calamity
-                  </button>
-                  <input
-                    type="text"
-                    placeholder="Search for Calamity..."
-                    className="w-1/2 text-gray-700 bg-gray-100 p-2 border rounded-lg shadow-inner outline-none"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
+      <div className="h-fit overflow-clip text-gray-100">
+        <div className="w-full overflow-y-auto p-4 h-svh pb-24">
+          <div className="p-4 w-full bg-gray-700">
+            <h2 className="p-8 text-3xl font-bold mb-4 text-center">
+              List of Calamity
+            </h2>
+            <div className="flex flex-row whitespace-nowrap gap-4 border-b border-gray-500">
+              <div className="mb-4 flex gap-4 w-full justify-between">
+                <button
+                  className="bg-blue-500 text-white py-2 px-4 rounded-lg whitespace-nowrap"
+                  onClick={() => setIsAddingFolder(true)}
+                >
+                  <span className="font-extrabold text-xl">＋</span> Calamity
+                </button>
+                <input
+                  type="text"
+                  placeholder="Search for Calamity..."
+                  className="w-1/2 text-gray-700 bg-gray-100 p-2 border rounded-lg shadow-inner outline-none"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
+            </div>
 
-              {isAddingFolder && (
-                <div className="mb-4 pb-4 border-b border-gray-500 mt-2">
-                  <h3 className="text-xl font-bold mb-4">
-                    New Calamity Folder
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    <div className="mb-4">
-                      <label className="block mb-2">Calamity Type</label>
-                      <select
-                        className="w-full p-2 bg-gray-100 border rounded-lg text-gray-500"
-                        value={newCalamityType}
-                        onChange={(e) => setNewCalamityType(e.target.value)}
-                      >
-                        <option value="">Select Calamity Type</option>
-                        {calamityTypes.map((type) => (
-                          <option key={type} value={type}>
-                            {type}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="mb-4">
-                      <label className="block mb-2 outline-none">
-                        Calamity Name
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full p-2 bg-gray-100 border rounded-lg text-gray-500 outline-none"
-                        value={newFolderName}
-                        onChange={(e) => setNewFolderName(e.target.value)}
-                        placeholder="Calamity name..."
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg mr-2 hover:bg-green-700"
-                    onClick={handleAddFolder}
-                  >
-                    Submit
-                  </button>
-                  <button
-                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-                    onClick={() => setIsAddingFolder(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              )}
-
-              <div className="flex flex-col gap-4 gap-y-4 mt-4">
-                {sortedKeys.map((letter) => (
-                  <div key={letter}>
-                    <h1 className="mb-4 text-xl">{letter}</h1>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-                      {groupedFolders[letter].map((folder) => (
-                        <Folder
-                          key={folder.id}
-                          name={folder.name}
-                          calamityType={folder.calamityType}
-                          onDelete={() => handleDeleteFolder(folder.id)}
-                        />
+            {isAddingFolder && (
+              <div className="mb-4 pb-4 border-b border-gray-500 mt-2">
+                <h3 className="text-xl font-bold mb-4">New Calamity Folder</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="mb-4">
+                    <label className="block mb-2">Calamity Type</label>
+                    <select
+                      className="w-full p-2 bg-gray-100 border rounded-lg text-gray-500"
+                      value={newCalamityType}
+                      onChange={(e) => setNewCalamityType(e.target.value)}
+                    >
+                      <option value="">Select Calamity Type</option>
+                      {calamityTypes.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
                       ))}
-                    </div>
+                    </select>
                   </div>
-                ))}
+                  <div className="mb-4">
+                    <label className="block mb-2 outline-none">
+                      Calamity Name
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full p-2 bg-gray-100 border rounded-lg text-gray-500 outline-none"
+                      value={newFolderName}
+                      onChange={(e) => setNewFolderName(e.target.value)}
+                      placeholder="Calamity name..."
+                    />
+                  </div>
+                </div>
+
+                <button
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg mr-2 hover:bg-green-700"
+                  onClick={handleAddFolder}
+                >
+                  Submit
+                </button>
+                <button
+                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                  onClick={() => setIsAddingFolder(false)}
+                >
+                  Cancel
+                </button>
               </div>
+            )}
+
+            <div className="flex flex-col gap-4 gap-y-4 mt-4">
+              {sortedKeys.map((letter) => (
+                <div key={letter}>
+                  <h1 className="mb-4 text-xl">{letter}</h1>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                    {groupedFolders[letter].map((folder) => (
+                      <Folder
+                        key={folder.id}
+                        name={folder.name}
+                        calamityType={folder.calamityType}
+                        onDelete={() => handleDeleteFolder(folder.id)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
