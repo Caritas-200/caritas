@@ -79,7 +79,7 @@ const Nav: React.FC = () => {
             </h1>
           </div>
           <div className="flex flex-col gap-10">
-            <footer className="flex flex-col justify-between items-center w-full italic opacity-50 p-4  ">
+            <footer className="flex flex-col justify-between items-center w-full italic opacity-50 p-4  mb-10">
               <h1 className="text-center text-xs">
                 Caritas 2024 <span className="">|</span> All Rights Reserved
               </h1>

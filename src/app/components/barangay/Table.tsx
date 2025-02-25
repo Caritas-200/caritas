@@ -181,14 +181,14 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
 
   return (
     <>
-      <div className="bg-gray-800 p-4 rounded-lg shadow-md text-gray-100">
+      <div className="bg-white-primary p-4 rounded-lg shadow-md text-text-color">
         <div className="flex flex-col md:flex-row items-center mb-4 space-y-4 md:space-y-0 md:space-x-4">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
           <select
             value={calamityNameFilter}
             onChange={(e) => setCalamityNameFilter(e.target.value)}
-            className="p-2 border rounded-lg text-gray-700"
+            className="p-2 border rounded-lg "
           >
             <option value="">All Calamity Names</option>
             {calamityNameOptions.map((name) => (
@@ -231,25 +231,25 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
           <p>Error: {error}</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full bg-gray-800 border border-gray-500 rounded-lg">
+            <table className="min-w-full  border border-border-color rounded-lg">
               <thead>
                 <tr>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     #
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Last Name
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     First Name
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Mobile Number
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Date Created
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Action
                   </th>
                 </tr>
@@ -258,26 +258,26 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
                 {currentItems.map((beneficiary, index) => (
                   <tr
                     key={beneficiary.id}
-                    className="hover:bg-gray-700 transition-colors"
+                    className="hover:bg-blue-500 hover:text-white-primary transition-colors"
                   >
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {index + 1}
                     </td>
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {toSentenceCase(beneficiary.lastName)}
                     </td>
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {toSentenceCase(beneficiary.firstName)}
                     </td>
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {toSentenceCase(beneficiary.mobileNumber)}
                     </td>
 
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {convertFirebaseTimestamp(beneficiary.dateCreated)}
                     </td>
 
-                    <td className="flex border gap-2 border-gray-500 py-2 px-4">
+                    <td className="flex border gap-2 border-border-color py-2 px-4">
                       <button
                         onClick={() => handleViewInfo(beneficiary.id)}
                         className="bg-blue-500 text-white px-2 py-1 rounded "

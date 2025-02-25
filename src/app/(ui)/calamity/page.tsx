@@ -91,9 +91,7 @@ const Calamity: React.FC = () => {
   return (
     <MainLayout>
       <div className="h-screen overflow-clip text-gray-100">
-        <Header />
         <div className="flex flex-row flex-1 bg-gray-700">
-          <LeftNav />
           <div className="w-full overflow-y-auto p-4 h-svh pb-24">
             <div className="p-4 w-full bg-gray-700">
               <h2 className="p-8 text-3xl font-bold mb-4 text-center">

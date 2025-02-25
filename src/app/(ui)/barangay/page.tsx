@@ -80,12 +80,12 @@ const BarangayList: React.FC = () => {
             <h2 className="p-8 text-3xl font-bold mb-4 text-center">
               List of Barangays
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 border-b border-gray-500 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 border-b border-gray-200 mb-4">
               <div className="mb-4 flex w-full justify-between    border overflow-hidden  rounded-lg shadow-inner">
                 <input
                   type="text"
                   placeholder="Barangay name..."
-                  className=" bg-transparent px-4 w-full outline-none"
+                  className=" px-4 w-full shadow-inner outline-none"
                   value={newFolderName}
                   onChange={(e) => setNewFolderName(e.target.value)}
                 />

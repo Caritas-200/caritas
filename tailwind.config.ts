@@ -17,6 +17,7 @@ const config: Config = {
         "white-primary": "var(--white-primary)",
         "bg-color": "var(--bg-color)",
         "text-color": "var(--text-color)",
+        "border-color": "var(--border-color)",
         "button-bg-color": "var(--button-bg-color)",
         "button-text-color": "var(--button-text-color)",
         "button-hover-bg-color": "var(--button-hover-bg-color)",
