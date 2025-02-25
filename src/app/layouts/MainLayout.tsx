@@ -8,15 +8,11 @@ interface DefaultLayoutTypes {
 
 export const MainLayout: React.FC<DefaultLayoutTypes> = ({ children }) => {
   return (
-    <main className="w-full h-screen">
-      <div className="shadow-md">
-        <Header />
-      </div>
-      <div className="flex flex-row flex-1 p-4 gap-4">
+    <main className="flex flex-col min-h-screen">
+      <Header />
+      <div className="flex flex-1 overflow-hidden">
         <LeftNav />
-        <div className="w-full">
-          <div className=" overflow-clip bg-bg-color">{children}</div>
-        </div>
+        <div className="flex-1 p-4 bg-bg-color overflow-auto">{children}</div>
       </div>
     </main>
   );
