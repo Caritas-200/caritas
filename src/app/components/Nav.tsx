@@ -32,7 +32,7 @@ const Nav: React.FC = () => {
   };
   return (
     <>
-      <div className="bg-bg-color text-text-color m-2 rounded-md">
+      <div className="bg-bg-color text-text-color rounded-md">
         <nav className="flex flex-col h-full justify-between p-1 pt-2 pr-2 w-[220px]">
           <ul className="space-y-4">
             {navItems.map((item) => {
@@ -64,27 +64,29 @@ const Nav: React.FC = () => {
               );
             })}
           </ul>
-          <span className="w-full border border-b opacity-10  "></span>
-          <div className="flex flex-col gap-4 justify-center items-center">
-            <button onClick={handleModal} className="">
-              <Image
-                src={"/icon/scan.svg"}
-                alt=""
-                width={100}
-                height={100}
-                className="opacity-80 hover:opacity-100 hover:cursor-pointer hover:scale-105 bg-white p-2 rounded-md shadow-sm border-1"
-              />
-            </button>
-            <h1 className="opacity-70  text-center uppercase ">
-              Click here to Verify Beneficiary
-            </h1>
+          <div className="flex flex-col  gap-10">
+            {/* <span className="w-full border border-b opacity-10  "></span> */}
+            <div className="flex flex-col gap-4 justify-center items-center">
+              <button onClick={handleModal} className="">
+                <Image
+                  src={"/icon/scan.svg"}
+                  alt=""
+                  width={100}
+                  height={100}
+                  className="opacity-80 hover:opacity-100 hover:cursor-pointer hover:scale-105 bg-white p-2 rounded-md shadow-sm border-1"
+                />
+              </button>
+              <h1 className="opacity-70  text-center uppercase ">
+                Click here to Verify Beneficiary
+              </h1>
+            </div>
+            {/* <span className="w-full border border-b opacity-10 "></span> */}
+            <footer className="flex flex-col justify-between items-center w-full italic opacity-50 p-4 ">
+              <h1 className="text-center text-xs">
+                Caritas 2024 <span className="">|</span> All Rights Reserved
+              </h1>
+            </footer>
           </div>
-          <span className="w-full border border-b opacity-10 "></span>
-          <footer className="flex flex-col justify-between items-center w-full italic opacity-50 p-4 mb-20 ">
-            <h1 className="text-center text-xs">
-              Caritas 2024 <span className="">|</span> All Rights Reserved
-            </h1>
-          </footer>
         </nav>
       </div>
 

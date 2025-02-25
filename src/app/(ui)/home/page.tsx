@@ -7,13 +7,7 @@ import { MainLayout } from "@/app/layouts/MainLayout";
 const HomeDashboard: React.FC = () => {
   return (
     <MainLayout>
-      <Header />
-      <div className="flex flex-row flex-1">
-        <LeftNav />
-        <div className="w-full overflow-y-auto p-4 h-svh pb-24">
-          <Calendar />
-        </div>
-      </div>
+      <Calendar />
     </MainLayout>
   );
 };

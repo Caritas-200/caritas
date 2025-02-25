@@ -22,7 +22,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="flex justify-between items-center bg-bg-color shadow-sm p-4 text-white">
+    <header className="flex justify-between items-center bg-blue-500 p-4 text-white">
       <div className="flex items-center gap-2">
         <Image
           src="/mswdologo.png"

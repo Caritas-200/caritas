@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 :root {
+  --white-primary: #ffffff;
+
   --bg-color: #f8f9fa;
   --text-color: #2d3748;
   --button-bg-color: #3aa0ff;
