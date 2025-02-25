@@ -172,7 +172,7 @@ const Calendar: React.FC = () => {
                 (event: Event, idx) => (
                   <div
                     key={idx}
-                    className="bg-white-primary shadow-sm  mt-1 p-2 rounded flex justify-between items-center "
+                    className="bg-white-primary shadow-sm  mt-1 p-2 rounded border-l-4 border-blue-400 flex justify-between items-center "
                   >
                     <span className="">
                       {toSentenceCase(event.event.join(", "))}
