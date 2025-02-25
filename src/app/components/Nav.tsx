@@ -32,8 +32,8 @@ const Nav: React.FC = () => {
   };
   return (
     <>
-      <div className="bg-gray-800">
-        <nav className="flex flex-col h-full justify-between text-white p-1 pt-2 pr-2 w-[220px]">
+      <div className="bg-bg-color text-text-color">
+        <nav className="flex flex-col h-full justify-between p-1 pt-2 pr-2 w-[220px]">
           <ul className="space-y-4">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
@@ -45,17 +45,17 @@ const Nav: React.FC = () => {
                       className={clsx(
                         "flex mt-4 gap-2 px-4 py-2 rounded-lg items-center w-full transition-colors duration-200 whitespace-nowrap",
                         {
-                          "bg-gray-700": isActive,
-                          "hover:bg-gray-600": !isActive,
+                          "bg-white shadow-sm border font-bold": isActive,
+                          "hover:bg-white": !isActive,
                         }
                       )}
                     >
                       <Image
                         src={item.icon}
                         alt=""
-                        width={30}
-                        height={30}
-                        className=""
+                        width={40}
+                        height={40}
+                        className="bg-white p-2 rounded-full shadow-sm"
                       />
                       {item.name}
                     </button>
@@ -68,14 +68,14 @@ const Nav: React.FC = () => {
           <div className="flex flex-col gap-4 justify-center items-center">
             <button onClick={handleModal} className="">
               <Image
-                src={"/icon/scan-white.svg"}
+                src={"/icon/scan.svg"}
                 alt=""
                 width={100}
                 height={100}
-                className="opacity-70 hover:opacity-100 hover:cursor-pointer"
+                className="opacity-80 hover:opacity-100 hover:cursor-pointer hover:scale-105 bg-white p-2 rounded-md shadow-sm border-1"
               />
             </button>
-            <h1 className="opacity-70  text-center uppercase">
+            <h1 className="opacity-70  text-center uppercase ">
               Click here to Verify Beneficiary
             </h1>
           </div>
