@@ -27,7 +27,7 @@ const EventDialog: React.FC<EventDialogProps> = ({
         aria-hidden="true"
       />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="mx-auto w-full max-w-sm rounded bg-white-primary p-6">
+        <DialogPanel className="mx-auto w-full max-w-sm rounded  bg-white-primary p-6">
           <div className="flex justify-end">
             <button
               className="hover:text-red-500 text-lg opacity-70 hover:opacity-100 mt-[-12px]"
@@ -45,7 +45,7 @@ const EventDialog: React.FC<EventDialogProps> = ({
           <textarea
             value={eventInput}
             onChange={(e) => setEventInput(e.target.value)}
-            className="mt-2 w-full h-24 bg-bg-color text-gray-100 rounded p-2"
+            className="mt-2 w-full h-24 bg-bg-color 0 rounded p-2 outline-none"
             placeholder="Event Description"
           />
 
