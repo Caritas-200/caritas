@@ -32,6 +32,7 @@ const Profile: React.FC = () => {
     password: "",
   });
 
+  const [initialProfile, setInitialProfile] = useState<UserProfile>(profile);
   const [password, setPassword] = useState<string>("");
   const [errors, setErrors] = useState<{ [key in keyof UserProfile]?: string }>(
     {}
@@ -43,6 +44,7 @@ const Profile: React.FC = () => {
       try {
         const userProfile = await fetchUserProfile();
         setProfile(userProfile);
+        setInitialProfile(userProfile); // Store the initial profile state
       } catch (error) {
         console.error("Failed to load user profile:", error);
         Swal.fire("Error", "Failed to load user profile", "error");
@@ -66,6 +68,7 @@ const Profile: React.FC = () => {
       await updateUserProfile(profile);
 
       Swal.fire("Success", "Profile updated successfully", "success");
+      setInitialProfile(profile); // Update the initial profile state
     } catch (error) {
       Swal.fire("Error", "Failed to update profile", "error");
     }
@@ -116,6 +119,7 @@ const Profile: React.FC = () => {
       setErrors({ ...errors, [field]: "" });
     }
   };
+
   const renderInputField = (
     label: string,
     field: keyof UserProfile,
@@ -123,11 +127,11 @@ const Profile: React.FC = () => {
     isDropdown: boolean = false,
     options: string[] = []
   ) => (
-    <div className="mb-4 w-full md:w-1/2 px-2">
-      <label className="text-white">{label}:</label>
+    <div className="mb-4 w-full px-2">
+      <label className="text-text-color">{label}:</label>
       {isDropdown ? (
         <select
-          className="bg-gray-600 text-white py-2 px-4 rounded-lg w-full"
+          className="bg-white-primary shadow-inner text-text-color py-2 px-4 rounded-lg w-full"
           value={profile[field]}
           onChange={(e) => handleInputChange(field, e.target.value)}
         >
@@ -143,8 +147,8 @@ const Profile: React.FC = () => {
           type={type}
           className={`${
             field === "email"
-              ? "bg-gray-800 text-gray-500 py-2 px-4 rounded-lg w-full outline-none"
-              : "bg-gray-600 text-white py-2 px-4 rounded-lg w-full outline-none"
+              ? "bg-gray-200 py-2 px-4 rounded-lg w-full outline-none"
+              : "bg-white-primary shadow-inner text-text-color py-2 px-4 rounded-lg w-full outline-none"
           } `}
           value={profile[field]}
           onChange={(e) => handleInputChange(field, e.target.value)}
@@ -156,63 +160,71 @@ const Profile: React.FC = () => {
       )}
     </div>
   );
+
+  // Check if the profile has been modified
+  const isProfileModified =
+    JSON.stringify(profile) !== JSON.stringify(initialProfile);
+
+  // Check if the password has been modified
+  const isPasswordModified = password !== "";
+
   return (
     <MainLayout>
-      <Header />
-      <div className="flex flex-row flex-1 bg-gray-700 text-gray-100">
-        <LeftNav />
-        <div className="w-full overflow-y-auto h-lvh ">
-          <div className="w-full overflow-y-auto h-svh pb-24">
-            <div className="p-4 bg-gray-700 pt-10 min-h-screen">
-              <div className="flex justify-between items-center pb-6">
-                <h1 className="text-2xl font-bold">User Profile</h1>
-              </div>
+      <div className="w-full overflow-y-auto ">
+        <div className="p-4 bg-bg-color pt-10 min-h-screen text-text-color">
+          <div className="flex justify-between items-center pb-6">
+            <h1 className="text-2xl font-bold">User Profile</h1>
+          </div>
 
-              <div className="flex flex-wrap ">
-                {renderInputField("Email", "email", "email")}
-                {renderInputField("First Name", "firstName")}
-                {renderInputField("Middle Name", "middleName")}
-                {renderInputField("Last Name", "lastName")}
-                {renderInputField("Mobile Number", "mobileNumber")}
-                {renderInputField("Gender", "gender", "text", true, [
-                  "Male",
-                  "Female",
-                ])}
-                {renderInputField("Status", "status", "text", true, [
-                  "Single",
-                  "Married",
-                  "Divorced",
-                  "Widowed",
-                ])}
-                {renderInputField("Position", "position")}
-                {renderInputField("Address", "address")}
-              </div>
+          <div className="grid  gap-2 w-full sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {renderInputField("Email", "email", "email")}
+            {renderInputField("First Name", "firstName")}
+            {renderInputField("Middle Name", "middleName")}
+            {renderInputField("Last Name", "lastName")}
+            {renderInputField("Mobile Number", "mobileNumber")}
+            {renderInputField("Gender", "gender", "text", true, [
+              "Male",
+              "Female",
+            ])}
+            {renderInputField("Status", "status", "text", true, [
+              "Single",
+              "Married",
+              "Divorced",
+              "Widowed",
+            ])}
+            {renderInputField("Position", "position")}
+            {renderInputField("Address", "address")}
+          </div>
 
-              <div className="flex space-x-4 mt-4">
-                <button
-                  className="bg-green-500 text-white py-2 px-4 rounded-lg"
-                  onClick={handleUpdateProfile}
-                >
-                  Save Changes
-                </button>
-              </div>
+          <div className="flex space-x-4 mt-4">
+            <button
+              className={` text-white py-2 px-4 rounded-lg ${
+                !isProfileModified ? "bg-gray-400" : "bg-green-500"
+              } `}
+              onClick={handleUpdateProfile}
+              disabled={!isProfileModified} // Disable button if no changes
+            >
+              Save Changes
+            </button>
+          </div>
 
-              <div className="mt-6">
-                <label className="text-white">Change Password:</label>
-                <input
-                  type="password"
-                  className="bg-gray-600 text-white py-2 px-4 rounded-lg w-full outline-none"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <button
-                  onClick={handleUpdatePassword}
-                  className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4"
-                >
-                  Update Password
-                </button>
-              </div>
-            </div>
+          <div className="mt-6">
+            <label className="text-text-color">Change Password:</label>
+            <input
+              type="password"
+              className="bg-white-primary text-text-color py-2 px-4 rounded-lg w-full outline-none"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              onClick={handleUpdatePassword}
+              className={`py-2 px-4 rounded-lg mt-4 text-white ${
+                !isPasswordModified ? "bg-gray-400" : "bg-blue-500"
+              }`}
+              disabled={!isPasswordModified} // Disable button if no changes
+            >
+              Update Password
+            </button>
           </div>
         </div>
       </div>
