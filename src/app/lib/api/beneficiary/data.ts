@@ -222,6 +222,7 @@ export const updateBeneficiary = async (
   updatedFormData: BeneficiaryForm, // New data to update
   brgyName: string // Barangay name
 ): Promise<{ success: boolean; message: string }> => {
+  console.log(updatedFormData);
   try {
     // Reference to the specific beneficiary document using the provided ID
     const beneficiaryDocRef = doc(

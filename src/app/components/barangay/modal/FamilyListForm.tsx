@@ -144,7 +144,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
           brgyName
         );
 
-        if (!result)
+        if (result)
           Swal.fire({
             icon: "success",
             title: "Success!",
