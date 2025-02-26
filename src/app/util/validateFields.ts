@@ -117,11 +117,6 @@ export const validateFields = (
       !(field in requiredFields) &&
       formData[field as keyof BeneficiaryForm]
     ) {
-      console.log(
-        `Field change detected: ${field} has been added or modified with value ${
-          formData[field as keyof BeneficiaryForm]
-        }`
-      );
     }
   });
 

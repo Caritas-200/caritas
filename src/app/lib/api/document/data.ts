@@ -72,8 +72,6 @@ export const addMediaFiles = async (
       },
       { merge: true }
     );
-
-    console.log("Media files added successfully:", newMediaEntries);
   } catch (error) {
     console.error("Error adding media files: ", error);
   }
@@ -89,7 +87,7 @@ export const fetchMediaFiles = async (documentName: string): Promise<any[]> => {
       const data = docSnapshot.data();
       return data.mediaFiles || []; // Return mediaFiles if they exist
     } else {
-      console.log("Document not found");
+      ("Document not found");
       return [];
     }
   } catch (error) {
@@ -110,7 +108,7 @@ export const deleteMediaFile = async (
     // Retrieve the current document data
     const docSnapshot = await getDoc(docRef);
     if (!docSnapshot.exists()) {
-      console.log(`Document "${documentName}" does not exist.`);
+      `Document "${documentName}" does not exist.`;
       return;
     }
 
@@ -121,7 +119,7 @@ export const deleteMediaFile = async (
       (file: { name: string }) => file.name === fileName
     );
     if (!fileToRemove) {
-      console.log(`File "${fileName}" not found in the document.`);
+      `File "${fileName}" not found in the document.`;
       return;
     }
 
@@ -131,9 +129,7 @@ export const deleteMediaFile = async (
       updatedAt: Timestamp.now(),
     });
 
-    console.log(
-      `Media file "${fileName}" deleted successfully from Firestore.`
-    );
+    `Media file "${fileName}" deleted successfully from Firestore.`;
   } catch (error) {
     console.error("Error deleting media file: ", error);
   }

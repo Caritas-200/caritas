@@ -108,8 +108,6 @@ export const updateDonor = async (
 
     // Update the donor document with the new data
     await updateDoc(donorDocRef, updatedData);
-
-    console.log(`Donor with ID ${donorId} has been updated.`);
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error updating donor: ", error.message);
@@ -129,8 +127,6 @@ export const deleteDonor = async (donorId: string): Promise<void> => {
 
     // Delete the donor document from Firestore
     await deleteDoc(donorDocRef);
-
-    console.log(`Donor with ID ${donorId} deleted successfully.`);
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error deleting donor: ", error.message);

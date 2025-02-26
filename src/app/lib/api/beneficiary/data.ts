@@ -130,8 +130,6 @@ export const updateBeneficiaryWithQrCode = async (
     await updateDoc(beneficiaryRef, {
       qrCode: qrCodeUrl,
     });
-
-    console.log("QR code added successfully!");
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error updating beneficiary with QR code: ", error.message);
@@ -222,7 +220,6 @@ export const updateBeneficiary = async (
   updatedFormData: BeneficiaryForm, // New data to update
   brgyName: string // Barangay name
 ): Promise<{ success: boolean; message: string }> => {
-  console.log(updatedFormData);
   try {
     // Reference to the specific beneficiary document using the provided ID
     const beneficiaryDocRef = doc(
@@ -275,8 +272,6 @@ export const deleteBeneficiary = async (
 
     // Delete the beneficiary document from Firestore
     await deleteDoc(beneficiaryDocRef);
-
-    console.log(`beneficiary with ID ${beneficiaryId} deleted successfully.`);
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error deleting beneficiary: ", error.message);

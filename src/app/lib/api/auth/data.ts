@@ -63,8 +63,6 @@ export const signup = async (data: SignUpData): Promise<SignUpResponse> => {
 export const logoutUser = async (): Promise<void> => {
   try {
     await auth.signOut();
-    console.log("User logged out successfully.");
-    // Additional logic after logout (e.g., redirect to login page)
   } catch (error) {
     console.error("Error logging out:", error);
     throw new Error("Failed to log out user");
