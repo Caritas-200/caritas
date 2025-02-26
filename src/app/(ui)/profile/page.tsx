@@ -46,7 +46,6 @@ const Profile: React.FC = () => {
         setProfile(userProfile);
         setInitialProfile(userProfile); // Store the initial profile state
       } catch (error) {
-        console.error("Failed to load user profile:", error);
         Swal.fire("Error", "Failed to load user profile", "error");
       }
     };

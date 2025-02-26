@@ -168,7 +168,6 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
               "There was a problem deleting the beneficiary.",
               "error"
             );
-            console.error("Error deleting beneficiary:", error);
           });
       }
     });

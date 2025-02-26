@@ -71,7 +71,6 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
         setVerificationResult("No Beneficiary Found!");
       }
     } catch (error) {
-      console.error("Verification failed", error);
       setVerificationResult("Verification failed. Please try again.");
       hideLoading();
     }

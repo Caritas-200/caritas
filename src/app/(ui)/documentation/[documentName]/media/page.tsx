@@ -141,7 +141,6 @@ const Media: React.FC = () => {
           "Failed to delete the media file. Please try again.",
           "error"
         );
-        console.error("Error deleting media file:", error);
       }
     }
   };

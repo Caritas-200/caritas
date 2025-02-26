@@ -107,8 +107,6 @@ const Table: React.FC = () => {
         });
       }
     } catch (error) {
-      console.error("Error updating qualification status:", error);
-
       // Revert the UI update on error
       setIsQualified((prev) => ({
         ...prev,
@@ -152,9 +150,7 @@ const Table: React.FC = () => {
       try {
         const data = await getAllBarangays();
         setBarangays(data);
-      } catch (err) {
-        console.error("Error fetching barangays:", err);
-      }
+      } catch (err) {}
     };
     loadBarangays();
   }, []);

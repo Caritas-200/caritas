@@ -44,7 +44,6 @@ export const validateFields = (
   requiredFields.forEach((field) => {
     if (!formData[field]) {
       newErrors[field] = "This field is required.";
-      console.error(`Validation error: ${field} is required but is missing.`);
     }
   });
 
@@ -82,7 +81,6 @@ export const validateFields = (
   const agePattern = /^(1[0-9]|[2-9][0-9]|100)$/;
   if (formData.age && !agePattern.test(formData.age)) {
     newErrors.age = "Age must be a number between 10 and 100.";
-    console.error(`Validation error: Invalid age value ${formData.age}`);
   }
 
   // Validate calamity field

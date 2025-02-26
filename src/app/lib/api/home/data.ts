@@ -27,9 +27,7 @@ export const saveEvent = async (date: Date, event: Event) => {
       },
       { merge: true }
     );
-  } catch (error) {
-    console.error("Error saving event: ", error);
-  }
+  } catch (error) {}
 };
 
 export const loadEvents = async (): Promise<EventMap> => {
@@ -66,9 +64,7 @@ export const deleteEvent = async (date: Date, event: Event) => {
         timestamp: event.timestamp, // Make sure to pass the exact timestamp for accurate deletion
       }),
     });
-  } catch (error) {
-    console.error("Error deleting event: ", error);
-  }
+  } catch (error) {}
 };
 
 export const updateEvent = async (
@@ -95,7 +91,5 @@ export const updateEvent = async (
         timestamp: oldEvent.timestamp, // Use the same timestamp to keep track of updates
       }),
     });
-  } catch (error) {
-    console.error("Error updating event: ", error);
-  }
+  } catch (error) {}
 };

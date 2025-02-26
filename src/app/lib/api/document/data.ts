@@ -72,9 +72,7 @@ export const addMediaFiles = async (
       },
       { merge: true }
     );
-  } catch (error) {
-    console.error("Error adding media files: ", error);
-  }
+  } catch (error) {}
 };
 
 // Function to fetch media files for a specific document from Firestore
@@ -91,7 +89,6 @@ export const fetchMediaFiles = async (documentName: string): Promise<any[]> => {
       return [];
     }
   } catch (error) {
-    console.error("Error fetching media files: ", error);
     return [];
   }
 };
@@ -130,7 +127,5 @@ export const deleteMediaFile = async (
     });
 
     `Media file "${fileName}" deleted successfully from Firestore.`;
-  } catch (error) {
-    console.error("Error deleting media file: ", error);
-  }
+  } catch (error) {}
 };

@@ -64,7 +64,6 @@ export const logoutUser = async (): Promise<void> => {
   try {
     await auth.signOut();
   } catch (error) {
-    console.error("Error logging out:", error);
     throw new Error("Failed to log out user");
   }
 };

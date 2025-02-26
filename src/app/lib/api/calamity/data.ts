@@ -16,9 +16,7 @@ import { BeneficiaryForm } from "../../definitions";
 export const addCalamity = async (calamityId: string, calamityData: any) => {
   try {
     await setDoc(doc(db, "calamity", calamityId), calamityData);
-  } catch (error) {
-    console.error("Error adding calamity: ", error);
-  }
+  } catch (error) {}
 };
 
 // Function to fetch all Calamity
@@ -40,7 +38,6 @@ export const getAllCalamity = async () => {
 
     return Calamity;
   } catch (error) {
-    console.error("Error fetching Calamity: ", error);
     return [];
   }
 };
@@ -48,9 +45,7 @@ export const getAllCalamity = async () => {
 export const deleteCalamity = async (calamityId: string) => {
   try {
     await deleteDoc(doc(db, "calamity", calamityId));
-  } catch (error) {
-    console.error("Error deleting calamity: ", error);
-  }
+  } catch (error) {}
 };
 
 export const updateQualificationStatus = async (
@@ -80,7 +75,6 @@ export const updateQualificationStatus = async (
     // Update the document with the prepared data
     await updateDoc(docRef, updateData);
   } catch (error) {
-    console.error("Error updating qualification status:", error);
     throw error;
   }
 };
@@ -129,10 +123,8 @@ export const fetchBeneficiariesByCalamity = async (
     return allBeneficiaries;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error fetching beneficiaries: ", error.message);
       throw error; // Re-throw to handle it in the UI
     } else {
-      console.error("Unknown error occurred");
       throw new Error("Unknown error occurred");
     }
   }

@@ -16,9 +16,7 @@ export const addFolder = async (folderId: string, folderData: any) => {
       ...folderData,
       createdAt: Timestamp.now(), // Add a timestamp for when the folder was created
     });
-  } catch (error) {
-    console.error("Error adding document folder: ", error);
-  }
+  } catch (error) {}
 };
 
 // Function to fetch all documentation folders
@@ -39,7 +37,6 @@ export const getAllFolders = async () => {
 
     return folders;
   } catch (error) {
-    console.error("Error fetching document folders: ", error);
     return [];
   }
 };
@@ -49,7 +46,5 @@ export const deleteFolder = async (folderId: string) => {
   try {
     // Delete the specified folder document from the "documentation" collection
     await deleteDoc(doc(db, "documentation", folderId));
-  } catch (error) {
-    console.error("Error deleting document folder: ", error);
-  }
+  } catch (error) {}
 };

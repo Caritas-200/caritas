@@ -12,9 +12,7 @@ const Header: React.FC = () => {
     try {
       await logoutUser();
       router.push("/");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+    } catch (error) {}
   };
 
   const toggleDropdown = () => {

@@ -106,7 +106,6 @@ const DonorTable: React.FC<DonorTableProps> = ({ donors }) => {
               "There was a problem deleting the donor.",
               "error"
             );
-            console.error("Error deleting donor:", error);
           });
       }
     });

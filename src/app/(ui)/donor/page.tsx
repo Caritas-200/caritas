@@ -21,7 +21,6 @@ const DonorList: React.FC = () => {
         const donorData = await fetchDonors(); // Fetch donors from Firestore
         setDonors(donorData);
       } catch (error) {
-        console.error("Error fetching donors:", error);
       } finally {
         setLoading(false); // Set loading to false after fetching data
       }

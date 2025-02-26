@@ -84,7 +84,6 @@ export const addBeneficiary = async (
     return newBeneficiaryRef.id;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error adding beneficiary: ", error.message);
       throw error;
     } else {
       throw new Error("Unknown error adding beneficiary");
@@ -132,7 +131,6 @@ export const updateBeneficiaryWithQrCode = async (
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error updating beneficiary with QR code: ", error.message);
       throw error;
     } else {
       throw new Error("Unknown error updating beneficiary with QR code");
@@ -167,10 +165,8 @@ export const fetchBeneficiaries = async (
   } catch (error: unknown) {
     // Type guard for Error object
     if (error instanceof Error) {
-      console.error("Error fetching beneficiaries: ", error.message);
       throw error; // Re-throw the error to handle it in the UI
     } else {
-      console.error("Unknown error fetching beneficiaries");
       throw new Error("Unknown error fetching beneficiaries");
     }
   }
@@ -201,16 +197,13 @@ export const fetchBeneficiaryById = async (
 
       return beneficiaryData;
     } else {
-      console.error("Beneficiary not found");
       return null; // Return null if document does not exist
     }
   } catch (error: unknown) {
     // Type guard for Error object
     if (error instanceof Error) {
-      console.error("Error fetching beneficiary: ", error.message);
       throw error; // Re-throw the error to handle it in the UI
     } else {
-      console.error("Unknown error fetching beneficiary");
       throw new Error("Unknown error fetching beneficiary");
     }
   }
@@ -252,7 +245,6 @@ export const updateBeneficiary = async (
     return { success: true, message: "Beneficiary updated successfully." };
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error updating beneficiary: ", error.message);
       return { success: false, message: error.message };
     } else {
       return { success: false, message: "Unknown error updating beneficiary" };
@@ -274,7 +266,6 @@ export const deleteBeneficiary = async (
     await deleteDoc(beneficiaryDocRef);
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error deleting beneficiary: ", error.message);
       throw error;
     } else {
       throw new Error("Unknown error occurred while deleting beneficiary");
@@ -317,7 +308,6 @@ export const verifyRecipient = async (
     }
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error verifying beneficiary: ", error.message);
       throw error;
     } else {
       throw new Error("Unknown error occurred while verifying beneficiary");
@@ -391,7 +381,6 @@ export const updateVerifiedBeneficiary = async (
     return { success: true, message: "Beneficiary updated successfully." };
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error updating beneficiary: ", error.message);
       return { success: false, message: error.message };
     } else {
       return { success: false, message: "Unknown error updating beneficiary" };
