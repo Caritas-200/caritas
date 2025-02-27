@@ -74,7 +74,6 @@ const Table: React.FC = () => {
         // Call the API to update the qualification status in the database
         await updateQualificationStatus(
           id,
-          selectedBarangay,
           status,
           calamityData,
           beneficiaryName,

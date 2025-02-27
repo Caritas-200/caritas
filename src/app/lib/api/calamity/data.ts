@@ -8,9 +8,11 @@ import {
   Timestamp,
   query,
   where,
+  getDoc,
 } from "firebase/firestore";
-import { db } from "@/app/services/firebaseConfig";
+import { db, storage } from "@/app/services/firebaseConfig";
 import { BeneficiaryForm } from "../../definitions";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 // Function to add a new calamity
 export const addCalamity = async (calamityId: string, calamityData: any) => {
@@ -55,15 +57,12 @@ export const deleteCalamity = async (calamityId: string) => {
 
 export const updateQualificationStatus = async (
   id: string,
-  selectedBarangay: string,
   isQualified: boolean,
   calamityData: { name: string; calamityType: string } | null,
   beneficiaryName: string,
   brgyName: string
 ) => {
   try {
-    const docRef = doc(db, `barangay/${selectedBarangay}/recipients`, id);
-
     // Prepare the update data
     const updateData: { [key: string]: any } = {
       isQualified,
@@ -100,9 +99,6 @@ export const updateQualificationStatus = async (
       );
       await deleteDoc(calamityRecipientRef);
     }
-
-    // Update the document with the prepared data
-    await updateDoc(docRef, updateData);
   } catch (error) {
     console.error("Error updating qualification status:", error);
     throw error;
@@ -183,5 +179,75 @@ export const checkRecipientsQualification = async (
   } catch (error) {
     console.error("Error checking recipients qualification:", error);
     throw error;
+  }
+};
+
+export const updateVerifiedBeneficiary = async (
+  beneficiaryId: string,
+  newFields: Record<string, any>,
+  calamityName: string,
+  isClaimed: boolean,
+  imageFile: File | null,
+  housingCondition: string,
+  casualty: string,
+  healthCondition: string
+): Promise<{ success: boolean; message?: string }> => {
+  console.log(calamityName);
+  try {
+    // Reference to the specific beneficiary document in the calamity collection
+    const beneficiaryDocRef = doc(
+      db,
+      `calamity/${calamityName}/recipients`,
+      beneficiaryId
+    );
+
+    // Fetch the existing beneficiary data
+    const beneficiaryDoc = await getDoc(beneficiaryDocRef);
+
+    // Check if the status is already 'claimed'
+    const existingData = beneficiaryDoc.data();
+    if (existingData?.isClaimed) {
+      return { success: false, message: "Benefits are already claimed." };
+    }
+
+    let imageUrl: string | null = null;
+
+    // Upload image if present using a promise
+    if (imageFile) {
+      const storageRef = ref(
+        storage,
+        `claimantImage/${beneficiaryId}/${imageFile.name}`
+      );
+      imageUrl = await new Promise<string>((resolve, reject) => {
+        uploadBytes(storageRef, imageFile)
+          .then(async () => {
+            const url = await getDownloadURL(storageRef);
+            resolve(url); // Resolve with the image URL
+          })
+          .catch((error) => reject(error)); // Handle any upload errors
+      });
+    }
+
+    // Prepare the update data, including the image URL if available
+    const updateData = {
+      ...newFields,
+      isClaimed: isClaimed,
+      dateClaimed: Timestamp.now(),
+      claimantImage: imageUrl,
+      housingCondition,
+      casualty,
+      healthCondition,
+    };
+
+    // Update the document with the new data
+    await updateDoc(beneficiaryDocRef, updateData);
+
+    return { success: true, message: "Beneficiary updated successfully." };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return { success: false, message: error.message };
+    } else {
+      return { success: false, message: "Unknown error updating beneficiary" };
+    }
   }
 };

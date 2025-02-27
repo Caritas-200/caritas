@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { UserData } from "@/app/lib/definitions";
-import { updateVerifiedBeneficiary } from "@/app/lib/api/beneficiary/data";
+import { UserData, CalamityBeneficiary } from "@/app/lib/definitions";
 import Swal from "sweetalert2";
 import WebcamCapture from "./subComponent/WebcamCapture";
 import DonationForm from "./subComponent/DonationForm";
@@ -8,16 +7,14 @@ import BeneficiaryDetails from "./subComponent/BeneficiaryDetails";
 import { convertBase64ToFile } from "@/app/util/convertBase64ToFile";
 import Dropdown from "./button/dropdown";
 import { radioGroups } from "@/app/config/qrFormConfig";
+import { DecodedData } from "@/app/lib/definitions";
 import {
   validateBenefitForm,
   validateCapturedImage,
   validateConditions,
 } from "@/app/util/validationQRForm";
-
-interface DecodedData {
-  id: string;
-  brgyName: string;
-}
+import { updateVerifiedBeneficiary } from "@/app/lib/api/calamity/data";
+import Calamity from "@/app/(ui)/calamity/page";
 
 interface ModalProps {
   data: UserData;
@@ -25,12 +22,14 @@ interface ModalProps {
   decodedData: DecodedData;
 }
 
-const UserFormModal: React.FC<ModalProps> = ({
+const ConfirmedBeneficiaryModal: React.FC<ModalProps> = ({
   data,
   onClose,
   decodedData,
 }) => {
-  const [formData, setFormData] = useState<UserData>(data);
+  const [formData, setFormData] = useState<CalamityBeneficiary>(
+    data as CalamityBeneficiary
+  );
   const [benefitForm, setBenefitForm] = useState({
     donationType: [] as string[],
     description: "",
@@ -53,7 +52,11 @@ const UserFormModal: React.FC<ModalProps> = ({
     if (
       !validateBenefitForm(benefitForm) ||
       !validateCapturedImage(capturedImage) ||
-      !validateConditions(formData)
+      !validateConditions({
+        healthCondition: formData.healthCondition || "",
+        housingCondition: formData.housingCondition || "",
+        casualty: formData.casualty || "",
+      })
     ) {
       return;
     }
@@ -65,12 +68,12 @@ const UserFormModal: React.FC<ModalProps> = ({
       const result = await updateVerifiedBeneficiary(
         decodedData.id,
         benefitForm,
-        decodedData.brgyName,
+        decodedData.calamityName,
         true,
         imageFile,
-        formData.healthCondition,
-        formData.housingCondition,
-        formData.casualty
+        formData.healthCondition || "",
+        formData.housingCondition || "",
+        formData.casualty || ""
       );
 
       Swal.fire({
@@ -164,4 +167,4 @@ const UserFormModal: React.FC<ModalProps> = ({
   );
 };
 
-export default UserFormModal;
+export default ConfirmedBeneficiaryModal;

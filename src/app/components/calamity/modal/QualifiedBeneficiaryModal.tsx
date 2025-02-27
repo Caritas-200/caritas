@@ -34,10 +34,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   const [activeModal, setActiveModal] = useState<"info" | "qr" | null>(null); // Manage which modal is open
   const [selectedBeneficiary, setSelectedBeneficiary] =
     useState<CalamityBeneficiary | null>(null);
-  const [decodedData, setDecodedData] = useState<DecodedData | null>({
-    id: selectedBeneficiary?.id || "",
-    brgyName: selectedBeneficiary?.address?.barangay?.barangay_name || "",
-  });
+  const [decodedData, setDecodedData] = useState<DecodedData | null>();
 
   const [userData, setUserData] = useState<UserData>({
     dateCreated: selectedBeneficiary?.dateCreated || {
@@ -72,8 +69,14 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
       setLoading(true);
       try {
         const data = await fetchBeneficiariesByCalamity(calamityData.name);
-        setBeneficiaries(data);
-        setFilteredData(data);
+        const mappedData = data.map((item: any) => ({
+          ...item,
+          housingCondition: item.housingCondition || "",
+          casualty: item.casualty || "",
+          healthCondition: item.healthCondition || "",
+        }));
+        setBeneficiaries(mappedData);
+        setFilteredData(mappedData);
       } catch (err: unknown) {
         setError(
           err instanceof Error
@@ -111,10 +114,10 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
 
         setDecodedData({
           id: beneficiary.id,
-          brgyName: beneficiary.brgyName,
+          calamityName: beneficiary.calamityName || "",
         });
 
-        const newObject = { beneficiary, ...result[0] };
+        const newObject = { ...beneficiary, ...result[0] };
 
         setUserData(newObject);
       } else {
