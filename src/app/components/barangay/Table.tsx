@@ -45,11 +45,6 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
         const data = await fetchBeneficiaries(brgyName);
         setBeneficiaries(data);
         setFilteredData(data);
-        // Extract unique calamity names for the dropdown
-        const uniqueCalamities = Array.from(
-          new Set(data.map((item) => item.calamityName || ""))
-        ).filter((name) => name !== ""); // Remove empty strings
-        setCalamityNameOptions(uniqueCalamities);
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);
@@ -75,12 +70,7 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
             .includes(searchTerm.toLowerCase()) ||
           beneficiary.lastName.toLowerCase().includes(searchTerm.toLowerCase());
 
-        // Match calamity name
-        const matchesCalamityName =
-          calamityNameFilter === "" ||
-          beneficiary.calamityName === calamityNameFilter;
-
-        return matchesSearchTerm && matchesCalamityName;
+        return matchesSearchTerm;
       });
 
       // Sorting logic
@@ -90,21 +80,6 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
           sortOrder === "asc"
             ? a.lastName.localeCompare(b.lastName)
             : b.lastName.localeCompare(a.lastName)
-        );
-      } else if (sortOrder === "calamityAsc" || sortOrder === "calamityDesc") {
-        sorted.sort((a, b) =>
-          sortOrder === "calamityAsc"
-            ? a.calamity.localeCompare(b.calamity)
-            : b.calamity.localeCompare(a.calamity)
-        );
-      } else if (
-        sortOrder === "calamityNameAsc" ||
-        sortOrder === "calamityNameDesc"
-      ) {
-        sorted.sort((a, b) =>
-          sortOrder === "calamityNameAsc"
-            ? (a.calamityName || "").localeCompare(b.calamityName || "")
-            : (b.calamityName || "").localeCompare(a.calamityName || "")
         );
       } else if (sortOrder === "date") {
         sorted.sort((a, b) => {
@@ -183,19 +158,6 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
       <div className="bg-white-primary p-4 rounded-lg shadow-md text-text-color">
         <div className="flex flex-col md:flex-row items-center mb-4 space-y-4 md:space-y-0 md:space-x-4">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
-          <select
-            value={calamityNameFilter}
-            onChange={(e) => setCalamityNameFilter(e.target.value)}
-            className="p-2 border rounded-lg "
-          >
-            <option value="">All Calamity Names</option>
-            {calamityNameOptions.map((name) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </select>
 
           <select
             value={itemsPerPage}
