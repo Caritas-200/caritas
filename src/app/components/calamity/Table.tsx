@@ -357,9 +357,9 @@ const Table: React.FC = () => {
         </div>
       )}
 
-      {selectedBeneficiaryId && (
+      {selectedBeneficiaryId && selectedBarangay && (
         <BeneficiaryInfoModal
-          brgyName="test"
+          brgyName={selectedBarangay}
           beneficiaryId={selectedBeneficiaryId}
           onClose={handleCloseModal}
         />

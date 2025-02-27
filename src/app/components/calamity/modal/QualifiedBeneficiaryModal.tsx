@@ -105,7 +105,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   }, [searchTerm, beneficiaries]);
 
   const handleViewInfo = async (beneficiary: CalamityBeneficiary) => {
-    if (beneficiary.brgyName) {
+    if (beneficiary.brgyName && beneficiary.calamityName) {
       const result = await fetchBeneficiaries(beneficiary.brgyName);
 
       if (result.length > 0) {
@@ -114,7 +114,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
 
         setDecodedData({
           id: beneficiary.id,
-          calamityName: beneficiary.calamityName || "",
+          calamityName: beneficiary.calamityName,
         });
 
         const newObject = { ...beneficiary, ...result[0] };
