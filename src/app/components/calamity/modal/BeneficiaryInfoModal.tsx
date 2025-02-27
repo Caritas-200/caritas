@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchBeneficiaryById } from "@/app/lib/api/beneficiary/data";
-import { BeneficiaryForm } from "@/app/lib/definitions";
+import { BeneficiaryForm, CalamityBeneficiary } from "@/app/lib/definitions";
 import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
 import { formatToPHP } from "@/app/util/formatToPHP";
@@ -17,7 +17,9 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
   beneficiaryId,
   onClose,
 }) => {
-  const [beneficiary, setBeneficiary] = useState<BeneficiaryForm | null>(null);
+  const [beneficiary, setBeneficiary] = useState<CalamityBeneficiary | null>(
+    null
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
