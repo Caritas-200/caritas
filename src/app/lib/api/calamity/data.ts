@@ -57,10 +57,11 @@ export const updateQualificationStatus = async (
   id: string,
   selectedBarangay: string,
   isQualified: boolean,
-  calamityData: { name: string; calamityType: string } | null
+  calamityData: { name: string; calamityType: string } | null,
+  beneficiaryName: string
 ) => {
   try {
-    // const docRef = doc(db, `barangay/${selectedBarangay}/recipients`, id);
+    const docRef = doc(db, `barangay/${selectedBarangay}/recipients`, id);
 
     // Prepare the update data
     const updateData: { [key: string]: any } = {
@@ -82,6 +83,7 @@ export const updateQualificationStatus = async (
       await setDoc(calamityRecipientRef, {
         isClaimed: false,
         isQualified: true,
+        beneficiaryName: beneficiaryName,
         ...updateData,
       });
     } else {
@@ -97,8 +99,8 @@ export const updateQualificationStatus = async (
       await deleteDoc(calamityRecipientRef);
     }
 
-    // // Update the document with the prepared data
-    // await updateDoc(docRef, updateData);
+    // Update the document with the prepared data
+    await updateDoc(docRef, updateData);
   } catch (error) {
     console.error("Error updating qualification status:", error);
     throw error;
@@ -106,47 +108,31 @@ export const updateQualificationStatus = async (
 };
 
 export const fetchBeneficiariesByCalamity = async (
-  calamityName: string,
-  calamity: string
+  calamityName: string
 ): Promise<BeneficiaryForm[]> => {
   try {
-    const barangayCollectionRef = collection(db, "barangay");
+    // Reference the recipients subcollection under the specified calamity
+    const recipientsCollectionRef = collection(
+      db,
+      `calamity/${calamityName}/recipients`
+    );
 
-    // Fetch all barangay documents
-    const barangaySnapshot = await getDocs(barangayCollectionRef);
+    // Query recipients based on isQualified and isClaimed
+    const q = query(
+      recipientsCollectionRef,
+      where("isQualified", "==", true),
+      where("isClaimed", "==", false)
+    );
 
-    const allBeneficiaries: BeneficiaryForm[] = [];
+    const recipientsSnapshot = await getDocs(q);
 
-    // Iterate over each barangay
-    for (const barangayDoc of barangaySnapshot.docs) {
-      const barangayName = barangayDoc.id;
+    // Map the documents to the beneficiaries list
+    const beneficiaries = recipientsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as unknown as BeneficiaryForm[];
 
-      // Reference the recipients subcollection
-      const recipientsCollectionRef = collection(
-        db,
-        `barangay/${barangayName}/recipients`
-      );
-
-      // Query recipients based on calamityName and calamityType
-      const q = query(
-        recipientsCollectionRef,
-        where("calamity", "==", calamity),
-        where("calamityName", "==", calamityName)
-      );
-
-      const recipientsSnapshot = await getDocs(q);
-
-      // Map the documents to the beneficiaries list
-      const beneficiaries = recipientsSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        barangayName, // Include barangayName for context
-        ...doc.data(),
-      })) as unknown as BeneficiaryForm[];
-
-      allBeneficiaries.push(...beneficiaries);
-    }
-
-    return allBeneficiaries;
+    return beneficiaries;
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error fetching beneficiaries:", error);

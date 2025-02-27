@@ -161,4 +161,7 @@ export type CalamityBeneficiary = BeneficiaryForm & {
   isQualified?: boolean;
   isClaimed?: boolean;
   dateVerified?: FirebaseTimestamp;
+  beneficiaryName?: string;
+  calamity?: string;
+  calamityName?: string;
 };

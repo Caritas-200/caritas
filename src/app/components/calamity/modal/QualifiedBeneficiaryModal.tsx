@@ -3,7 +3,7 @@ import Pagination from "../../Pagination";
 import SearchBar from "../../SearchBar";
 import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
-import { BeneficiaryForm } from "@/app/lib/definitions";
+import { CalamityBeneficiary } from "@/app/lib/definitions";
 import { fetchBeneficiariesByCalamity } from "@/app/lib/api/calamity/data";
 import SkeletonTable from "../animation/tableSkeleton";
 import BeneficiaryIdQr from "../../barangay/modal/BeneficiaryIdQr";
@@ -21,8 +21,8 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   onClose,
   calamityData,
 }) => {
-  const [beneficiaries, setBeneficiaries] = useState<BeneficiaryForm[]>([]);
-  const [filteredData, setFilteredData] = useState<BeneficiaryForm[]>([]);
+  const [beneficiaries, setBeneficiaries] = useState<CalamityBeneficiary[]>([]);
+  const [filteredData, setFilteredData] = useState<CalamityBeneficiary[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(5);
@@ -32,7 +32,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
 
   const [activeModal, setActiveModal] = useState<"info" | "qr" | null>(null); // Manage which modal is open
   const [selectedBeneficiary, setSelectedBeneficiary] =
-    useState<BeneficiaryForm | null>(null);
+    useState<CalamityBeneficiary | null>(null);
   const [decodedData, setDecodedData] = useState<DecodedData | null>({
     id: selectedBeneficiary?.id || "",
     brgyName: selectedBeneficiary?.address?.barangay?.barangay_name || "",
@@ -70,10 +70,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     const loadBeneficiaries = async () => {
       setLoading(true);
       try {
-        const data = await fetchBeneficiariesByCalamity(
-          calamityData.name,
-          calamityData.calamityType
-        );
+        const data = await fetchBeneficiariesByCalamity(calamityData.name);
         setBeneficiaries(data);
         setFilteredData(data);
       } catch (err: unknown) {
@@ -103,7 +100,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     setCurrentPage(1);
   }, [searchTerm, beneficiaries]);
 
-  const handleViewInfo = (beneficiary: BeneficiaryForm) => {
+  const handleViewInfo = (beneficiary: CalamityBeneficiary) => {
     setSelectedBeneficiary(beneficiary);
     setActiveModal("info");
 
@@ -115,7 +112,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     setUserData(beneficiary);
   };
 
-  const handleViewQR = (beneficiary: BeneficiaryForm) => {
+  const handleViewQR = (beneficiary: CalamityBeneficiary) => {
     setSelectedBeneficiary(beneficiary);
     setActiveModal("qr");
 
@@ -141,7 +138,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Qualified Beneficiaries</h2>
           <button
-            className="text-gray-300 hover:text-red-500 text-xl"
+            className="text-gray-300 hover:text-red-500 text-4xl p-2"
             onClick={onClose}
           >
             &times;
@@ -206,18 +203,12 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                       {index + 1}
                     </td>
                     <td className="border border-border-color py-2 px-4">
-                      {toSentenceCase(
-                        beneficiary.lastName + " " + beneficiary.firstName
-                      )}
+                      {toSentenceCase(beneficiary.beneficiaryName || "")}
                     </td>
                     <td className="border border-border-color py-2 px-4">
-                      {beneficiary.calamity
-                        ? toSentenceCase(
-                            beneficiary.calamity +
-                              " " +
-                              beneficiary.calamityName
-                          )
-                        : "N/A"}
+                      {toSentenceCase(
+                        beneficiary.calamity + " " + beneficiary.calamityName
+                      )}
                     </td>
                     <td className="border border-border-color py-2 px-4">
                       {beneficiary.dateVerified

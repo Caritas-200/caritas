@@ -76,7 +76,8 @@ const Table: React.FC = () => {
           id,
           selectedBarangay,
           status,
-          calamityData
+          calamityData,
+          beneficiaryName
         );
 
         // Show success message
@@ -303,7 +304,9 @@ const Table: React.FC = () => {
                               beneficiary.id,
                               selectedBarangay,
                               true,
-                              beneficiary.firstName,
+                              beneficiary.firstName +
+                                " " +
+                                beneficiary.lastName,
                               calamityData
                             )
                           }
@@ -322,7 +325,9 @@ const Table: React.FC = () => {
                               beneficiary.id,
                               selectedBarangay,
                               false,
-                              beneficiary.firstName,
+                              beneficiary.firstName +
+                                " " +
+                                beneficiary.lastName,
                               calamityData
                             )
                           }
