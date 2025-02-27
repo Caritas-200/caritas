@@ -13,11 +13,10 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
     { label: "Calamity Type", value: formData.calamity },
     {
       label: "Date Created",
-      // value: new Date(formData.dateCreated.seconds * 1000).toLocaleString(),
+      value: new Date(formData.dateCreated.seconds * 1000).toLocaleString(),
     },
   ];
 
-  console.log("formData", formData);
   return (
     <div className="grid grid-cols-3 gap-4 mb-4 border-b pb-2">
       {fields.map(

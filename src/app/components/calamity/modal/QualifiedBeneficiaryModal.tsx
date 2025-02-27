@@ -105,7 +105,6 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     if (beneficiary.brgyName) {
       const result = await fetchBeneficiaries(beneficiary.brgyName);
 
-      console.log("result", result);
       if (result.length > 0) {
         setSelectedBeneficiary(result[0]);
         setActiveModal("info");
@@ -115,7 +114,9 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
           brgyName: beneficiary.brgyName,
         });
 
-        setUserData(beneficiary);
+        const newObject = { beneficiary, ...result[0] };
+
+        setUserData(newObject);
       } else {
         setError("No beneficiaries found for the given barangay name.");
       }
