@@ -77,7 +77,8 @@ const Table: React.FC = () => {
           selectedBarangay,
           status,
           calamityData,
-          beneficiaryName
+          beneficiaryName,
+          selectedBarangay
         );
 
         // Show success message

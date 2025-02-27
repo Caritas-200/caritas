@@ -58,7 +58,8 @@ export const updateQualificationStatus = async (
   selectedBarangay: string,
   isQualified: boolean,
   calamityData: { name: string; calamityType: string } | null,
-  beneficiaryName: string
+  beneficiaryName: string,
+  brgyName: string
 ) => {
   try {
     const docRef = doc(db, `barangay/${selectedBarangay}/recipients`, id);
@@ -84,6 +85,7 @@ export const updateQualificationStatus = async (
         isClaimed: false,
         isQualified: true,
         beneficiaryName: beneficiaryName,
+        brgyName: brgyName,
         ...updateData,
       });
     } else {

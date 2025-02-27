@@ -1,8 +1,8 @@
 import React from "react";
-import { UserData } from "@/app/lib/definitions";
+import { CalamityBeneficiary } from "@/app/lib/definitions";
 
 interface BeneficiaryDetailsProps {
-  formData: UserData;
+  formData: CalamityBeneficiary;
 }
 
 const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
@@ -13,10 +13,11 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
     { label: "Calamity Type", value: formData.calamity },
     {
       label: "Date Created",
-      value: new Date(formData.dateCreated.seconds * 1000).toLocaleString(),
+      // value: new Date(formData.dateCreated.seconds * 1000).toLocaleString(),
     },
   ];
 
+  console.log("formData", formData);
   return (
     <div className="grid grid-cols-3 gap-4 mb-4 border-b pb-2">
       {fields.map(

@@ -164,4 +164,5 @@ export type CalamityBeneficiary = BeneficiaryForm & {
   beneficiaryName?: string;
   calamity?: string;
   calamityName?: string;
+  brgyName?: string;
 };

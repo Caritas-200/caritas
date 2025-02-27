@@ -9,6 +9,7 @@ import SkeletonTable from "../animation/tableSkeleton";
 import BeneficiaryIdQr from "../../barangay/modal/BeneficiaryIdQr";
 import UserFormModal from "../../qr/ConfirmedBeneficiaryModal";
 import { UserData, DecodedData } from "@/app/lib/definitions";
+import { fetchBeneficiaries } from "@/app/lib/api/beneficiary/data";
 
 interface ModalProps {
   isOpen: boolean;
@@ -100,16 +101,27 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     setCurrentPage(1);
   }, [searchTerm, beneficiaries]);
 
-  const handleViewInfo = (beneficiary: CalamityBeneficiary) => {
-    setSelectedBeneficiary(beneficiary);
-    setActiveModal("info");
+  const handleViewInfo = async (beneficiary: CalamityBeneficiary) => {
+    if (beneficiary.brgyName) {
+      const result = await fetchBeneficiaries(beneficiary.brgyName);
 
-    setDecodedData({
-      id: beneficiary.id,
-      brgyName: beneficiary.address.barangay.barangay_name,
-    });
+      console.log("result", result);
+      if (result.length > 0) {
+        setSelectedBeneficiary(result[0]);
+        setActiveModal("info");
 
-    setUserData(beneficiary);
+        setDecodedData({
+          id: beneficiary.id,
+          brgyName: beneficiary.brgyName,
+        });
+
+        setUserData(beneficiary);
+      } else {
+        setError("No beneficiaries found for the given barangay name.");
+      }
+    } else {
+      setError("Barangay name is undefined.");
+    }
   };
 
   const handleViewQR = (beneficiary: CalamityBeneficiary) => {
