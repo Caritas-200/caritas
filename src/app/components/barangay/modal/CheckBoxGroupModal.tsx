@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { BeneficiaryForm } from "@/app/lib/definitions";
-import { codeChecklist } from "@/app/config/formConfig";
+import { codeChecklist, radioGroups } from "@/app/config/formConfig";
 import ProgressBar from "../../ProgressBar";
 import FamilyListModal from "./FamilyListForm";
-import { radioGroups } from "@/app/config/formConfig";
 
 interface CheckboxGroupModalProps {
   formData: BeneficiaryForm;
@@ -43,6 +42,17 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
     setErrors({ ...errors, [name]: "" });
   };
 
+  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const key = name as keyof BeneficiaryForm;
+
+    onChange({
+      ...formData,
+      [key]: [value],
+    });
+    setErrors({ ...errors, [name]: "" });
+  };
+
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
@@ -78,7 +88,7 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
             >
               ✖
             </button>
-            <h2 className="text-2xl font-bold mb-4  text-center text-gray-900">
+            <h2 className="text-2xl font-bold mb-4 text-center text-gray-900">
               {`${!isEditing ? "Beneficiary Form" : "Edit Beneficiary"}`}
             </h2>
 
@@ -106,7 +116,7 @@ const CheckboxGroupModal: React.FC<CheckboxGroupModalProps> = ({
                             checked={(
                               formData[group.name] as string[]
                             ).includes(option)}
-                            onChange={handleCheckboxChange}
+                            onChange={handleRadioChange}
                             className={`form-radio ${
                               errors[group.name] ? "border-red-500" : ""
                             }`}
