@@ -75,21 +75,15 @@ export type BeneficiaryForm = {
   ownershipRentalType: string[];
   code: string[];
   qrCode: string;
-  calamity: string;
-  calamityName: string;
   donationType?: string;
-  dateClaimed?: FirebaseTimestamp;
   cost?: string;
   quantity?: string;
   claimantImage?: string;
-  isQualified?: boolean;
   dateVerified?: FirebaseTimestamp;
 };
 
 export type UserData = Pick<
   BeneficiaryForm,
-  | "calamity"
-  | "calamityName"
   | "dateCreated"
   | "familyMembers"
   | "firstName"
@@ -161,3 +155,10 @@ export interface DecodedData {
   id: string;
   brgyName: string;
 }
+
+// New type that extends BeneficiaryForm with additional fields from calamity collection
+export type CalamityBeneficiary = BeneficiaryForm & {
+  isQualified?: boolean;
+  isClaimed?: boolean;
+  dateVerified?: FirebaseTimestamp;
+};

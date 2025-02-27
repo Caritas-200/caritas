@@ -15,6 +15,8 @@ const Recipient: React.FC = () => {
   const params = useParams() as unknown as Params;
   const { barangayName } = params;
 
+  const calamityName = barangayName;
+
   const tableRef = useRef<HTMLDivElement>(null);
 
   // State to toggle the modal
@@ -37,7 +39,7 @@ const Recipient: React.FC = () => {
         </button>
       </div>
       <h2 className="text-2xl font-bold mb-4">
-        Calamity Name: {barangayName.toUpperCase()}
+        Calamity Name: {calamityName.toUpperCase()}
       </h2>
       <div ref={tableRef}>
         <Table />
@@ -48,7 +50,7 @@ const Recipient: React.FC = () => {
         <BeneficiaryModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          calamityData={{ name: barangayName, calamityType: "Typhoon" }}
+          calamityData={{ name: calamityName, calamityType: "Typhoon" }}
         />
       )}
     </div>

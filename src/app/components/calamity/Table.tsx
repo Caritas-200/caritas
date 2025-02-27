@@ -3,10 +3,12 @@ import SearchBar from "../SearchBar";
 import Pagination from "../Pagination";
 import { fetchBeneficiaries } from "@/app/lib/api/beneficiary/data";
 import { getAllBarangays } from "@/app/lib/api/barangay/data";
-import { BeneficiaryForm } from "@/app/lib/definitions";
-import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
+import { CalamityBeneficiary } from "@/app/lib/definitions";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
-import { updateQualificationStatus } from "@/app/lib/api/calamity/data";
+import {
+  updateQualificationStatus,
+  checkRecipientsQualification,
+} from "@/app/lib/api/calamity/data";
 import Swal from "sweetalert2";
 import BeneficiaryInfoModal from "./modal/BeneficiaryInfoModal";
 
@@ -15,11 +17,8 @@ const Table: React.FC = () => {
     []
   );
   const [selectedBarangay, setSelectedBarangay] = useState<string | null>(null);
-  const [beneficiaries, setBeneficiaries] = useState<BeneficiaryForm[]>([]);
-  const [filteredData, setFilteredData] = useState<BeneficiaryForm[]>([]);
-  const [isQualified, setIsQualified] = useState<{
-    [key: string]: boolean | null;
-  }>({});
+  const [beneficiaries, setBeneficiaries] = useState<CalamityBeneficiary[]>([]);
+  const [filteredData, setFilteredData] = useState<CalamityBeneficiary[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(5);
@@ -58,35 +57,19 @@ const Table: React.FC = () => {
 
       if (result.isConfirmed) {
         // Optimistically update the UI for both qualification status and calamity column
-        setIsQualified((prev) => ({
-          ...prev,
-          [id]: status,
-        }));
-
-        // Optimistically update calamity column if qualifying
-        if (status && calamityData) {
-          setBeneficiaries((prev) =>
-            prev.map((beneficiary) =>
-              beneficiary.id === id
-                ? {
-                    ...beneficiary,
-                    calamity: `${calamityData.calamityType} ${calamityData.name}`,
-                  }
-                : beneficiary
-            )
-          );
-        } else if (!status) {
-          setBeneficiaries((prev) =>
-            prev.map((beneficiary) =>
-              beneficiary.id === id
-                ? {
-                    ...beneficiary,
-                    calamity: "",
-                  }
-                : beneficiary
-            )
-          );
-        }
+        setBeneficiaries((prev) =>
+          prev.map((beneficiary) =>
+            beneficiary.id === id
+              ? {
+                  ...beneficiary,
+                  isQualified: status,
+                  calamity: status
+                    ? `${calamityData?.calamityType} ${calamityData?.name}`
+                    : "",
+                }
+              : beneficiary
+          )
+        );
 
         // Call the API to update the qualification status in the database
         await updateQualificationStatus(
@@ -108,24 +91,16 @@ const Table: React.FC = () => {
       }
     } catch (error) {
       // Revert the UI update on error
-      setIsQualified((prev) => ({
-        ...prev,
-        [id]: !status,
-      }));
-
-      if (status) {
-        // Reset calamity value to N/A on failure
-        setBeneficiaries((prev) =>
-          prev.map((beneficiary) =>
-            beneficiary.id === id
-              ? {
-                  ...beneficiary,
-                  calamity: "N/A",
-                }
-              : beneficiary
-          )
-        );
-      }
+      setBeneficiaries((prev) =>
+        prev.map((beneficiary) =>
+          beneficiary.id === id
+            ? {
+                ...beneficiary,
+                isQualified: !status,
+              }
+            : beneficiary
+        )
+      );
 
       // Show error message
       await Swal.fire({
@@ -162,15 +137,29 @@ const Table: React.FC = () => {
       setLoading(true);
       try {
         const data = await fetchBeneficiaries(selectedBarangay);
-        setBeneficiaries(data);
-        setFilteredData(data);
 
-        // Map initial status from the fetched data
-        const initialStatus = data.reduce((acc, item) => {
-          acc[item.id] = item.isQualified ?? null; // Use null if isQualified is undefined
-          return acc;
-        }, {} as { [key: string]: boolean | null });
-        setIsQualified(initialStatus);
+        // Fetch qualification data from calamity collection
+        const recipientIDs = data.map((beneficiary) => beneficiary.id);
+        const qualificationData = await checkRecipientsQualification(
+          recipientIDs,
+          calamityData?.name || ""
+        );
+
+        // Merge qualification data with beneficiaries
+        const mergedData = data.map((beneficiary) => {
+          const qualification = qualificationData.find(
+            (q) => q.id === beneficiary.id
+          );
+          return {
+            ...beneficiary,
+            isQualified: qualification?.isQualified ?? undefined,
+            isClaimed: qualification?.isClaimed ?? false,
+            dateVerified: qualification?.dateVerified ?? undefined,
+          };
+        });
+
+        setBeneficiaries(mergedData);
+        setFilteredData(mergedData);
       } catch (err: unknown) {
         setError(
           err instanceof Error
@@ -183,7 +172,7 @@ const Table: React.FC = () => {
     };
 
     loadBeneficiaries();
-  }, [selectedBarangay]);
+  }, [selectedBarangay, calamityData]);
 
   useEffect(() => {
     const filtered = beneficiaries.filter((beneficiary) =>
@@ -254,12 +243,7 @@ const Table: React.FC = () => {
                 <th className="border border-border-color py-2 px-4 text-left">
                   First Name
                 </th>
-                <th className="border border-border-color py-2 px-4 text-left">
-                  Calamity
-                </th>
-                <th className="border border-border-color py-2 px-4 text-left">
-                  Date Verified
-                </th>
+
                 <th className="border border-border-color py-2 px-4 text-left">
                   Qualification
                 </th>
@@ -286,30 +270,17 @@ const Table: React.FC = () => {
                   <td className="border border-border-color py-2 px-4">
                     {toSentenceCase(beneficiary.firstName)}
                   </td>
-                  <td className="border border-border-color py-2 px-4">
-                    {beneficiary.calamity ? (
-                      toSentenceCase(
-                        beneficiary.calamity + " " + beneficiary.calamityName
-                      )
-                    ) : (
-                      <span className="uppercase">N/A</span>
-                    )}
-                  </td>
-                  <td className="border border-border-color py-2 px-4">
-                    {beneficiary.dateVerified
-                      ? convertFirebaseTimestamp(beneficiary.dateVerified)
-                      : "N/A"}
-                  </td>
+
                   <td
                     className={`border border-border-color py-2 px-4 ${
-                      isQualified[beneficiary.id] === true
+                      beneficiary.isQualified === true
                         ? "text-green-500 font-bold"
                         : ""
                     }`}
                   >
-                    {isQualified[beneficiary.id] === true
+                    {beneficiary.isQualified === true
                       ? "Qualified"
-                      : isQualified[beneficiary.id] === false
+                      : beneficiary.isQualified === false
                       ? "Unqualified"
                       : "N/A"}
                   </td>
@@ -322,11 +293,11 @@ const Table: React.FC = () => {
                       <>
                         <button
                           className={`mr-2 px-2 py-1 rounded text-white ${
-                            isQualified[beneficiary.id] === true
+                            beneficiary.isQualified === true
                               ? "bg-gray-500"
                               : "bg-green-500"
                           }`}
-                          disabled={isQualified[beneficiary.id] === true}
+                          disabled={beneficiary.isQualified === true}
                           onClick={() =>
                             handleQualification(
                               beneficiary.id,
@@ -341,11 +312,11 @@ const Table: React.FC = () => {
                         </button>
                         <button
                           className={`px-2 py-1 rounded text-white ${
-                            isQualified[beneficiary.id] === false
+                            beneficiary.isQualified === false
                               ? "bg-gray-500"
                               : "bg-red-500"
                           }`}
-                          disabled={isQualified[beneficiary.id] === false}
+                          disabled={beneficiary.isQualified === false}
                           onClick={() =>
                             handleQualification(
                               beneficiary.id,

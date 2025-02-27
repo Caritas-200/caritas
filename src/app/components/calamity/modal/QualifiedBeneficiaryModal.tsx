@@ -39,8 +39,6 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   });
 
   const [userData, setUserData] = useState<UserData>({
-    calamity: selectedBeneficiary?.calamity || "",
-    calamityName: selectedBeneficiary?.calamityName || "",
     dateCreated: selectedBeneficiary?.dateCreated || {
       seconds: 0,
       nanoseconds: 0,
