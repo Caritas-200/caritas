@@ -14,7 +14,6 @@ import {
   validateConditions,
 } from "@/app/util/validationQRForm";
 import { updateVerifiedBeneficiary } from "@/app/lib/api/calamity/data";
-import Calamity from "@/app/(ui)/calamity/page";
 
 interface ModalProps {
   data: UserData;
