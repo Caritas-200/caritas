@@ -1,4 +1,4 @@
-import react, { useState } from "react";
+import React, { useState } from "react";
 import QRCode from "react-qr-code";
 import Image from "next/image";
 import { BeneficiaryForm } from "@/app/lib/definitions";
@@ -18,6 +18,7 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
 }) => {
   const newObject = JSON.parse(beneficiaryData);
   const [beneficiary, setBeneficiary] = useState<BeneficiaryForm>(newObject);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Safely extract address fields and construct the full address
   const fullAddress = [
@@ -163,12 +164,22 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
               {/* QR Code */}
               <div className="id-front-qr flex justify-end">
                 {from === "calamity" ? (
-                  <Image
-                    src={beneficiary.qrCode}
-                    alt="gg"
-                    width={150}
-                    height={150}
-                  />
+                  <>
+                    {isLoading && (
+                      <div className="flex items-center justify-center">
+                        <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+                      </div>
+                    )}
+                    <Image
+                      src={beneficiary.qrCode}
+                      alt="QR Code"
+                      width={150}
+                      height={150}
+                      onLoadingComplete={() => setIsLoading(false)}
+                      placeholder="blur"
+                      blurDataURL="/path/to/placeholder-image.jpg" // Replace with your placeholder image path
+                    />
+                  </>
                 ) : (
                   <QRCode value={qrData} size={150} />
                 )}
