@@ -57,14 +57,9 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
       email: "",
       beneficiary4Ps: "",
       monthlyNetIncome: "",
-      housingCondition: "",
-      casualty: "",
-      healthCondition: "",
       ownershipRentalType: [],
       code: [],
       qrCode: "",
-      calamity: "",
-      calamityName: "",
     }
   );
 
@@ -255,7 +250,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
       ) : (
         // Second part of the modal for additional information (if needed)
         <CheckboxGroupModal
-          isEditing={isEditing}
+          isEditing={isEditing ?? false}
           formData={formData}
           onChange={setFormData}
           onSubmit={handleFinalSubmit}

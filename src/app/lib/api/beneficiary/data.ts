@@ -72,9 +72,7 @@ export const addBeneficiary = async (
     const formDataWithId = {
       ...formData,
       id: newBeneficiaryRef.id,
-      isClaimed: false,
       dateCreated: Timestamp.now(),
-      isQualified: false,
     };
 
     // Save the new beneficiary document

@@ -192,7 +192,6 @@ export const updateVerifiedBeneficiary = async (
   casualty: string,
   healthCondition: string
 ): Promise<{ success: boolean; message?: string }> => {
-  console.log(calamityName);
   try {
     // Reference to the specific beneficiary document in the calamity collection
     const beneficiaryDocRef = doc(

@@ -7,9 +7,11 @@ import FamilyListModal from "./FamilyListForm";
 interface CheckboxGroupModalProps {
   formData: BeneficiaryForm;
   onChange: (formData: BeneficiaryForm) => void;
+  onSubmit: (updatedData: BeneficiaryForm) => void;
   onClose: () => void;
   onBack: () => void;
   brgyName: string;
+
   isEditing: boolean;
 }
 

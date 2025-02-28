@@ -118,7 +118,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
           calamityName: beneficiary.calamityName,
         });
 
-        const newObject = { ...beneficiary, ...result[0] };
+        const newObject = { ...result[0], ...beneficiary };
 
         setUserData(newObject);
       } else {
@@ -134,7 +134,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
       //fetch data from beneficiaries using barangay name as path
       const result = await fetchBeneficiaries(beneficiary.brgyName);
 
-      const newObject = { ...beneficiary, ...result[0] };
+      const newObject = { ...result[0], ...beneficiary };
       setSelectedBeneficiary(newObject);
       setActiveModal("qr");
 

@@ -17,7 +17,6 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
   beneficiaryId,
   onClose,
 }) => {
-  console.log(beneficiaryId, brgyName);
   const [beneficiary, setBeneficiary] = useState<CalamityBeneficiary | null>(
     null
   );
