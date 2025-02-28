@@ -106,6 +106,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
 
   const handleViewInfo = async (beneficiary: CalamityBeneficiary) => {
     if (beneficiary.brgyName && beneficiary.calamityName) {
+      //fetch data from beneficiaries using barangay name as path
       const result = await fetchBeneficiaries(beneficiary.brgyName);
 
       if (result.length > 0) {
@@ -128,17 +129,22 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     }
   };
 
-  const handleViewQR = (beneficiary: CalamityBeneficiary) => {
-    setSelectedBeneficiary(beneficiary);
-    setActiveModal("qr");
+  const handleViewQR = async (beneficiary: CalamityBeneficiary) => {
+    if (beneficiary.brgyName) {
+      //fetch data from beneficiaries using barangay name as path
+      const result = await fetchBeneficiaries(beneficiary.brgyName);
 
-    const qrPayload = {
-      id: beneficiary.id,
-      lastName: beneficiary.lastName,
-      brgyName: beneficiary.address.barangay.barangay_name,
-    };
+      const newObject = { ...beneficiary, ...result[0] };
+      setSelectedBeneficiary(newObject);
+      setActiveModal("qr");
 
-    setQrData(JSON.stringify(qrPayload)); // Set QR data
+      const qrPayload = {
+        id: beneficiary.id,
+        lastName: beneficiary.lastName,
+        brgyName: beneficiary.brgyName,
+      };
+      setQrData(JSON.stringify(qrPayload)); // Set QR data
+    }
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
