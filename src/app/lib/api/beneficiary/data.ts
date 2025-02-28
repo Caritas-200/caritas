@@ -257,13 +257,33 @@ export const deleteBeneficiary = async (
   beneficiaryId: string
 ): Promise<void> => {
   try {
+    // Reference to the specific beneficiary document in the barangay collection
     const beneficiaryDocRef = doc(
       db,
       `barangay/${brgyName}/recipients/${beneficiaryId}`
     );
 
-    // Delete the beneficiary document from Firestore
+    // Delete the beneficiary document from the barangay collection
     await deleteDoc(beneficiaryDocRef);
+
+    // Fetch all calamity collections
+    const calamityCollectionRef = collection(db, "calamity");
+    const calamitySnapshot = await getDocs(calamityCollectionRef);
+
+    // Iterate over each calamity collection and delete the corresponding document
+    for (const calamityDoc of calamitySnapshot.docs) {
+      const calamityName = calamityDoc.id;
+      const calamityRecipientDocRef = doc(
+        db,
+        `calamity/${calamityName}/recipients/${beneficiaryId}`
+      );
+
+      // Check if the document exists before attempting to delete it
+      const calamityRecipientDoc = await getDoc(calamityRecipientDocRef);
+      if (calamityRecipientDoc.exists()) {
+        await deleteDoc(calamityRecipientDocRef);
+      }
+    }
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw error;
