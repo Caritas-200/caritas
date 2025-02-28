@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { fetchBeneficiaryById } from "@/app/lib/api/beneficiary/data";
-import { BeneficiaryForm, CalamityBeneficiary } from "@/app/lib/definitions";
+import { CalamityBeneficiary, BeneficiaryForm } from "@/app/lib/definitions";
 import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
 import { formatToPHP } from "@/app/util/formatToPHP";
 import Image from "next/image";
+import { fetchBeneficiaryByCalamityAndId } from "@/app/lib/api/calamity/data";
 
 interface BeneficiaryInfoModalProps {
   brgyName: string;
+  calamityData: { name: string; calamityType: string };
   beneficiaryId: string;
   onClose: () => void;
 }
 
 const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
   brgyName,
+  calamityData,
   beneficiaryId,
   onClose,
 }) => {
@@ -26,8 +29,32 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
   useEffect(() => {
     const fetchBeneficiary = async () => {
       try {
-        const data = await fetchBeneficiaryById(brgyName, beneficiaryId);
-        setBeneficiary(data);
+        const BeneficiaryData = await fetchBeneficiaryById(
+          brgyName,
+          beneficiaryId
+        );
+        const calamityBeneficiaryData = await fetchBeneficiaryByCalamityAndId(
+          calamityData.name,
+          beneficiaryId
+        );
+
+        if (!BeneficiaryData) {
+          throw new Error("Beneficiary data not found");
+        }
+
+        const newObject: CalamityBeneficiary = {
+          ...BeneficiaryData,
+          ...calamityBeneficiaryData,
+          id: BeneficiaryData.id || "",
+          firstName: BeneficiaryData.firstName || "",
+          middleName: BeneficiaryData.middleName || "",
+          lastName: BeneficiaryData.lastName || "",
+          mobileNumber: BeneficiaryData.mobileNumber || "",
+          age: BeneficiaryData.age || "",
+          // Add other required fields with default values if necessary
+        };
+
+        setBeneficiary(newObject);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
       } finally {
@@ -36,7 +63,7 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
     };
 
     fetchBeneficiary();
-  }, [brgyName, beneficiaryId]);
+  }, [brgyName, beneficiaryId, calamityData.name]);
 
   if (loading) {
     return <div className="p-4">Loading...</div>;
@@ -79,7 +106,6 @@ const BeneficiaryInfoModal: React.FC<BeneficiaryInfoModalProps> = ({
     "Ownership/Rental Type": beneficiary.ownershipRentalType.join(", "),
     Code: beneficiary.code.join(", "),
     "Date Created": convertFirebaseTimestamp(beneficiary.dateCreated),
-    Status: beneficiary.isClaimed,
     Calamity: beneficiary.calamity,
     "Calamity Name": beneficiary.calamityName,
   };

@@ -11,7 +11,7 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { db, storage } from "@/app/services/firebaseConfig";
-import { BeneficiaryForm } from "../../definitions";
+import { BeneficiaryForm, CalamityBeneficiary } from "../../definitions";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 // Function to add a new calamity
@@ -137,6 +137,41 @@ export const fetchBeneficiariesByCalamity = async (
       throw error; // Re-throw to handle it in the UI
     } else {
       throw new Error("Unknown error occurred");
+    }
+  }
+};
+
+export const fetchBeneficiaryByCalamityAndId = async (
+  calamityName: string,
+  beneficiaryId: string
+): Promise<CalamityBeneficiary | null> => {
+  try {
+    // Reference to the specific beneficiary document in the calamity collection
+    const beneficiaryDocRef = doc(
+      db,
+      `calamity/${calamityName}/recipients`,
+      beneficiaryId
+    );
+
+    // Fetch the beneficiary document
+    const beneficiaryDoc = await getDoc(beneficiaryDocRef);
+
+    if (beneficiaryDoc.exists()) {
+      // Return the beneficiary data
+      return {
+        id: beneficiaryDoc.id,
+        ...beneficiaryDoc.data(),
+      } as CalamityBeneficiary;
+    } else {
+      console.error("No such document!");
+      return null;
+    }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error fetching beneficiary:", error);
+      throw error;
+    } else {
+      throw new Error("Unknown error occurred while fetching beneficiary");
     }
   }
 };
