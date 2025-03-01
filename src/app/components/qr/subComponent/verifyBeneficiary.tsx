@@ -8,7 +8,10 @@ import clsx from "clsx";
 import { showLoading, hideLoading } from "../../loading";
 import { UserData, DecodedData } from "@/app/lib/definitions";
 import UserFormModal from "../ConfirmedBeneficiaryModal";
-import { fetchBeneficiaryByCalamityAndId } from "@/app/lib/api/calamity/data";
+import {
+  fetchBeneficiaryByCalamityAndId,
+  getAllCalamity,
+} from "@/app/lib/api/calamity/data";
 
 interface ModalProps {
   onClose: () => void;
@@ -67,16 +70,19 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
         setIsBeneficiaryFound(true);
         setBeneficiaryData(result.beneficiaryData as UserData | undefined);
 
+        const allCalamities = await getAllCalamity();
         const qualifiedCalamitiesList: string[] = [];
-        if (selectedCalamity) {
+
+        for (const calamity of allCalamities) {
           const calamityResult = await fetchBeneficiaryByCalamityAndId(
-            selectedCalamity,
+            calamity.name,
             id
           );
           if (calamityResult && calamityResult.isQualified) {
-            qualifiedCalamitiesList.push(selectedCalamity);
+            qualifiedCalamitiesList.push(calamity.name);
           }
         }
+
         setQualifiedCalamities(qualifiedCalamitiesList);
       } else {
         setVerificationMessage("No Beneficiary Found!");
