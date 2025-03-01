@@ -14,7 +14,7 @@ import Image from "next/image";
 
 // Skeleton Loader Component
 const SkeletonLoader: React.FC = () => (
-  <div className="animate-pulse flex flex-col space-y-4 p-4 bg-white-primary rounded-lg">
+  <div className="animate-pulse flex flex-col space-y-4 p-4 bg-white rounded-lg">
     <div className="bg-gray-200 h-40 rounded-md"></div>
     <div className="h-4 bg-gray-200 rounded"></div>
     <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -178,184 +178,225 @@ const Media: React.FC = () => {
   };
 
   return (
-    <div className="p-20 bg-bg-color min-h-screen text-text-color">
-      <div className="flex justify-between items-center mb-4">
-        <button
-          className="bg-blue-500 text-white py-2 px-4 rounded-lg"
-          onClick={() => router.back()}
-        >
-          Back
-        </button>
-        <div className="flex gap-4">
-          <select
-            value={viewingOption}
-            onChange={handleViewingOptionChange}
-            className="bg-blue-500 text-white py-2 px-4 rounded-lg outline-none"
-          >
-            <option className="bg-white-primary text-text-color " value="Large">
-              Large
-            </option>
-            <option className="bg-white-primary text-text-color" value="Medium">
-              Medium
-            </option>
-            <option className="bg-white-primary text-text-color" value="Small">
-              Small
-            </option>
-          </select>
-        </div>
-      </div>
-      <h2 className="text-2xl font-bold mb-4">
-        {documentName.toUpperCase()} _ Media Files
-      </h2>
-
-      <div
-        {...getRootProps()}
-        className="border-dashed border-2 border-gray-400 p-10 text-center mb-4 cursor-pointer"
-      >
-        <input {...getInputProps()} />
-        {isCompressing ? (
-          <p>Compressing files, please wait...</p>
-        ) : (
-          <p>Drag & drop some files here, or click to select files</p>
-        )}
-      </div>
-
-      <div className={`grid ${getGridColumns()} relative gap-4`}>
-        {isCompressing || loadingFetchedMedia ? (
-          Array.from({ length: 6 }).map((_, index) => (
-            <SkeletonLoader key={index} />
-          ))
-        ) : (
-          <>
-            {mediaFiles.map((file, index) => (
-              <div
-                key={`local-${index}`}
-                className="relative bg-gray-600 p-2 rounded-lg  overflow-hidden"
-              >
-                <div className="absolute top-2 right-2 z-10">
-                  <button
-                    className="text-white p-2 rounded-full w-10 z-12"
-                    onClick={() =>
-                      setSelectedFileIndex(
-                        selectedFileIndex === index ? null : index
-                      )
-                    }
-                  >
-                    ⋮
-                  </button>
-                  {selectedFileIndex === index && (
-                    <div className="absolute right-0 mt-2 bg-gray-700 rounded-lg shadow-lg z-20">
-                      <button
-                        className="block text-white px-4 py-2 hover:bg-red-600"
-                        onClick={() =>
-                          handleDeleteMedia(index, false, file.name)
-                        }
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {file.type && file.type.startsWith("image/") && (
-                  <Image
-                    src={URL.createObjectURL(file)}
-                    alt="Image Preview"
-                    width={400}
-                    height={400}
-                    className="w-full h-fill object-fit"
-                  />
-                )}
-                {file.type && file.type.startsWith("video/") && (
-                  <video
-                    controls
-                    src={URL.createObjectURL(file)}
-                    className="w-full h-fill object-fit"
-                  />
-                )}
-                {!file.type?.startsWith("image/") &&
-                  !file.type?.startsWith("video/") && (
-                    <p className="text-white text-wrap overflow-clip">
-                      {file.name.length > getCharLimit()
-                        ? `${file.name.substring(0, getCharLimit())}...`
-                        : file.name}
-                    </p>
-                  )}
-                {!(file.type && file.type.startsWith("application/")) && (
-                  <p className="text-white text-wrap overflow-clip">
-                    {file.name}
-                  </p>
-                )}
-              </div>
-            ))}
-            {fetchedMedia.map((media, index) => (
-              <div
-                key={`fetched-${index}`}
-                className="relative bg-gray-600 p-2 rounded-lg  overflow-hidden"
-              >
-                <div className="absolute top-2 right-2 z-10">
-                  <button
-                    className="text-white p-2 rounded-full w-10 z-12"
-                    onClick={() =>
-                      setSelectedFileIndex(
-                        selectedFileIndex === index ? null : index
-                      )
-                    }
-                  >
-                    ⋮
-                  </button>
-                  {selectedFileIndex === index && (
-                    <div className="absolute right-0 mt-2 bg-gray-700 rounded-lg shadow-lg z-20">
-                      <button
-                        className="block text-white px-4 py-2 hover:bg-red-600"
-                        onClick={() =>
-                          handleDeleteMedia(index, true, media.name)
-                        }
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                {media.type && media.type.startsWith("image/") && (
-                  <Image
-                    src={media.url}
-                    alt="Image Preview"
-                    width={400}
-                    height={400}
-                    className="w-full h-fill object-cover"
-                  />
-                )}
-                {media.type && media.type.startsWith("video/") && (
-                  <video
-                    controls
-                    src={media.url}
-                    className="w-full h-fill object-fit"
-                  />
-                )}
-                {!media.type?.startsWith("image/") &&
-                  !media.type?.startsWith("video/") && (
-                    <p className="text-white text-wrap overflow-clip">
-                      {media.name.length > getCharLimit()
-                        ? `${media.name.substring(0, getCharLimit())}...`
-                        : media.name}
-                    </p>
-                  )}
-                {!(media.type && media.type.startsWith("application/")) && (
-                  <p className="text-white text-wrap overflow-clip">
-                    {media.name.length > getCharLimit()
-                      ? `${media.name.substring(0, getCharLimit())}...`
-                      : media.name}
-                  </p>
-                )}
-              </div>
-            ))}
-          </>
-        )}
-      </div>
+    <div className="p-20 bg-white min-h-screen text-black">
+      <Header
+        documentName={documentName}
+        viewingOption={viewingOption}
+        handleViewingOptionChange={handleViewingOptionChange}
+        router={router}
+      />
+      <Dropzone
+        getRootProps={getRootProps}
+        getInputProps={getInputProps}
+        isCompressing={isCompressing}
+      />
+      <MediaGrid
+        mediaFiles={mediaFiles}
+        fetchedMedia={fetchedMedia}
+        isCompressing={isCompressing}
+        loadingFetchedMedia={loadingFetchedMedia}
+        selectedFileIndex={selectedFileIndex}
+        setSelectedFileIndex={setSelectedFileIndex}
+        handleDeleteMedia={handleDeleteMedia}
+        getGridColumns={getGridColumns}
+        getCharLimit={getCharLimit}
+      />
     </div>
   );
 };
+
+const Header: React.FC<{
+  documentName: string;
+  viewingOption: string;
+  handleViewingOptionChange: (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => void;
+  router: ReturnType<typeof useRouter>;
+}> = ({ documentName, viewingOption, handleViewingOptionChange, router }) => (
+  <div className="flex justify-between items-center mb-4">
+    <button
+      className="bg-blue-500 text-white py-2 px-4 rounded-lg"
+      onClick={() => router.back()}
+    >
+      Back
+    </button>
+    <div className="flex gap-4">
+      <select
+        value={viewingOption}
+        onChange={handleViewingOptionChange}
+        className="bg-blue-500 text-white py-2 px-4 rounded-lg outline-none"
+      >
+        <option className="bg-white text-black" value="Large">
+          Large
+        </option>
+        <option className="bg-white text-black" value="Medium">
+          Medium
+        </option>
+        <option className="bg-white text-black" value="Small">
+          Small
+        </option>
+      </select>
+    </div>
+  </div>
+);
+
+const Dropzone: React.FC<{
+  getRootProps: ReturnType<typeof useDropzone>["getRootProps"];
+  getInputProps: ReturnType<typeof useDropzone>["getInputProps"];
+  isCompressing: boolean;
+}> = ({ getRootProps, getInputProps, isCompressing }) => (
+  <div
+    {...getRootProps()}
+    className="border-dashed border-2 border-gray-400 p-10 text-center mb-4 cursor-pointer"
+  >
+    <input {...getInputProps()} />
+    {isCompressing ? (
+      <p>Compressing files, please wait...</p>
+    ) : (
+      <p>Drag & drop some files here, or click to select files</p>
+    )}
+  </div>
+);
+
+const MediaGrid: React.FC<{
+  mediaFiles: File[];
+  fetchedMedia: MediaData[];
+  isCompressing: boolean;
+  loadingFetchedMedia: boolean;
+  selectedFileIndex: number | null;
+  setSelectedFileIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  handleDeleteMedia: (
+    index: number,
+    isFetched: boolean,
+    fileName: string
+  ) => Promise<void>;
+  getGridColumns: () => string;
+  getCharLimit: () => number;
+}> = ({
+  mediaFiles,
+  fetchedMedia,
+  isCompressing,
+  loadingFetchedMedia,
+  selectedFileIndex,
+  setSelectedFileIndex,
+  handleDeleteMedia,
+  getGridColumns,
+  getCharLimit,
+}) => (
+  <div className={`grid ${getGridColumns()} relative gap-4`}>
+    {isCompressing || loadingFetchedMedia ? (
+      Array.from({ length: 6 }).map((_, index) => (
+        <SkeletonLoader key={index} />
+      ))
+    ) : (
+      <>
+        {mediaFiles.map((file, index) => (
+          <MediaItem
+            key={`local-${index}`}
+            file={file}
+            index={index}
+            selectedFileIndex={selectedFileIndex}
+            setSelectedFileIndex={setSelectedFileIndex}
+            handleDeleteMedia={handleDeleteMedia}
+            isFetched={false}
+            getCharLimit={getCharLimit}
+          />
+        ))}
+        {fetchedMedia.map((media, index) => (
+          <MediaItem
+            key={`fetched-${index}`}
+            file={media}
+            index={index}
+            selectedFileIndex={selectedFileIndex}
+            setSelectedFileIndex={setSelectedFileIndex}
+            handleDeleteMedia={handleDeleteMedia}
+            isFetched={true}
+            getCharLimit={getCharLimit}
+          />
+        ))}
+      </>
+    )}
+  </div>
+);
+
+const MediaItem: React.FC<{
+  file: File | MediaData;
+  index: number;
+  selectedFileIndex: number | null;
+  setSelectedFileIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  handleDeleteMedia: (
+    index: number,
+    isFetched: boolean,
+    fileName: string
+  ) => Promise<void>;
+  isFetched: boolean;
+  getCharLimit: () => number;
+}> = ({
+  file,
+  index,
+  selectedFileIndex,
+  setSelectedFileIndex,
+  handleDeleteMedia,
+  isFetched,
+  getCharLimit,
+}) => (
+  <div className="relative bg-white h-fit min-h-36 flex flex-col shadow-md text-black p-2 rounded-lg overflow-hidden">
+    <div className="absolute top-2 right-2 z-10">
+      <button
+        className="p-2 rounded-full w-10 z-12"
+        onClick={() =>
+          setSelectedFileIndex(selectedFileIndex === index ? null : index)
+        }
+      >
+        ⋮
+      </button>
+      {selectedFileIndex === index && (
+        <div className="absolute right-0 text-black mt-2 bg-white-primary overflow-hidden rounded-lg shadow-lg z-20">
+          <button
+            className="block px-4 py-2 hover:bg-red-600 hover:text-white-primary text-sm"
+            onClick={() => handleDeleteMedia(index, isFetched, file.name)}
+          >
+            Delete
+          </button>
+        </div>
+      )}
+    </div>
+
+    {file.type && file.type.startsWith("image/") && (
+      <Image
+        src={
+          isFetched
+            ? (file as MediaData).url
+            : URL.createObjectURL(file as File)
+        }
+        alt="Image Preview"
+        width={400}
+        height={400}
+        className="w-full h-fill object-fit"
+      />
+    )}
+    {file.type && file.type.startsWith("video/") && (
+      <video
+        controls
+        src={
+          isFetched
+            ? (file as MediaData).url
+            : URL.createObjectURL(file as File)
+        }
+        className="w-full h-fill object-fit"
+      />
+    )}
+    {!file.type?.startsWith("image/") && !file.type?.startsWith("video/") && (
+      <p className="text-wrap overflow-clip">
+        {file.name.length > getCharLimit()
+          ? `${file.name.substring(0, getCharLimit())}...`
+          : file.name}
+      </p>
+    )}
+    {!(file.type && file.type.startsWith("application/")) && (
+      <p className="text-sm text-wrap overflow-clip mt-2">{file.name}</p>
+    )}
+  </div>
+);
 
 export default Media;
