@@ -90,7 +90,9 @@ const Nav: React.FC = () => {
         </nav>
       </div>
 
-      {showModal && <VerifyBeneficiary onClose={handleModal} />}
+      {showModal && (
+        <VerifyBeneficiary onClose={handleModal} selectedCalamity={null} />
+      )}
     </>
   );
 };
