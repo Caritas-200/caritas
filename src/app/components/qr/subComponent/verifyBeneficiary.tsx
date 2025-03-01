@@ -7,11 +7,13 @@ import { verifyRecipient } from "@/app/lib/api/beneficiary/data";
 import clsx from "clsx";
 import { showLoading, hideLoading } from "../../loading";
 import { UserData, DecodedData } from "@/app/lib/definitions";
-import UserFormModal from "../ConfirmedBeneficiaryModal";
+import ConfirmedBeneficiaryModal from "../ConfirmedBeneficiaryModal";
 import {
   fetchBeneficiaryByCalamityAndId,
   getAllCalamity,
 } from "@/app/lib/api/calamity/data";
+
+import { fetchBeneficiaryById } from "@/app/lib/api/beneficiary/data";
 
 interface ModalProps {
   onClose: () => void;
@@ -29,6 +31,7 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
   const [isBeneficiaryFound, setIsBeneficiaryFound] = useState<boolean>(false);
   const [qualifiedCalamities, setQualifiedCalamities] = useState<string[]>([]);
   const [selectedCalamity, setSelectedCalamity] = useState<string | null>(null);
+  const [calamityData, setCalamityData] = useState<UserData | null>(null);
   const verificationDoneRef = useRef(false);
 
   const handleScan = (data: string | null) => {
@@ -68,7 +71,9 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
       if (result.found) {
         setVerificationMessage("Beneficiary Found!");
         setIsBeneficiaryFound(true);
-        setBeneficiaryData(result.beneficiaryData as UserData | undefined);
+        const otherData = await fetchBeneficiaryById(brgyName, id);
+        const newObject = { ...result.beneficiaryData, ...otherData };
+        setBeneficiaryData(newObject as UserData | undefined);
 
         const allCalamities = await getAllCalamity();
         const qualifiedCalamitiesList: string[] = [];
@@ -82,6 +87,8 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
             qualifiedCalamitiesList.push(calamity.name);
           }
         }
+
+        setBeneficiaryData(newObject as UserData | undefined);
 
         setQualifiedCalamities(qualifiedCalamitiesList);
       } else {
@@ -99,12 +106,17 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
     }
   }, [decodedData]);
 
-  const handleModalToggle = () => {
-    setIsModalOpen((prev) => !prev);
-  };
-
-  const handleCalamitySelection = (calamity: string) => {
+  const handleCalamitySelection = async (calamity: string) => {
     setSelectedCalamity(calamity);
+    const calamityResult = await fetchBeneficiaryByCalamityAndId(
+      calamity,
+      decodedData?.id ?? ""
+    );
+    if (calamityResult) {
+      const mergedData = { ...beneficiaryData, ...calamityResult };
+      setCalamityData(mergedData as UserData);
+    }
+    setIsModalOpen(true);
   };
 
   const renderQrReader = () => (
@@ -163,15 +175,6 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
           No qualified calamities found.
         </h4>
       )}
-
-      {selectedCalamity && (
-        <button
-          className="bg-green-700 hover:bg-green-500 p-2 px-4 text-white rounded-md mt-4"
-          onClick={handleModalToggle}
-        >
-          Release Benefits
-        </button>
-      )}
     </div>
   );
 
@@ -196,10 +199,10 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
             Please align the code properly to decode.
           </p>
         )}
-        {isModalOpen && beneficiaryData && decodedData && (
-          <UserFormModal
+        {isModalOpen && calamityData && decodedData && (
+          <ConfirmedBeneficiaryModal
             onClose={onClose}
-            data={beneficiaryData}
+            data={calamityData}
             decodedData={decodedData}
           />
         )}
