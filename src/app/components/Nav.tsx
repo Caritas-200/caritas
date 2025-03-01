@@ -33,8 +33,8 @@ const Nav: React.FC = () => {
   return (
     <>
       <div className="bg-bg-color text-text-color pr-2 h-full border-r">
-        <nav className="flex flex-col h-full gap-4 justify-between w-[220px] ">
-          <ul className="space-y-4">
+        <nav className="flex flex-col h-full gap-4 justify-between w-[220px] px-4 ">
+          <ul className="flex flex-col mt-4 gap-2">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
 
@@ -43,20 +43,22 @@ const Nav: React.FC = () => {
                   <Link href={item.href} passHref>
                     <button
                       className={clsx(
-                        "flex mt-4 gap-2 px-4 py-2 rounded-lg items-center w-full transition-colors duration-200 whitespace-nowrap",
+                        "flex gap-2 py-1 px-4 rounded-lg items-center w-full transition-colors duration-200 whitespace-nowrap",
                         {
                           "bg-white shadow-sm border font-bold": isActive,
                           "hover:bg-white": !isActive,
                         }
                       )}
                     >
-                      <Image
-                        src={item.icon}
-                        alt=""
-                        width={40}
-                        height={40}
-                        className=" px-2 rounded-full"
-                      />
+                      <div className="flex justify-center items-center bg-white rounded-full w-10 h-10 ">
+                        <Image
+                          src={item.icon}
+                          alt=""
+                          width={40}
+                          height={40}
+                          className=" px-2 rounded-full"
+                        />
+                      </div>
                       {item.name}
                     </button>
                   </Link>
