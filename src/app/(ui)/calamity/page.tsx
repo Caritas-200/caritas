@@ -31,6 +31,7 @@ const Calamity: React.FC = () => {
   const [isAddingFolder, setIsAddingFolder] = useState<boolean>(false);
   const [newFolderName, setNewFolderName] = useState<string>("");
   const [newCalamityType, setNewCalamityType] = useState<string>("");
+  const [selectedCalamityType, setSelectedCalamityType] = useState<string>("");
 
   // Handle adding new calamity folder
   const handleAddFolder = async () => {
@@ -42,7 +43,7 @@ const Calamity: React.FC = () => {
       calamityType: newCalamityType,
     };
 
-    //add calamity here to db
+    // Add calamity here to db
     await addCalamity(newFolder.name, {
       name: newFolder.name,
       calamityType: newFolder.calamityType,
@@ -59,9 +60,15 @@ const Calamity: React.FC = () => {
     setFolders(folders.filter((folder) => folder.id !== id));
   };
 
-  const filteredFolders = folders.filter((folder) =>
-    folder.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredFolders = folders.filter((folder) => {
+    const matchesSearchTerm = folder.name
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCalamityType =
+      selectedCalamityType === "" ||
+      folder.calamityType === selectedCalamityType;
+    return matchesSearchTerm && matchesCalamityType;
+  });
 
   const groupedFolders = filteredFolders.reduce((acc, folder) => {
     const firstLetter = folder.name[0].toUpperCase();
@@ -74,7 +81,7 @@ const Calamity: React.FC = () => {
 
   const sortedKeys = Object.keys(groupedFolders).sort();
 
-  //fetch Calamity stored in db
+  // Fetch Calamity stored in db
   useEffect(() => {
     const fetchCalamity = async () => {
       showLoading();
@@ -100,13 +107,28 @@ const Calamity: React.FC = () => {
             >
               <span className="font-extrabold text-xl">＋</span> Calamity
             </button>
-            <input
-              type="text"
-              placeholder="Search for Calamity..."
-              className="w-1/2 text-gray-700  p-2 border rounded-lg shadow-inner outline-none"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+
+            <div className="flex gap-4 w-full justify-between">
+              <input
+                type="text"
+                placeholder="Search for Calamity..."
+                className="w-1/2 text-gray-700  p-2 border rounded-lg shadow-inner outline-none"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <select
+                className="p-2 border rounded-lg text-gray-700"
+                value={selectedCalamityType}
+                onChange={(e) => setSelectedCalamityType(e.target.value)}
+              >
+                <option value="">All Calamity</option>
+                {calamityTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
