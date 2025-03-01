@@ -3,27 +3,44 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
+  --white-primary: #ffffff;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --bg-color: #f8f9fa;
+  --text-color: rgb(46, 46, 46);
+  --border-color: #eeeeee;
+  --button-bg-color: #3aa0ff;
+  --button-text-color: #ffffff;
+  --button-hover-bg-color: #60a5fa;
 }
+/* 
 
+@Main-color     : #4FD1C5;
+@White-color    : #FFFFFF;
+@Bg-white-color : #F8F9FA;
+@Gray-color     : #A0AEC0;
+@Gray2-color     : #718096;
+@Dark-color     : #2D3748;
+@Green-color    : #48BB78; */
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.custom-bg {
+  background-color: var(--bg-color);
+}
+
+.custom-text {
+  color: var(--text-color);
+}
+
+.custom-button {
+  background-color: var(--button-bg-color);
+  color: var(--button-text-color);
+}
+
+.custom-button:hover {
+  background-color: var(--button-hover-bg-color);
 }
 
 @layer utilities {

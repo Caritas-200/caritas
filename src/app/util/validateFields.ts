@@ -44,7 +44,6 @@ export const validateFields = (
   requiredFields.forEach((field) => {
     if (!formData[field]) {
       newErrors[field] = "This field is required.";
-      console.error(`Validation error: ${field} is required but is missing.`);
     }
   });
 
@@ -82,7 +81,6 @@ export const validateFields = (
   const agePattern = /^(1[0-9]|[2-9][0-9]|100)$/;
   if (formData.age && !agePattern.test(formData.age)) {
     newErrors.age = "Age must be a number between 10 and 100.";
-    console.error(`Validation error: Invalid age value ${formData.age}`);
   }
 
   // Validate calamity field
@@ -96,20 +94,6 @@ export const validateFields = (
     "Drought",
     "Other",
   ];
-  if (formData.calamity && !calamityOptions.includes(formData.calamity)) {
-    newErrors.calamity = "Invalid calamity type.";
-    console.error(
-      `Validation error: Invalid calamity type ${formData.calamity}`
-    );
-  }
-
-  // Validate calamityName if 'Other' is selected
-  if (formData.calamity === "Other" && !formData.calamityName) {
-    newErrors.calamityName = "Please specify the calamity.";
-    console.error(
-      "Validation error: Calamity Name are required if 'Other' is selected."
-    );
-  }
 
   // Log form data changes if fields are updated
   Object.keys(formData).forEach((field) => {
@@ -117,11 +101,6 @@ export const validateFields = (
       !(field in requiredFields) &&
       formData[field as keyof BeneficiaryForm]
     ) {
-      console.log(
-        `Field change detected: ${field} has been added or modified with value ${
-          formData[field as keyof BeneficiaryForm]
-        }`
-      );
     }
   });
 

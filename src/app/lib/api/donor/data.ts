@@ -54,7 +54,6 @@ export const addDonor = async (formData: DonorFormData): Promise<string> => {
     return newDonorRef.id;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error adding donor: ", error.message);
       throw error;
     } else {
       throw new Error("Unknown error adding donor");
@@ -83,7 +82,6 @@ export const fetchDonors = async () => {
     return donorsData;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error fetching donors: ", error.message);
       throw error;
     } else {
       throw new Error("Unknown error fetching donors");
@@ -108,11 +106,8 @@ export const updateDonor = async (
 
     // Update the donor document with the new data
     await updateDoc(donorDocRef, updatedData);
-
-    console.log(`Donor with ID ${donorId} has been updated.`);
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error updating donor: ", error.message);
       throw error;
     } else {
       throw new Error("Unknown error updating donor");
@@ -129,11 +124,8 @@ export const deleteDonor = async (donorId: string): Promise<void> => {
 
     // Delete the donor document from Firestore
     await deleteDoc(donorDocRef);
-
-    console.log(`Donor with ID ${donorId} deleted successfully.`);
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error deleting donor: ", error.message);
       throw error;
     } else {
       throw new Error("Unknown error occurred while deleting donor");

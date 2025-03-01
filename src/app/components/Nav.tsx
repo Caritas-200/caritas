@@ -32,9 +32,9 @@ const Nav: React.FC = () => {
   };
   return (
     <>
-      <div className="bg-gray-800">
-        <nav className="flex flex-col h-full justify-between text-white p-1 pt-2 pr-2 w-[220px]">
-          <ul className="space-y-4">
+      <div className="bg-bg-color text-text-color pr-2 h-full border-r">
+        <nav className="flex flex-col h-full gap-4 justify-between w-[220px] px-4 ">
+          <ul className="flex flex-col mt-4 gap-2">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
 
@@ -43,20 +43,22 @@ const Nav: React.FC = () => {
                   <Link href={item.href} passHref>
                     <button
                       className={clsx(
-                        "flex mt-4 gap-2 px-4 py-2 rounded-lg items-center w-full transition-colors duration-200 whitespace-nowrap",
+                        "flex gap-2 py-1 px-4 rounded-lg items-center w-full transition-colors duration-200 whitespace-nowrap",
                         {
-                          "bg-gray-700": isActive,
-                          "hover:bg-gray-600": !isActive,
+                          "bg-white shadow-sm border font-bold": isActive,
+                          "hover:bg-white": !isActive,
                         }
                       )}
                     >
-                      <Image
-                        src={item.icon}
-                        alt=""
-                        width={30}
-                        height={30}
-                        className=""
-                      />
+                      <div className="flex justify-center items-center bg-white rounded-full w-10 h-10 ">
+                        <Image
+                          src={item.icon}
+                          alt=""
+                          width={40}
+                          height={40}
+                          className=" px-2 rounded-full"
+                        />
+                      </div>
                       {item.name}
                     </button>
                   </Link>
@@ -64,27 +66,27 @@ const Nav: React.FC = () => {
               );
             })}
           </ul>
-          <span className="w-full border border-b opacity-10  "></span>
           <div className="flex flex-col gap-4 justify-center items-center">
             <button onClick={handleModal} className="">
               <Image
-                src={"/icon/scan-white.svg"}
+                src={"/icon/scan.svg"}
                 alt=""
                 width={100}
                 height={100}
-                className="opacity-70 hover:opacity-100 hover:cursor-pointer"
+                className="opacity-80 hover:opacity-100 hover:cursor-pointer hover:scale-105 bg-white p-2 rounded-md shadow-sm border-1"
               />
             </button>
-            <h1 className="opacity-70  text-center uppercase">
+            <h1 className="opacity-70  text-center uppercase ">
               Click here to Verify Beneficiary
             </h1>
           </div>
-          <span className="w-full border border-b opacity-10 "></span>
-          <footer className="flex flex-col justify-between items-center w-full italic opacity-50 p-4 mb-20 ">
-            <h1 className="text-center text-xs">
-              Caritas 2024 <span className="">|</span> All Rights Reserved
-            </h1>
-          </footer>
+          <div className="flex flex-col gap-10">
+            <footer className="flex flex-col justify-between items-center w-full italic opacity-50 p-4">
+              <h1 className="text-center text-xs">
+                Caritas 2024 <span className="">|</span> All Rights Reserved
+              </h1>
+            </footer>
+          </div>
         </nav>
       </div>
 

@@ -36,7 +36,7 @@ const Calendar: React.FC = () => {
   const [eventToEdit, setEventToEdit] = useState<Event | null>(null);
 
   // Fixed theme to dark mode
-  const themeClasses = "bg-gray-800 text-gray-100";
+  const themeClasses = "text-text-color bg-bg-color inner-shadow";
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -62,21 +62,21 @@ const Calendar: React.FC = () => {
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-            className="ml-2 text-gray-100"
+            className="ml-2 bg-white-primary p-2 rounded-md"
           >
             Prev
           </button>
 
           <button
             onClick={() => setCurrentMonth(new Date())}
-            className="ml-2 text-gray-100"
+            className="ml-2 bg-white-primary p-2 rounded-md"
           >
             Today
           </button>
 
           <button
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-            className="ml-2 text-gray-100"
+            className="ml-2 bg-white-primary p-2 rounded-md"
           >
             Next
           </button>
@@ -92,7 +92,7 @@ const Calendar: React.FC = () => {
                 setMonth(currentMonth, months.indexOf(e.target.value))
               )
             }
-            className="p-2 rounded-lg bg-gray-700 text-gray-100"
+            className="p-2 rounded-lg bg-white-primary "
           >
             {months.map((month, idx) => (
               <option key={idx} value={month}>
@@ -107,7 +107,7 @@ const Calendar: React.FC = () => {
             onChange={(e) =>
               setCurrentMonth(setYear(currentMonth, Number(e.target.value)))
             }
-            className="p-2 rounded-lg bg-gray-700 text-gray-100"
+            className="p-2 rounded-lg bg-white-primary"
           >
             {years.map((year, idx) => (
               <option key={idx} value={year}>
@@ -154,15 +154,15 @@ const Calendar: React.FC = () => {
         days.push(
           <div
             key={day.toString()}
-            className={`p-2 border md:min-h-20 lg:min-h-32 hover:bg-blue-500 cursor-pointer ${
+            className={`p-2 border md:min-h-20 lg:min-h-32 hover:bg-blue-500 hover:text-white-primary cursor-pointer ${
               !isSameMonth(day, monthStart) ? "text-gray-400" : ""
-            } ${isSameDay(day, selectedDate) ? "bg-blue-500" : ""}`}
+            } ${isSameDay(day, selectedDate) ? "" : ""}`}
             onClick={() => onDateClick(cloneDay)}
           >
             <div className="relative">
               <span>{formattedDate}</span>
               {isSameDay(day, today) && (
-                <div className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-1">
+                <div className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full px-2 py-1">
                   Today
                 </div>
               )}
@@ -172,9 +172,9 @@ const Calendar: React.FC = () => {
                 (event: Event, idx) => (
                   <div
                     key={idx}
-                    className="bg-gray-700 mt-1 p-2 rounded flex justify-between items-center hover:bg-gray-800"
+                    className="bg-white-primary shadow-sm  mt-1 p-2 rounded border-l-4 hover:text-text-color border-blue-400 flex justify-between items-center "
                   >
-                    <span className="text-white">
+                    <span className="">
                       {toSentenceCase(event.event.join(", "))}
                     </span>
                     <div className="flex space-x-2">
@@ -290,7 +290,7 @@ const Calendar: React.FC = () => {
   };
 
   return (
-    <div className={`p-4 shadow-lg  rounded-lg ${themeClasses}`}>
+    <div className={`p-4 rounded-lg ${themeClasses}`}>
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         {renderHeader()}

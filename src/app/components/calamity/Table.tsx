@@ -3,27 +3,30 @@ import SearchBar from "../SearchBar";
 import Pagination from "../Pagination";
 import { fetchBeneficiaries } from "@/app/lib/api/beneficiary/data";
 import { getAllBarangays } from "@/app/lib/api/barangay/data";
-import { BeneficiaryForm } from "@/app/lib/definitions";
-import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
+import { CalamityBeneficiary } from "@/app/lib/definitions";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
-import { updateQualificationStatus } from "@/app/lib/api/calamity/data";
+import {
+  updateQualificationStatus,
+  checkRecipientsQualification,
+} from "@/app/lib/api/calamity/data";
 import Swal from "sweetalert2";
+import BeneficiaryInfoModal from "./modal/BeneficiaryInfoModal";
 
 const Table: React.FC = () => {
   const [barangays, setBarangays] = useState<{ id: string; name: string }[]>(
     []
   );
   const [selectedBarangay, setSelectedBarangay] = useState<string | null>(null);
-  const [beneficiaries, setBeneficiaries] = useState<BeneficiaryForm[]>([]);
-  const [filteredData, setFilteredData] = useState<BeneficiaryForm[]>([]);
-  const [isQualified, setIsQualified] = useState<{
-    [key: string]: boolean | null;
-  }>({});
+  const [beneficiaries, setBeneficiaries] = useState<CalamityBeneficiary[]>([]);
+  const [filteredData, setFilteredData] = useState<CalamityBeneficiary[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(5);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedBeneficiaryId, setSelectedBeneficiaryId] = useState<
+    string | null
+  >(null);
 
   const [calamityData, setCalamityData] = useState<{
     name: string;
@@ -54,42 +57,27 @@ const Table: React.FC = () => {
 
       if (result.isConfirmed) {
         // Optimistically update the UI for both qualification status and calamity column
-        setIsQualified((prev) => ({
-          ...prev,
-          [id]: status,
-        }));
-
-        // Optimistically update calamity column if qualifying
-        if (status && calamityData) {
-          setBeneficiaries((prev) =>
-            prev.map((beneficiary) =>
-              beneficiary.id === id
-                ? {
-                    ...beneficiary,
-                    calamity: `${calamityData.calamityType} ${calamityData.name}`,
-                  }
-                : beneficiary
-            )
-          );
-        } else if (!status) {
-          setBeneficiaries((prev) =>
-            prev.map((beneficiary) =>
-              beneficiary.id === id
-                ? {
-                    ...beneficiary,
-                    calamity: "",
-                  }
-                : beneficiary
-            )
-          );
-        }
+        setBeneficiaries((prev) =>
+          prev.map((beneficiary) =>
+            beneficiary.id === id
+              ? {
+                  ...beneficiary,
+                  isQualified: status,
+                  calamity: status
+                    ? `${calamityData?.calamityType} ${calamityData?.name}`
+                    : "",
+                }
+              : beneficiary
+          )
+        );
 
         // Call the API to update the qualification status in the database
         await updateQualificationStatus(
           id,
-          selectedBarangay,
           status,
-          calamityData
+          calamityData,
+          beneficiaryName,
+          selectedBarangay
         );
 
         // Show success message
@@ -103,27 +91,17 @@ const Table: React.FC = () => {
         });
       }
     } catch (error) {
-      console.error("Error updating qualification status:", error);
-
       // Revert the UI update on error
-      setIsQualified((prev) => ({
-        ...prev,
-        [id]: !status,
-      }));
-
-      if (status) {
-        // Reset calamity value to N/A on failure
-        setBeneficiaries((prev) =>
-          prev.map((beneficiary) =>
-            beneficiary.id === id
-              ? {
-                  ...beneficiary,
-                  calamity: "N/A",
-                }
-              : beneficiary
-          )
-        );
-      }
+      setBeneficiaries((prev) =>
+        prev.map((beneficiary) =>
+          beneficiary.id === id
+            ? {
+                ...beneficiary,
+                isQualified: !status,
+              }
+            : beneficiary
+        )
+      );
 
       // Show error message
       await Swal.fire({
@@ -148,9 +126,7 @@ const Table: React.FC = () => {
       try {
         const data = await getAllBarangays();
         setBarangays(data);
-      } catch (err) {
-        console.error("Error fetching barangays:", err);
-      }
+      } catch (err) {}
     };
     loadBarangays();
   }, []);
@@ -162,15 +138,29 @@ const Table: React.FC = () => {
       setLoading(true);
       try {
         const data = await fetchBeneficiaries(selectedBarangay);
-        setBeneficiaries(data);
-        setFilteredData(data);
 
-        // Map initial status from the fetched data
-        const initialStatus = data.reduce((acc, item) => {
-          acc[item.id] = item.isQualified ?? null; // Use null if isQualified is undefined
-          return acc;
-        }, {} as { [key: string]: boolean | null });
-        setIsQualified(initialStatus);
+        // Fetch qualification data from calamity collection
+        const recipientIDs = data.map((beneficiary) => beneficiary.id);
+        const qualificationData = await checkRecipientsQualification(
+          recipientIDs,
+          calamityData?.name || ""
+        );
+
+        // Merge qualification data with beneficiaries
+        const mergedData = data.map((beneficiary) => {
+          const qualification = qualificationData.find(
+            (q) => q.id === beneficiary.id
+          );
+          return {
+            ...beneficiary,
+            isQualified: qualification?.isQualified ?? undefined,
+            isClaimed: qualification?.isClaimed ?? false,
+            dateVerified: qualification?.dateVerified ?? undefined,
+          };
+        });
+
+        setBeneficiaries(mergedData);
+        setFilteredData(mergedData);
       } catch (err: unknown) {
         setError(
           err instanceof Error
@@ -183,7 +173,7 @@ const Table: React.FC = () => {
     };
 
     loadBeneficiaries();
-  }, [selectedBarangay]);
+  }, [selectedBarangay, calamityData]);
 
   useEffect(() => {
     const filtered = beneficiaries.filter((beneficiary) =>
@@ -201,12 +191,16 @@ const Table: React.FC = () => {
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
+  const handleCloseModal = () => {
+    setSelectedBeneficiaryId(null);
+  };
+
   return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-md text-gray-100">
+    <div className="bg-white-primary p-4 rounded-lg shadow-md text-text-color">
       <div className="flex flex-col mb-4 space-y-4 md:flex-row md:items-center md:space-y-0 md:space-x-4">
         <select
           onChange={(e) => setSelectedBarangay(e.target.value)}
-          className="p-2 border rounded-lg text-gray-700"
+          className="p-2 border rounded-lg "
         >
           <option value="">Select Barangay</option>
           {barangays.map((barangay) => (
@@ -216,7 +210,7 @@ const Table: React.FC = () => {
           ))}
         </select>
         <div className="flex flex-row w-full gap-4 justify-end">
-          <div className="w-1/3">
+          <div className="w-1/3 ">
             <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           </div>
           <select
@@ -238,29 +232,27 @@ const Table: React.FC = () => {
         <p>Error: {error}</p>
       ) : (
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-gray-800 border border-gray-500 rounded-lg">
+          <table className="min-w-full  border border-border-color rounded-lg">
             <thead>
               <tr>
-                <th className="border border-gray-500 py-2 px-4 text-left">
+                <th className="border border-border-color py-2 px-4 text-left">
                   #
                 </th>
-                <th className="border border-gray-500 py-2 px-4 text-left">
+                <th className="border border-border-color py-2 px-4 text-left">
                   Last Name
                 </th>
-                <th className="border border-gray-500 py-2 px-4 text-left">
+                <th className="border border-border-color py-2 px-4 text-left">
                   First Name
                 </th>
-                <th className="border border-gray-500 py-2 px-4 text-left">
-                  Calamity
-                </th>
-                <th className="border border-gray-500 py-2 px-4 text-left">
-                  Date Verified
-                </th>
-                <th className="border border-gray-500 py-2 px-4 text-left">
+
+                <th className="border border-border-color py-2 px-4 text-left">
                   Qualification
                 </th>
-                <th className="border border-gray-500 py-2 px-4 text-left">
+                <th className="border border-border-color py-2 px-4 text-left">
                   Action/Status
+                </th>
+                <th className="border border-border-color py-2 px-4 text-left">
+                  Info
                 </th>
               </tr>
             </thead>
@@ -268,66 +260,53 @@ const Table: React.FC = () => {
               {currentItems.map((beneficiary, index) => (
                 <tr
                   key={beneficiary.id}
-                  className="hover:bg-gray-700 transition-colors"
+                  className="hover:bg-button-hover-bg-color hover:text-bg-color transition-colors"
                 >
-                  <td className="border border-gray-500 py-2 px-4">
+                  <td className="border border-border-color py-2 px-4">
                     {index + 1}
                   </td>
-                  <td className="border border-gray-500 py-2 px-4">
+                  <td className="border border-border-color py-2 px-4">
                     {toSentenceCase(beneficiary.lastName)}
                   </td>
-                  <td className="border border-gray-500 py-2 px-4">
+                  <td className="border border-border-color py-2 px-4">
                     {toSentenceCase(beneficiary.firstName)}
                   </td>
-                  <td className="border border-gray-500 py-2 px-4">
-                    {beneficiary.calamity ? (
-                      toSentenceCase(
-                        beneficiary.calamity + " " + beneficiary.calamityName
-                      )
-                    ) : (
-                      <span className="uppercase">N/A</span>
-                    )}
-                  </td>
-                  <td className="border border-gray-500 py-2 px-4">
-                    {beneficiary.dateVerified
-                      ? convertFirebaseTimestamp(beneficiary.dateVerified)
-                      : "N/A"}
-                  </td>
+
                   <td
-                    className={`border border-gray-500 py-2 px-4 ${
-                      isQualified[beneficiary.id] === true
+                    className={`border border-border-color py-2 px-4 ${
+                      beneficiary.isQualified === true
                         ? "text-green-500 font-bold"
                         : ""
                     }`}
                   >
-                    {isQualified[beneficiary.id] === true
+                    {beneficiary.isQualified === true
                       ? "Qualified"
-                      : isQualified[beneficiary.id] === false
+                      : beneficiary.isQualified === false
                       ? "Unqualified"
                       : "N/A"}
                   </td>
-
-                  <td className="border border-gray-500 py-2 px-4 whitespace-nowrap">
+                  <td className="border border-border-color py-2 px-4 whitespace-nowrap">
                     {beneficiary.isClaimed ? (
-                      <h1 className="text-green-500 font-bold uppercase">
+                      <h1 className="text-green-500 font-bold uppercase ">
                         Claimed
                       </h1>
                     ) : (
                       <>
-                        {" "}
                         <button
-                          className={`mr-2 px-2 py-1 rounded ${
-                            isQualified[beneficiary.id] === true
+                          className={`mr-2 px-2 py-1 rounded text-white ${
+                            beneficiary.isQualified === true
                               ? "bg-gray-500"
                               : "bg-green-500"
                           }`}
-                          disabled={isQualified[beneficiary.id] === true}
+                          disabled={beneficiary.isQualified === true}
                           onClick={() =>
                             handleQualification(
                               beneficiary.id,
                               selectedBarangay,
                               true,
-                              beneficiary.firstName,
+                              beneficiary.firstName +
+                                " " +
+                                beneficiary.lastName,
                               calamityData
                             )
                           }
@@ -335,18 +314,20 @@ const Table: React.FC = () => {
                           Qualify
                         </button>
                         <button
-                          className={`px-2 py-1 rounded ${
-                            isQualified[beneficiary.id] === false
+                          className={`px-2 py-1 rounded text-white ${
+                            beneficiary.isQualified === false
                               ? "bg-gray-500"
                               : "bg-red-500"
                           }`}
-                          disabled={isQualified[beneficiary.id] === false}
+                          disabled={beneficiary.isQualified === false}
                           onClick={() =>
                             handleQualification(
                               beneficiary.id,
                               selectedBarangay,
                               false,
-                              beneficiary.firstName,
+                              beneficiary.firstName +
+                                " " +
+                                beneficiary.lastName,
                               calamityData
                             )
                           }
@@ -355,6 +336,14 @@ const Table: React.FC = () => {
                         </button>
                       </>
                     )}
+                  </td>
+                  <td className="border border-border-color py-2 px-4 whitespace-nowrap">
+                    <button
+                      className="px-2 py-1 rounded bg-blue-500 text-white"
+                      onClick={() => setSelectedBeneficiaryId(beneficiary.id)}
+                    >
+                      View
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -366,6 +355,15 @@ const Table: React.FC = () => {
             setCurrentPage={setCurrentPage}
           />
         </div>
+      )}
+
+      {selectedBeneficiaryId && selectedBarangay && calamityData && (
+        <BeneficiaryInfoModal
+          calamityData={calamityData}
+          brgyName={selectedBarangay}
+          beneficiaryId={selectedBeneficiaryId}
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );

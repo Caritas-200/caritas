@@ -32,7 +32,7 @@ const Recipient: React.FC = () => {
   };
 
   return (
-    <div className="p-20 bg-gray-700 min-h-screen text-gray-100">
+    <div className="p-20 bg-bg-color min-h-screen text-text-color">
       <div className="flex justify-between items-center mb-4">
         <button
           className="bg-blue-500 text-white py-2 px-4 rounded-lg"

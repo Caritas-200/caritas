@@ -61,7 +61,6 @@ export type BeneficiaryForm = {
   gender: string;
   occupation: string;
   civilStatus: string;
-  isClaimed?: boolean;
   monthlyNetIncome: string;
   ethnicity: string;
   dateCreated: FirebaseTimestamp;
@@ -69,27 +68,33 @@ export type BeneficiaryForm = {
   email: string;
   familyMembers?: FamilyMember[];
   beneficiary4Ps: string;
-  housingCondition: string;
-  casualty: string;
-  healthCondition: string;
   ownershipRentalType: string[];
   code: string[];
   qrCode: string;
-  calamity: string;
-  calamityName: string;
-  donationType?: string;
+};
+
+// New type that extends BeneficiaryForm with additional fields from calamity collection
+export type CalamityBeneficiary = BeneficiaryForm & {
+  isQualified?: boolean;
+  isClaimed?: boolean;
+  dateVerified?: FirebaseTimestamp;
   dateClaimed?: FirebaseTimestamp;
+  beneficiaryName?: string;
+  calamity?: string;
+  calamityName?: string;
+  brgyName?: string;
+  claimantImage?: string;
+  claimantName?: string;
+  donationType?: string;
   cost?: string;
   quantity?: string;
-  claimantImage?: string;
-  isQualified?: boolean;
-  dateVerified?: FirebaseTimestamp;
+  housingCondition?: string;
+  casualty?: string;
+  healthCondition?: string;
 };
 
 export type UserData = Pick<
-  BeneficiaryForm,
-  | "calamity"
-  | "calamityName"
+  BeneficiaryForm & CalamityBeneficiary,
   | "dateCreated"
   | "familyMembers"
   | "firstName"
@@ -98,6 +103,8 @@ export type UserData = Pick<
   | "housingCondition"
   | "casualty"
   | "healthCondition"
+  | "calamity"
+  | "calamityName"
 >;
 
 export type DonorFormData = {
@@ -159,5 +166,6 @@ export interface UserProfile {
 
 export interface DecodedData {
   id: string;
+  calamityName: string;
   brgyName: string;
 }

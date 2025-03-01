@@ -45,11 +45,6 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
         const data = await fetchBeneficiaries(brgyName);
         setBeneficiaries(data);
         setFilteredData(data);
-        // Extract unique calamity names for the dropdown
-        const uniqueCalamities = Array.from(
-          new Set(data.map((item) => item.calamityName || ""))
-        ).filter((name) => name !== ""); // Remove empty strings
-        setCalamityNameOptions(uniqueCalamities);
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);
@@ -75,12 +70,7 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
             .includes(searchTerm.toLowerCase()) ||
           beneficiary.lastName.toLowerCase().includes(searchTerm.toLowerCase());
 
-        // Match calamity name
-        const matchesCalamityName =
-          calamityNameFilter === "" ||
-          beneficiary.calamityName === calamityNameFilter;
-
-        return matchesSearchTerm && matchesCalamityName;
+        return matchesSearchTerm;
       });
 
       // Sorting logic
@@ -90,21 +80,6 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
           sortOrder === "asc"
             ? a.lastName.localeCompare(b.lastName)
             : b.lastName.localeCompare(a.lastName)
-        );
-      } else if (sortOrder === "calamityAsc" || sortOrder === "calamityDesc") {
-        sorted.sort((a, b) =>
-          sortOrder === "calamityAsc"
-            ? a.calamity.localeCompare(b.calamity)
-            : b.calamity.localeCompare(a.calamity)
-        );
-      } else if (
-        sortOrder === "calamityNameAsc" ||
-        sortOrder === "calamityNameDesc"
-      ) {
-        sorted.sort((a, b) =>
-          sortOrder === "calamityNameAsc"
-            ? (a.calamityName || "").localeCompare(b.calamityName || "")
-            : (b.calamityName || "").localeCompare(a.calamityName || "")
         );
       } else if (sortOrder === "date") {
         sorted.sort((a, b) => {
@@ -168,7 +143,6 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
               "There was a problem deleting the beneficiary.",
               "error"
             );
-            console.error("Error deleting beneficiary:", error);
           });
       }
     });
@@ -181,22 +155,9 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
 
   return (
     <>
-      <div className="bg-gray-800 p-4 rounded-lg shadow-md text-gray-100">
+      <div className="bg-white-primary p-4 rounded-lg shadow-md text-text-color">
         <div className="flex flex-col md:flex-row items-center mb-4 space-y-4 md:space-y-0 md:space-x-4">
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
-          <select
-            value={calamityNameFilter}
-            onChange={(e) => setCalamityNameFilter(e.target.value)}
-            className="p-2 border rounded-lg text-gray-700"
-          >
-            <option value="">All Calamity Names</option>
-            {calamityNameOptions.map((name) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </select>
 
           <select
             value={itemsPerPage}
@@ -231,25 +192,25 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
           <p>Error: {error}</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full bg-gray-800 border border-gray-500 rounded-lg">
+            <table className="min-w-full  border border-border-color rounded-lg">
               <thead>
                 <tr>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     #
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Last Name
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     First Name
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
-                    Calamity
+                  <th className="border border-border-color py-2 px-4 text-left">
+                    Mobile Number
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Date Created
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Action
                   </th>
                 </tr>
@@ -258,37 +219,31 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
                 {currentItems.map((beneficiary, index) => (
                   <tr
                     key={beneficiary.id}
-                    className="hover:bg-gray-700 transition-colors"
+                    className="hover:bg-button-hover-bg-color hover:text-white-primary transition-colors"
                   >
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {index + 1}
                     </td>
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {toSentenceCase(beneficiary.lastName)}
                     </td>
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {toSentenceCase(beneficiary.firstName)}
                     </td>
-                    <td className="border border-gray-500 py-2 px-4">
-                      {beneficiary.calamity
-                        ? toSentenceCase(
-                            beneficiary.calamity +
-                              " " +
-                              beneficiary.calamityName
-                          )
-                        : "N/A"}
+                    <td className="border border-border-color py-2 px-4">
+                      {toSentenceCase(beneficiary.mobileNumber)}
                     </td>
 
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {convertFirebaseTimestamp(beneficiary.dateCreated)}
                     </td>
 
-                    <td className="flex border gap-2 border-gray-500 py-2 px-4">
+                    <td className="flex border gap-2 border-border-color py-2 px-4">
                       <button
                         onClick={() => handleViewInfo(beneficiary.id)}
                         className="bg-blue-500 text-white px-2 py-1 rounded "
                       >
-                        View Info
+                        View
                       </button>
 
                       <button

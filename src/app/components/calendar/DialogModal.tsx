@@ -22,9 +22,12 @@ const EventDialog: React.FC<EventDialogProps> = ({
 }) => {
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
-      <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+      <div
+        className="fixed text-text-color inset-0 bg-black/30"
+        aria-hidden="true"
+      />
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="mx-auto w-full max-w-sm rounded bg-gray-800 p-6">
+        <DialogPanel className="mx-auto w-full max-w-sm rounded  bg-white-primary p-6">
           <div className="flex justify-end">
             <button
               className="hover:text-red-500 text-lg opacity-70 hover:opacity-100 mt-[-12px]"
@@ -34,7 +37,7 @@ const EventDialog: React.FC<EventDialogProps> = ({
             </button>
           </div>
 
-          <DialogTitle className="text-lg font-medium text-gray-100">
+          <DialogTitle className="text-lg font-medium ">
             {isEditing ? "Edit Event" : "Add Event"} on{" "}
             {selectedDate.toDateString()}
           </DialogTitle>
@@ -42,7 +45,7 @@ const EventDialog: React.FC<EventDialogProps> = ({
           <textarea
             value={eventInput}
             onChange={(e) => setEventInput(e.target.value)}
-            className="mt-2 w-full h-24 bg-gray-700 text-gray-100 rounded p-2"
+            className="mt-2 w-full h-24 bg-bg-color 0 rounded p-2 outline-none"
             placeholder="Event Description"
           />
 

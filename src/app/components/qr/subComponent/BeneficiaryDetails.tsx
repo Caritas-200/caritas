@@ -1,8 +1,8 @@
 import React from "react";
-import { UserData } from "@/app/lib/definitions";
+import { CalamityBeneficiary } from "@/app/lib/definitions";
 
 interface BeneficiaryDetailsProps {
-  formData: UserData;
+  formData: CalamityBeneficiary;
 }
 
 const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({

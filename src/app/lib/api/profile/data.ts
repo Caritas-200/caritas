@@ -26,7 +26,6 @@ export const fetchUserProfile = async (): Promise<UserProfile> => {
       throw new Error("User not found");
     }
   } catch (error) {
-    console.error("Error fetching user profile:", error);
     throw error;
   }
 };
@@ -45,7 +44,6 @@ export const updateUserProfile = async (updatedData: Partial<UserProfile>) => {
     // Update Firestore user document
     await updateDoc(userDocRef, updatedData);
   } catch (error) {
-    console.error("Error updating user profile:", error);
     throw new Error("Failed to update user profile");
   }
 };
@@ -90,8 +88,6 @@ export const updateUserPassword = async (newPassword: string) => {
       status: 200,
     };
   } catch (error: any) {
-    console.error(error);
-
     // Customize error messages for better feedback
     if (error.message.includes("timed out")) {
       throw new Error(

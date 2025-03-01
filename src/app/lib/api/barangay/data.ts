@@ -12,9 +12,7 @@ import { auth, db } from "@/app/services/firebaseConfig";
 export const addBarangay = async (barangayId: string, barangayData: any) => {
   try {
     await setDoc(doc(db, "barangay", barangayId), barangayData);
-  } catch (error) {
-    console.error("Error adding barangay: ", error);
-  }
+  } catch (error) {}
 };
 
 // Function to fetch all barangays
@@ -35,7 +33,6 @@ export const getAllBarangays = async () => {
 
     return barangays;
   } catch (error) {
-    console.error("Error fetching barangays: ", error);
     return [];
   }
 };
@@ -43,7 +40,5 @@ export const getAllBarangays = async () => {
 export const deleteBarangay = async (barangayId: string) => {
   try {
     await deleteDoc(doc(db, "barangay", barangayId));
-  } catch (error) {
-    console.error("Error deleting barangay: ", error);
-  }
+  } catch (error) {}
 };

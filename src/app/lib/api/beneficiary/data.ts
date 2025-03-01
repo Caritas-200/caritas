@@ -72,9 +72,7 @@ export const addBeneficiary = async (
     const formDataWithId = {
       ...formData,
       id: newBeneficiaryRef.id,
-      isClaimed: false,
       dateCreated: Timestamp.now(),
-      isQualified: false,
     };
 
     // Save the new beneficiary document
@@ -84,7 +82,6 @@ export const addBeneficiary = async (
     return newBeneficiaryRef.id;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error adding beneficiary: ", error.message);
       throw error;
     } else {
       throw new Error("Unknown error adding beneficiary");
@@ -130,11 +127,8 @@ export const updateBeneficiaryWithQrCode = async (
     await updateDoc(beneficiaryRef, {
       qrCode: qrCodeUrl,
     });
-
-    console.log("QR code added successfully!");
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error updating beneficiary with QR code: ", error.message);
       throw error;
     } else {
       throw new Error("Unknown error updating beneficiary with QR code");
@@ -169,10 +163,8 @@ export const fetchBeneficiaries = async (
   } catch (error: unknown) {
     // Type guard for Error object
     if (error instanceof Error) {
-      console.error("Error fetching beneficiaries: ", error.message);
       throw error; // Re-throw the error to handle it in the UI
     } else {
-      console.error("Unknown error fetching beneficiaries");
       throw new Error("Unknown error fetching beneficiaries");
     }
   }
@@ -203,16 +195,13 @@ export const fetchBeneficiaryById = async (
 
       return beneficiaryData;
     } else {
-      console.error("Beneficiary not found");
       return null; // Return null if document does not exist
     }
   } catch (error: unknown) {
     // Type guard for Error object
     if (error instanceof Error) {
-      console.error("Error fetching beneficiary: ", error.message);
       throw error; // Re-throw the error to handle it in the UI
     } else {
-      console.error("Unknown error fetching beneficiary");
       throw new Error("Unknown error fetching beneficiary");
     }
   }
@@ -254,7 +243,6 @@ export const updateBeneficiary = async (
     return { success: true, message: "Beneficiary updated successfully." };
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error updating beneficiary: ", error.message);
       return { success: false, message: error.message };
     } else {
       return { success: false, message: "Unknown error updating beneficiary" };
@@ -267,18 +255,35 @@ export const deleteBeneficiary = async (
   beneficiaryId: string
 ): Promise<void> => {
   try {
+    // Reference to the specific beneficiary document in the barangay collection
     const beneficiaryDocRef = doc(
       db,
       `barangay/${brgyName}/recipients/${beneficiaryId}`
     );
 
-    // Delete the beneficiary document from Firestore
+    // Delete the beneficiary document from the barangay collection
     await deleteDoc(beneficiaryDocRef);
 
-    console.log(`beneficiary with ID ${beneficiaryId} deleted successfully.`);
+    // Fetch all calamity collections
+    const calamityCollectionRef = collection(db, "calamity");
+    const calamitySnapshot = await getDocs(calamityCollectionRef);
+
+    // Iterate over each calamity collection and delete the corresponding document
+    for (const calamityDoc of calamitySnapshot.docs) {
+      const calamityName = calamityDoc.id;
+      const calamityRecipientDocRef = doc(
+        db,
+        `calamity/${calamityName}/recipients/${beneficiaryId}`
+      );
+
+      // Check if the document exists before attempting to delete it
+      const calamityRecipientDoc = await getDoc(calamityRecipientDocRef);
+      if (calamityRecipientDoc.exists()) {
+        await deleteDoc(calamityRecipientDocRef);
+      }
+    }
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error deleting beneficiary: ", error.message);
       throw error;
     } else {
       throw new Error("Unknown error occurred while deleting beneficiary");
@@ -321,84 +326,9 @@ export const verifyRecipient = async (
     }
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Error verifying beneficiary: ", error.message);
       throw error;
     } else {
       throw new Error("Unknown error occurred while verifying beneficiary");
-    }
-  }
-};
-
-export const updateVerifiedBeneficiary = async (
-  beneficiaryId: string,
-  newFields: Record<string, any>,
-  brgyName: string,
-  isClaimed: boolean,
-  imageFile: File | null,
-  housingCondition: string,
-  casualty: string,
-  healthCondition: string
-): Promise<{ success: boolean; message?: string }> => {
-  try {
-    // Reference to the specific beneficiary document
-    const beneficiaryDocRef = doc(
-      db,
-      `barangay/${brgyName}/recipients`,
-      beneficiaryId
-    );
-
-    // Fetch the existing beneficiary data
-    const beneficiaryDoc = await getDoc(beneficiaryDocRef);
-
-    if (!beneficiaryDoc.exists()) {
-      return { success: false, message: "Beneficiary does not exist." };
-    }
-
-    // Check if the status is already 'claimed'
-    const existingData = beneficiaryDoc.data();
-    if (existingData?.isClaimed) {
-      return { success: false, message: "Benefits are already claimed." };
-    }
-
-    let imageUrl: string | null = null;
-
-    // Upload image if present using a promise
-    if (imageFile) {
-      const storageRef = ref(
-        storage,
-        `claimantImage/${beneficiaryId}/${imageFile.name}`
-      );
-      imageUrl = await new Promise<string>((resolve, reject) => {
-        uploadBytes(storageRef, imageFile)
-          .then(async () => {
-            const url = await getDownloadURL(storageRef);
-            resolve(url); // Resolve with the image URL
-          })
-          .catch((error) => reject(error)); // Handle any upload errors
-      });
-    }
-
-    // Prepare the update data, including the image URL if available
-    const updateData = {
-      ...newFields,
-      isClaimed: isClaimed,
-      dateClaimed: Timestamp.now(),
-      claimantImage: imageUrl,
-      housingCondition,
-      casualty,
-      healthCondition,
-    };
-
-    // Update the document with the new data
-    await updateDoc(beneficiaryDocRef, updateData);
-
-    return { success: true, message: "Beneficiary updated successfully." };
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Error updating beneficiary: ", error.message);
-      return { success: false, message: error.message };
-    } else {
-      return { success: false, message: "Unknown error updating beneficiary" };
     }
   }
 };

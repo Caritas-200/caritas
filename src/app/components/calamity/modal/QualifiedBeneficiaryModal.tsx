@@ -3,12 +3,13 @@ import Pagination from "../../Pagination";
 import SearchBar from "../../SearchBar";
 import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
-import { BeneficiaryForm } from "@/app/lib/definitions";
+import { CalamityBeneficiary } from "@/app/lib/definitions";
 import { fetchBeneficiariesByCalamity } from "@/app/lib/api/calamity/data";
 import SkeletonTable from "../animation/tableSkeleton";
 import BeneficiaryIdQr from "../../barangay/modal/BeneficiaryIdQr";
 import UserFormModal from "../../qr/ConfirmedBeneficiaryModal";
 import { UserData, DecodedData } from "@/app/lib/definitions";
+import { fetchBeneficiaries } from "@/app/lib/api/beneficiary/data";
 
 interface ModalProps {
   isOpen: boolean;
@@ -21,8 +22,8 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   onClose,
   calamityData,
 }) => {
-  const [beneficiaries, setBeneficiaries] = useState<BeneficiaryForm[]>([]);
-  const [filteredData, setFilteredData] = useState<BeneficiaryForm[]>([]);
+  const [beneficiaries, setBeneficiaries] = useState<CalamityBeneficiary[]>([]);
+  const [filteredData, setFilteredData] = useState<CalamityBeneficiary[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [itemsPerPage, setItemsPerPage] = useState<number>(5);
@@ -32,15 +33,10 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
 
   const [activeModal, setActiveModal] = useState<"info" | "qr" | null>(null); // Manage which modal is open
   const [selectedBeneficiary, setSelectedBeneficiary] =
-    useState<BeneficiaryForm | null>(null);
-  const [decodedData, setDecodedData] = useState<DecodedData | null>({
-    id: selectedBeneficiary?.id || "",
-    brgyName: selectedBeneficiary?.address?.barangay?.barangay_name || "",
-  });
+    useState<CalamityBeneficiary | null>(null);
+  const [decodedData, setDecodedData] = useState<DecodedData | null>();
 
   const [userData, setUserData] = useState<UserData>({
-    calamity: selectedBeneficiary?.calamity || "",
-    calamityName: selectedBeneficiary?.calamityName || "",
     dateCreated: selectedBeneficiary?.dateCreated || {
       seconds: 0,
       nanoseconds: 0,
@@ -72,12 +68,15 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     const loadBeneficiaries = async () => {
       setLoading(true);
       try {
-        const data = await fetchBeneficiariesByCalamity(
-          calamityData.name,
-          calamityData.calamityType
-        );
-        setBeneficiaries(data);
-        setFilteredData(data);
+        const data = await fetchBeneficiariesByCalamity(calamityData.name);
+        const mappedData = data.map((item: any) => ({
+          ...item,
+          housingCondition: item.housingCondition || "",
+          casualty: item.casualty || "",
+          healthCondition: item.healthCondition || "",
+        }));
+        setBeneficiaries(mappedData);
+        setFilteredData(mappedData);
       } catch (err: unknown) {
         setError(
           err instanceof Error
@@ -105,29 +104,48 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     setCurrentPage(1);
   }, [searchTerm, beneficiaries]);
 
-  const handleViewInfo = (beneficiary: BeneficiaryForm) => {
-    setSelectedBeneficiary(beneficiary);
-    setActiveModal("info");
+  const handleViewInfo = async (beneficiary: CalamityBeneficiary) => {
+    if (beneficiary.brgyName && beneficiary.calamityName) {
+      //fetch data from beneficiaries using barangay name as path
+      const result = await fetchBeneficiaries(beneficiary.brgyName);
 
-    setDecodedData({
-      id: beneficiary.id,
-      brgyName: beneficiary.address.barangay.barangay_name,
-    });
+      if (result.length > 0) {
+        setSelectedBeneficiary(result[0]);
+        setActiveModal("info");
 
-    setUserData(beneficiary);
+        setDecodedData({
+          id: beneficiary.id,
+          calamityName: beneficiary.calamityName,
+          brgyName: beneficiary.brgyName,
+        });
+
+        const newObject = { ...result[0], ...beneficiary };
+
+        setUserData(newObject);
+      } else {
+        setError("No beneficiaries found for the given barangay name.");
+      }
+    } else {
+      setError("Barangay name is undefined.");
+    }
   };
 
-  const handleViewQR = (beneficiary: BeneficiaryForm) => {
-    setSelectedBeneficiary(beneficiary);
-    setActiveModal("qr");
+  const handleViewQR = async (beneficiary: CalamityBeneficiary) => {
+    if (beneficiary.brgyName) {
+      //fetch data from beneficiaries using barangay name as path
+      const result = await fetchBeneficiaries(beneficiary.brgyName);
 
-    const qrPayload = {
-      id: beneficiary.id,
-      lastName: beneficiary.lastName,
-      brgyName: beneficiary.address.barangay.barangay_name,
-    };
+      const newObject = { ...result[0], ...beneficiary };
+      setSelectedBeneficiary(newObject);
+      setActiveModal("qr");
 
-    setQrData(JSON.stringify(qrPayload)); // Set QR data
+      const qrPayload = {
+        id: beneficiary.id,
+        lastName: beneficiary.lastName,
+        brgyName: beneficiary.brgyName,
+      };
+      setQrData(JSON.stringify(qrPayload)); // Set QR data
+    }
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -138,12 +156,12 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
-      <div className="bg-gray-800 p-4 rounded-lg shadow-md text-gray-100 w-[90%] max-w-7xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+      <div className="bg-white-primary p-4 rounded-lg shadow-md text-text-color w-[90%] max-w-7xl">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Qualified Beneficiaries</h2>
           <button
-            className="text-gray-300 hover:text-red-500 text-xl"
+            className="text-gray-300 hover:text-red-500 text-4xl p-2"
             onClick={onClose}
           >
             &times;
@@ -175,25 +193,25 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
           <p>Error: {error}</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full bg-gray-800 border border-gray-500 rounded-lg">
+            <table className="min-w-full  border border-border-color rounded-lg">
               <thead>
                 <tr>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     #
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Name
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Calamity
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Date Verified
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Status
                   </th>
-                  <th className="border border-gray-500 py-2 px-4 text-left">
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Action/Status
                   </th>
                 </tr>
@@ -202,41 +220,35 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                 {currentItems.map((beneficiary, index) => (
                   <tr
                     key={beneficiary.id}
-                    className="hover:bg-gray-700 transition-colors"
+                    className="hover:bg-button-hover-bg-color hover:text-white-primary transition-colors"
                   >
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {index + 1}
                     </td>
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
+                      {toSentenceCase(beneficiary.beneficiaryName || "")}
+                    </td>
+                    <td className="border border-border-color py-2 px-4">
                       {toSentenceCase(
-                        beneficiary.lastName + " " + beneficiary.firstName
+                        beneficiary.calamity + " " + beneficiary.calamityName
                       )}
                     </td>
-                    <td className="border border-gray-500 py-2 px-4">
-                      {beneficiary.calamity
-                        ? toSentenceCase(
-                            beneficiary.calamity +
-                              " " +
-                              beneficiary.calamityName
-                          )
-                        : "N/A"}
-                    </td>
-                    <td className="border border-gray-500 py-2 px-4">
+                    <td className="border border-border-color py-2 px-4">
                       {beneficiary.dateVerified
                         ? beneficiary.dateVerified &&
                           convertFirebaseTimestamp(beneficiary.dateVerified)
                         : "N/A"}
                     </td>
                     <td
-                      className={`border border-gray-500 py-2 px-4 ${
+                      className={`border border-border-color py-2 px-4 ${
                         beneficiary.isQualified
-                          ? "text-green-500 font-bold"
+                          ? "text-green-500 font-bold "
                           : ""
                       }`}
                     >
                       {beneficiary.isQualified ? "Qualified" : "Unqualified"}
                     </td>
-                    <td className="border border-gray-500 py-2 px-4 whitespace-nowrap">
+                    <td className="border border-border-color py-2 px-4 whitespace-nowrap">
                       {beneficiary.isClaimed ? (
                         <h1 className="text-green-500 font-bold uppercase">
                           Claimed
@@ -244,13 +256,13 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                       ) : (
                         <>
                           <button
-                            className="mr-2 px-2 py-1 rounded bg-blue-500 hover:bg-blue-600"
+                            className="mr-2 px-2 py-1 rounded bg-blue-500 text-white-primary hover:bg-blue-600"
                             onClick={() => handleViewInfo(beneficiary)}
                           >
                             View Info
                           </button>
                           <button
-                            className="px-2 py-1 rounded bg-purple-500 hover:bg-purple-600"
+                            className="px-2 py-1 rounded bg-purple-500 text-white-primary hover:bg-purple-600"
                             onClick={() => handleViewQR(beneficiary)}
                           >
                             View QR
