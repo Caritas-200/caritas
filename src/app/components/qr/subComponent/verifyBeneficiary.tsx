@@ -26,6 +26,7 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
   ); // Store verification result
   const [found, setFound] = useState<boolean>(false); // Store verification result
   const [qualifiedCalamities, setQualifiedCalamities] = useState<string[]>([]); // Store qualified calamities
+  const [selectedCalamity, setSelectedCalamity] = useState<string | null>(null); // Store selected calamity
   const verificationDoneRef = useRef(false); // Flag to track if verification is done
 
   const handleScan = (data: string | null) => {
@@ -82,15 +83,19 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
 
         // Check qualified calamities
         const qualifiedCalamitiesList: string[] = [];
-        for (const calamity of calamityTypes) {
+
+        if (selectedCalamity) {
           const calamityResult = await fetchBeneficiaryByCalamityAndId(
-            calamity,
+            selectedCalamity,
             id
           );
+
+          console.log(calamityResult);
           if (calamityResult && calamityResult.isQualified) {
-            qualifiedCalamitiesList.push(calamity);
+            qualifiedCalamitiesList.push(selectedCalamity);
           }
         }
+
         setQualifiedCalamities(qualifiedCalamitiesList);
       } else {
         setVerificationResult("No Beneficiary Found!");
@@ -112,6 +117,10 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
 
   const handleModalForm = () => {
     setModalView((prev) => !prev);
+  };
+
+  const handleCalamityClick = (calamity: string) => {
+    setSelectedCalamity(calamity);
   };
 
   return (
@@ -176,7 +185,7 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
                     <button
                       key={calamity}
                       className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
-                      onClick={() => handleModalForm()}
+                      onClick={() => handleCalamityClick(calamity)}
                     >
                       {calamity}
                     </button>
@@ -189,14 +198,16 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
               </h4>
             )}
 
-            <button
-              className="bg-green-700 hover:bg-green-500 p-2 px-4 text-white rounded-md mt-4"
-              onClick={() => {
-                handleModalForm();
-              }}
-            >
-              Release Benefits
-            </button>
+            {selectedCalamity && (
+              <button
+                className="bg-green-700 hover:bg-green-500 p-2 px-4 text-white rounded-md mt-4"
+                onClick={() => {
+                  handleModalForm();
+                }}
+              >
+                Release Benefits
+              </button>
+            )}
           </div>
         )}
 
