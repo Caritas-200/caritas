@@ -85,7 +85,11 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
             calamity.name,
             id
           );
-          if (calamityResult && calamityResult.isQualified) {
+          if (
+            calamityResult &&
+            calamityResult.isQualified && // Check if the calamity is qualified
+            !calamityResult.isClaimed // Check if the calamity is not yet claimed
+          ) {
             qualifiedCalamitiesList.push(calamity.name);
           }
         }
