@@ -34,11 +34,11 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
         // Validate and set only the required fields: id and brgyName
         const usableObject: DecodedData = {
           id: parsedData.id ?? "",
-          brgyName: parsedData.brgyName ?? "",
+          calamityName: parsedData.calamityName ?? "",
         };
 
         // Check if id and brgyName exist before setting the state
-        if (usableObject.id && usableObject.brgyName) {
+        if (usableObject.id && usableObject.calamityName) {
           setDecodedData(usableObject);
           setError(null);
           setIsScanning(false);
@@ -79,7 +79,7 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
   // useEffect will trigger handleVerify only once when decodedData is set
   useEffect(() => {
     if (decodedData !== null && !verificationDoneRef.current) {
-      handleVerify(decodedData.brgyName, decodedData.id);
+      handleVerify(decodedData.calamityName, decodedData.id);
     }
   }, [decodedData]);
 
