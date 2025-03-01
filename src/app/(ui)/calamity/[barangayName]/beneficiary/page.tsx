@@ -15,7 +15,8 @@ const Recipient: React.FC = () => {
   const params = useParams() as unknown as Params;
   const { barangayName } = params;
 
-  const calamityName = barangayName;
+  // Decode the calamity name to handle spaces and special characters
+  const calamityName = decodeURIComponent(barangayName);
 
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +40,7 @@ const Recipient: React.FC = () => {
         </button>
       </div>
       <h2 className="text-2xl font-bold mb-4">
-        Calamity Name: {calamityName.toUpperCase()}
+        Calamity Name: {calamityName.normalize().toUpperCase()}
       </h2>
       <div ref={tableRef}>
         <Table />
