@@ -94,20 +94,6 @@ export const validateFields = (
     "Drought",
     "Other",
   ];
-  if (formData.calamity && !calamityOptions.includes(formData.calamity)) {
-    newErrors.calamity = "Invalid calamity type.";
-    console.error(
-      `Validation error: Invalid calamity type ${formData.calamity}`
-    );
-  }
-
-  // Validate calamityName if 'Other' is selected
-  if (formData.calamity === "Other" && !formData.calamityName) {
-    newErrors.calamityName = "Please specify the calamity.";
-    console.error(
-      "Validation error: Calamity Name are required if 'Other' is selected."
-    );
-  }
 
   // Log form data changes if fields are updated
   Object.keys(formData).forEach((field) => {
