@@ -33,7 +33,7 @@ const Nav: React.FC = () => {
   return (
     <>
       <div className="bg-bg-color text-text-color pr-2 h-full border-r">
-        <nav className="flex flex-col gap-10 h-full justify-between  p-4 w-[220px] ">
+        <nav className="flex flex-col h-full gap-4 justify-between w-[220px] ">
           <ul className="space-y-4">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
@@ -55,7 +55,7 @@ const Nav: React.FC = () => {
                         alt=""
                         width={40}
                         height={40}
-                        className="bg-white p-2 rounded-full shadow-sm"
+                        className=" px-2 rounded-full"
                       />
                       {item.name}
                     </button>
