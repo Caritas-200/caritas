@@ -17,6 +17,7 @@ import { fetchBeneficiaryById } from "@/app/lib/api/beneficiary/data";
 
 interface ModalProps {
   onClose: () => void;
+  selectedCalamity: string | null;
 }
 
 export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
@@ -116,6 +117,7 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
 
   const handleCalamitySelection = async (calamity: string) => {
     setSelectedCalamity(calamity);
+
     const calamityResult = await fetchBeneficiaryByCalamityAndId(
       calamity,
       decodedData?.id ?? ""
@@ -226,11 +228,12 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
             Please align the code properly to decode.
           </p>
         )}
-        {isModalOpen && calamityData && decodedData && (
+        {isModalOpen && calamityData && decodedData && selectedCalamity && (
           <ConfirmedBeneficiaryModal
             onClose={onClose}
             data={calamityData}
             decodedData={decodedData}
+            selectedCalamity={selectedCalamity}
           />
         )}
       </div>

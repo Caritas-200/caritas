@@ -19,12 +19,14 @@ interface ModalProps {
   data: UserData;
   onClose: () => void;
   decodedData: DecodedData;
+  selectedCalamity: string;
 }
 
 const ConfirmedBeneficiaryModal: React.FC<ModalProps> = ({
   data,
   onClose,
   decodedData,
+  selectedCalamity,
 }) => {
   const [formData, setFormData] = useState<CalamityBeneficiary>(
     data as CalamityBeneficiary
@@ -75,7 +77,7 @@ const ConfirmedBeneficiaryModal: React.FC<ModalProps> = ({
         const result = await updateVerifiedBeneficiary(
           decodedData.id,
           benefitForm,
-          decodedData.calamityName,
+          decodedData.calamityName || selectedCalamity,
           true,
           imageFile,
           formData.healthCondition || "",
@@ -112,6 +114,7 @@ const ConfirmedBeneficiaryModal: React.FC<ModalProps> = ({
       formData.housingCondition,
       isFormValid,
       onClose,
+      selectedCalamity,
     ]
   );
 
