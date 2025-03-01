@@ -116,6 +116,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
         setDecodedData({
           id: beneficiary.id,
           calamityName: beneficiary.calamityName,
+          brgyName: beneficiary.brgyName,
         });
 
         const newObject = { ...result[0], ...beneficiary };

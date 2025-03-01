@@ -167,4 +167,5 @@ export interface UserProfile {
 export interface DecodedData {
   id: string;
   calamityName: string;
+  brgyName: string;
 }

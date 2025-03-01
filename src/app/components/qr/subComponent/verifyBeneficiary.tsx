@@ -8,6 +8,8 @@ import clsx from "clsx";
 import { showLoading, hideLoading } from "../../loading";
 import { UserData, DecodedData } from "@/app/lib/definitions";
 import UserFormModal from "../ConfirmedBeneficiaryModal";
+import { calamityTypes } from "@/app/config/calamity";
+import { fetchBeneficiaryByCalamityAndId } from "@/app/lib/api/calamity/data";
 
 interface ModalProps {
   onClose: () => void;
@@ -23,54 +25,78 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
     null
   ); // Store verification result
   const [found, setFound] = useState<boolean>(false); // Store verification result
+  const [qualifiedCalamities, setQualifiedCalamities] = useState<string[]>([]); // Store qualified calamities
   const verificationDoneRef = useRef(false); // Flag to track if verification is done
 
   const handleScan = (data: string | null) => {
+    console.log("handleScan called with data:", data);
     if (decodedData === null && data && isScanning) {
       try {
         // Parse the data string into a JavaScript object
         const parsedData = JSON.parse(data);
+        console.log("Parsed data:", parsedData);
 
         // Validate and set only the required fields: id and brgyName
         const usableObject: DecodedData = {
           id: parsedData.id ?? "",
+          brgyName: parsedData.brgyName ?? "",
           calamityName: parsedData.calamityName ?? "",
         };
 
         // Check if id and brgyName exist before setting the state
-        if (usableObject.id && usableObject.calamityName) {
+        if (usableObject.id && usableObject.brgyName) {
           setDecodedData(usableObject);
           setError(null);
           setIsScanning(false);
+          console.log("Decoded data set:", usableObject);
         } else {
           throw new Error("Invalid QR code data: Missing required fields.");
         }
       } catch (e) {
+        console.error("Error parsing QR code data:", e);
         setError("Invalid QR code data. Unable to parse.");
       }
     }
   };
 
   const handleError = (err: any) => {
+    console.error("Error reading QR code:", err);
     setError("Error reading QR code. Please try again.");
   };
 
   // handleVerify function adjusted to accept parameters directly from state
   const handleVerify = async (brgyName: string, id: string) => {
+    console.log("handleVerify called with brgyName:", brgyName, "id:", id);
     try {
       showLoading();
       const result = await verifyRecipient(brgyName, id);
       hideLoading();
       verificationDoneRef.current = true; // Set flag to true after verification
 
+      console.log("Verification result:", result);
+
       if (result.found) {
         setVerificationResult("Beneficiary Found!");
         setFound(true);
         setBeneficiaryData(result.beneficiaryData as UserData | undefined);
+
+        // Check qualified calamities
+        const qualifiedCalamitiesList: string[] = [];
+        for (const calamity of calamityTypes) {
+          const calamityResult = await fetchBeneficiaryByCalamityAndId(
+            calamity,
+            id
+          );
+          if (calamityResult && calamityResult.isQualified) {
+            qualifiedCalamitiesList.push(calamity);
+          }
+        }
+        setQualifiedCalamities(qualifiedCalamitiesList);
       } else {
         setVerificationResult("No Beneficiary Found!");
       }
     } catch (error) {
+      console.error("Error during verification:", error);
       setVerificationResult("Verification failed. Please try again.");
       hideLoading();
     }
@@ -79,7 +105,8 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
   // useEffect will trigger handleVerify only once when decodedData is set
   useEffect(() => {
     if (decodedData !== null && !verificationDoneRef.current) {
-      handleVerify(decodedData.calamityName, decodedData.id);
+      console.log("Triggering handleVerify with decodedData:", decodedData);
+      handleVerify(decodedData.brgyName, decodedData.id);
     }
   }, [decodedData]);
 
@@ -138,6 +165,27 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
             {!verificationResult && (
               <h4 className="mt-2 opacity-60 w-3/4 text-center">
                 Please wait while we verify the beneficiary from the Database.
+              </h4>
+            )}
+
+            {found && qualifiedCalamities.length > 0 ? (
+              <div className="flex flex-col items-center gap-2">
+                <h4 className="text-lg font-semibold">Qualified Calamities:</h4>
+                <div className="flex flex-wrap gap-2">
+                  {qualifiedCalamities.map((calamity) => (
+                    <button
+                      key={calamity}
+                      className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+                      onClick={() => handleModalForm()}
+                    >
+                      {calamity}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <h4 className="text-lg font-semibold text-red-500">
+                No qualified calamities found.
               </h4>
             )}
 

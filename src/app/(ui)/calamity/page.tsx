@@ -9,21 +9,13 @@ import {
   getAllCalamity,
 } from "@/app/lib/api/calamity/data";
 import { MainLayout } from "@/app/layouts/MainLayout";
+import { calamityTypes } from "@/app/config/calamity";
 
 interface Folder {
   id: string;
   calamityType: string;
   name: string;
 }
-
-const calamityTypes = [
-  "Typhoon",
-  "Flood",
-  "Earthquake",
-  "Volcanic Eruption",
-  "Landslide",
-  "Tsunami",
-];
 
 const Calamity: React.FC = () => {
   const [folders, setFolders] = useState<Folder[]>([]);
