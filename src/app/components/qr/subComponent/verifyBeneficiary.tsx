@@ -32,6 +32,7 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
   const [qualifiedCalamities, setQualifiedCalamities] = useState<string[]>([]);
   const [selectedCalamity, setSelectedCalamity] = useState<string | null>(null);
   const [calamityData, setCalamityData] = useState<UserData | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const verificationDoneRef = useRef(false);
 
   const handleScan = (data: string | null) => {
@@ -63,6 +64,7 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
 
   const handleVerify = async (brgyName: string, id: string) => {
     try {
+      setIsLoading(true);
       showLoading();
       const result = await verifyRecipient(brgyName, id);
       hideLoading();
@@ -97,6 +99,8 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
     } catch (error) {
       setVerificationMessage("Verification failed. Please try again.");
       hideLoading();
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -157,8 +161,14 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
 
       {isBeneficiaryFound && qualifiedCalamities.length > 0 ? (
         <div className="flex flex-col items-center gap-2">
-          <h4 className="text-lg font-semibold">Qualified Calamities:</h4>
-          <div className="flex flex-wrap gap-2">
+          <h4 className="text-lg mt-2 p-4 text-green-500 uppercase font-bold">
+            Qualified In:
+          </h4>
+          <div
+            className={`grid ${
+              qualifiedCalamities.length === 1 ? "grid-cols-1" : "grid-cols-2"
+            } gap-2`}
+          >
             {qualifiedCalamities.map((calamity) => (
               <button
                 key={calamity}
@@ -171,9 +181,13 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
           </div>
         </div>
       ) : (
-        <h4 className="text-lg font-semibold text-red-500">
-          No qualified calamities found.
-        </h4>
+        <div>
+          {isBeneficiaryFound && (
+            <h1 className=" text-white p-2 bg-red-500 rounded-md">
+              Unqualified in all Calamities !
+            </h1>
+          )}
+        </div>
       )}
     </div>
   );
@@ -193,7 +207,16 @@ export const VerifyBeneficiary: React.FC<ModalProps> = ({ onClose }) => {
           ✖
         </button>
         {decodedData === null && isScanning && renderQrReader()}
-        {decodedData && verificationMessage && renderVerificationResult()}
+        {isLoading ? (
+          <div className="flex flex-col items-center gap-2">
+            <div className="loader"></div>
+            <h4 className="mt-2 opacity-60 w-3/4 text-center">
+              Checking qualified calamities...
+            </h4>
+          </div>
+        ) : (
+          decodedData && verificationMessage && renderVerificationResult()
+        )}
         {error && !decodedData && (
           <p className="text-red-500 text-sm font-semibold -mt-6 text-center">
             Please align the code properly to decode.

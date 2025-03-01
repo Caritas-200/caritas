@@ -121,7 +121,7 @@ const BeneficiaryIdQr: React.FC<QRModalProps> = ({
 
   return (
     <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center ">
-      <div className="modal-content bg-white p-10 rounded-lg w-full h-[60%] max-w-5xl relative">
+      <div className="modal-content bg-white p-10 rounded-lg w-full h-fit max-w-5xl relative">
         <button
           onClick={handleClose}
           className="modal-close-button absolute top-2 right-2 text-gray-700"
