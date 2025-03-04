@@ -224,12 +224,9 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                   <th className="border border-border-color py-2 px-4 text-left">
                     Barangay
                   </th>
-                  <th className="border border-border-color py-2 px-4 text-left">
-                    Status
-                  </th>
 
                   <th className="border border-border-color py-2 px-4 text-left">
-                    Action/Status
+                    Action
                   </th>
                 </tr>
               </thead>
@@ -263,15 +260,6 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                       {beneficiary.brgyName
                         ? toSentenceCase(beneficiary.brgyName)
                         : "N/A"}
-                    </td>
-                    <td
-                      className={`border border-border-color py-2 px-4 ${
-                        beneficiary.isQualified
-                          ? "text-green-500 font-bold "
-                          : ""
-                      }`}
-                    >
-                      {beneficiary.isQualified ? "Qualified" : "Unqualified"}
                     </td>
 
                     <td className="border border-border-color py-2 px-4 whitespace-nowrap">
