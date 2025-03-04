@@ -303,6 +303,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
             onClose={closeModals}
             data={userData}
             decodedData={decodedData}
+            selectedCalamity={""}
           />
         </div>
       )}
