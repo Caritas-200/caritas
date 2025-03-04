@@ -209,8 +209,12 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                     Date Verified
                   </th>
                   <th className="border border-border-color py-2 px-4 text-left">
+                    Barangay
+                  </th>
+                  <th className="border border-border-color py-2 px-4 text-left">
                     Status
                   </th>
+
                   <th className="border border-border-color py-2 px-4 text-left">
                     Action/Status
                   </th>
@@ -240,6 +244,14 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                         : "N/A"}
                     </td>
                     <td
+                      className={`border border-border-color py-2 px-4 
+                      `}
+                    >
+                      {beneficiary.brgyName
+                        ? toSentenceCase(beneficiary.brgyName)
+                        : "N/A"}
+                    </td>
+                    <td
                       className={`border border-border-color py-2 px-4 ${
                         beneficiary.isQualified
                           ? "text-green-500 font-bold "
@@ -248,6 +260,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                     >
                       {beneficiary.isQualified ? "Qualified" : "Unqualified"}
                     </td>
+
                     <td className="border border-border-color py-2 px-4 whitespace-nowrap">
                       {beneficiary.isClaimed ? (
                         <h1 className="text-green-500 font-bold uppercase">
