@@ -10,6 +10,7 @@ import BeneficiaryIdQr from "../../barangay/modal/BeneficiaryIdQr";
 import UserFormModal from "../../qr/ConfirmedBeneficiaryModal";
 import { UserData, DecodedData } from "@/app/lib/definitions";
 import { fetchBeneficiaries } from "@/app/lib/api/beneficiary/data";
+import { printQualifiedBeneficiaries } from "@/app/util/printQualfiedBeneficiaries";
 
 interface ModalProps {
   isOpen: boolean;
@@ -148,6 +149,10 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     }
   };
 
+  const handlePrint = async () => {
+    await printQualifiedBeneficiaries(calamityData, filteredData);
+  };
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
@@ -172,14 +177,22 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
           <div className="w-1/3">
             <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           </div>
-          <select
-            value={itemsPerPage}
-            onChange={(e) => setItemsPerPage(parseInt(e.target.value, 10))}
-            className="p-2 border rounded-lg text-gray-700"
-          >
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-          </select>
+          <div className="flex gap-4">
+            <select
+              value={itemsPerPage}
+              onChange={(e) => setItemsPerPage(parseInt(e.target.value, 10))}
+              className="p-2 border rounded-lg text-gray-700"
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+            </select>
+            <button
+              className="bg-blue-500 text-white py-2 px-4 rounded-lg"
+              onClick={handlePrint}
+            >
+              Print
+            </button>
+          </div>
         </div>
 
         {loading ? (
@@ -209,10 +222,11 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                     Date Verified
                   </th>
                   <th className="border border-border-color py-2 px-4 text-left">
-                    Status
+                    Barangay
                   </th>
+
                   <th className="border border-border-color py-2 px-4 text-left">
-                    Action/Status
+                    Action
                   </th>
                 </tr>
               </thead>
@@ -240,14 +254,14 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                         : "N/A"}
                     </td>
                     <td
-                      className={`border border-border-color py-2 px-4 ${
-                        beneficiary.isQualified
-                          ? "text-green-500 font-bold "
-                          : ""
-                      }`}
+                      className={`border border-border-color py-2 px-4 
+                      `}
                     >
-                      {beneficiary.isQualified ? "Qualified" : "Unqualified"}
+                      {beneficiary.brgyName
+                        ? toSentenceCase(beneficiary.brgyName)
+                        : "N/A"}
                     </td>
+
                     <td className="border border-border-color py-2 px-4 whitespace-nowrap">
                       {beneficiary.isClaimed ? (
                         <h1 className="text-green-500 font-bold uppercase">

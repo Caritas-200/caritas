@@ -35,18 +35,31 @@ export const addBeneficiary = async (
         `barangay/${brgy}/recipients`
       );
 
-      const duplicateQuery = query(
+      // Query to check for duplicate firstName and lastName
+      const nameQuery = query(
         recipientsCollectionRef,
         where("firstName", "==", formData.firstName),
-        where("lastName", "==", formData.lastName),
+        where("lastName", "==", formData.lastName)
+      );
+
+      // Query to check for duplicate email
+      const emailQuery = query(
+        recipientsCollectionRef,
         where("email", "==", formData.email)
       );
 
-      const querySnapshot = await getDocs(duplicateQuery);
+      const nameQuerySnapshot = await getDocs(nameQuery);
+      const emailQuerySnapshot = await getDocs(emailQuery);
 
-      if (!querySnapshot.empty) {
+      if (!nameQuerySnapshot.empty) {
         throw new Error(
-          `A beneficiary with the same name and email already exists in barangay ${brgy}.`
+          `A beneficiary with the same name already exists in barangay ${brgy}.`
+        );
+      }
+
+      if (!emailQuerySnapshot.empty) {
+        throw new Error(
+          `A beneficiary with the same email already exists in barangay ${brgy}.`
         );
       }
     }

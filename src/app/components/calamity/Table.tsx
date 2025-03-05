@@ -27,6 +27,8 @@ const Table: React.FC = () => {
   const [selectedBeneficiaryId, setSelectedBeneficiaryId] = useState<
     string | null
   >(null);
+  const [statusFilter, setStatusFilter] = useState<string>("All");
+  const [qualificationFilter, setQualificationFilter] = useState<string>("All");
 
   const [calamityData, setCalamityData] = useState<{
     name: string;
@@ -182,9 +184,28 @@ const Table: React.FC = () => {
         .toLowerCase()
         .includes(searchTerm.toLowerCase())
     );
-    setFilteredData(filtered);
+
+    let filteredByStatus = filtered;
+    if (statusFilter !== "All") {
+      const isClaimed = statusFilter === "Claimed";
+      filteredByStatus = filtered.filter(
+        (beneficiary) => beneficiary.isClaimed === isClaimed
+      );
+    }
+
+    if (qualificationFilter !== "All") {
+      const isQualified = qualificationFilter === "Qualified";
+      setFilteredData(
+        filteredByStatus.filter(
+          (beneficiary) => beneficiary.isQualified === isQualified
+        )
+      );
+    } else {
+      setFilteredData(filteredByStatus);
+    }
+
     setCurrentPage(1);
-  }, [searchTerm, beneficiaries]);
+  }, [searchTerm, beneficiaries, statusFilter, qualificationFilter]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -221,6 +242,24 @@ const Table: React.FC = () => {
             <option value={5}>5</option>
             <option value={10}>10</option>
           </select>
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="p-2 border rounded-lg text-gray-700"
+          >
+            <option value="All">Status</option>
+            <option value="Claimed">Claimed</option>
+            <option value="Unclaimed">Unclaimed</option>
+          </select>
+          <select
+            value={qualificationFilter}
+            onChange={(e) => setQualificationFilter(e.target.value)}
+            className="p-2 border rounded-lg text-gray-700"
+          >
+            <option value="All">Qualification</option>
+            <option value="Qualified">Qualified</option>
+            <option value="Unqualified">Unqualified</option>
+          </select>
         </div>
       </div>
 
@@ -249,10 +288,13 @@ const Table: React.FC = () => {
                   Qualification
                 </th>
                 <th className="border border-border-color py-2 px-4 text-left">
-                  Action/Status
+                  Status
                 </th>
                 <th className="border border-border-color py-2 px-4 text-left">
-                  Info
+                  Details
+                </th>
+                <th className="border border-border-color py-2 px-4 text-left">
+                  Action
                 </th>
               </tr>
             </thead>
@@ -291,50 +333,9 @@ const Table: React.FC = () => {
                         Claimed
                       </h1>
                     ) : (
-                      <>
-                        <button
-                          className={`mr-2 px-2 py-1 rounded text-white ${
-                            beneficiary.isQualified === true
-                              ? "bg-gray-500"
-                              : "bg-green-500"
-                          }`}
-                          disabled={beneficiary.isQualified === true}
-                          onClick={() =>
-                            handleQualification(
-                              beneficiary.id,
-                              selectedBarangay,
-                              true,
-                              beneficiary.firstName +
-                                " " +
-                                beneficiary.lastName,
-                              calamityData
-                            )
-                          }
-                        >
-                          Qualify
-                        </button>
-                        <button
-                          className={`px-2 py-1 rounded text-white ${
-                            beneficiary.isQualified === false
-                              ? "bg-gray-500"
-                              : "bg-red-500"
-                          }`}
-                          disabled={beneficiary.isQualified === false}
-                          onClick={() =>
-                            handleQualification(
-                              beneficiary.id,
-                              selectedBarangay,
-                              false,
-                              beneficiary.firstName +
-                                " " +
-                                beneficiary.lastName,
-                              calamityData
-                            )
-                          }
-                        >
-                          Unqualify
-                        </button>
-                      </>
+                      <h1 className="text-yellow-500 font-bold uppercase ">
+                        Unclaimed
+                      </h1>
                     )}
                   </td>
                   <td className="border border-border-color py-2 px-4 whitespace-nowrap">
@@ -344,6 +345,48 @@ const Table: React.FC = () => {
                     >
                       View
                     </button>
+                  </td>
+                  <td className="border border-border-color py-2 px-4 whitespace-nowrap">
+                    <>
+                      <button
+                        className={`mr-2 px-2 py-1 rounded text-white ${
+                          beneficiary.isQualified === true
+                            ? "bg-gray-500"
+                            : "bg-green-500"
+                        }`}
+                        disabled={beneficiary.isQualified === true}
+                        onClick={() =>
+                          handleQualification(
+                            beneficiary.id,
+                            selectedBarangay,
+                            true,
+                            beneficiary.firstName + " " + beneficiary.lastName,
+                            calamityData
+                          )
+                        }
+                      >
+                        Qualify
+                      </button>
+                      <button
+                        className={`px-2 py-1 rounded text-white ${
+                          beneficiary.isQualified === false
+                            ? "bg-gray-500"
+                            : "bg-red-500"
+                        }`}
+                        disabled={beneficiary.isQualified === false}
+                        onClick={() =>
+                          handleQualification(
+                            beneficiary.id,
+                            selectedBarangay,
+                            false,
+                            beneficiary.firstName + " " + beneficiary.lastName,
+                            calamityData
+                          )
+                        }
+                      >
+                        Unqualify
+                      </button>
+                    </>
                   </td>
                 </tr>
               ))}
