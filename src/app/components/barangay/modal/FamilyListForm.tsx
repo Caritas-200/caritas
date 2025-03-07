@@ -269,7 +269,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
                 }
                 className="col-span-1 bg-red-500 text-white px-4 py-2 rounded-lg"
               >
-                ✖
+                Clear
               </button>
             </div>
           ))}

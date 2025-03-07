@@ -80,7 +80,7 @@ const Folder: React.FC<FolderProps> = ({ name, onDelete, onClick }) => {
             }}
             className="block px-4 py-2 text-left w-full hover:bg-gray-200"
           >
-            <h1 className="text-red-500 text-bold"> ✖</h1>
+            <h1 className="text-red-500 text-bold">Delete</h1>
           </button>
         </div>
       )}
