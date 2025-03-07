@@ -279,7 +279,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                             className="px-2 py-1 rounded bg-purple-500 text-white-primary hover:bg-purple-600"
                             onClick={() => handleViewQR(beneficiary)}
                           >
-                            View QR
+                            View ID with QR
                           </button>
                         </>
                       )}
