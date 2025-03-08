@@ -174,6 +174,25 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                           errors[field.name] ? "border-red-500" : ""
                         }`}
                         placeholder={`Please enter ${field.label.toLowerCase()}`}
+                        type="text"
+                        inputMode={
+                          field.name === "age"
+                            ? "numeric"
+                            : field.name === "firstName" ||
+                              field.name === "middleName" ||
+                              field.name === "lastName"
+                            ? "text"
+                            : undefined
+                        }
+                        pattern={
+                          field.name === "age"
+                            ? "[0-9]*"
+                            : field.name === "firstName" ||
+                              field.name === "middleName" ||
+                              field.name === "lastName"
+                            ? "[A-Za-z ]*"
+                            : undefined
+                        }
                       />
                     )}
                     {errors[field.name] && (
