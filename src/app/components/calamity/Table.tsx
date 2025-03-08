@@ -247,7 +247,7 @@ const Table: React.FC = () => {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="p-2 border rounded-lg text-gray-700"
           >
-            <option value="All">Status</option>
+            <option value="All">All Status</option>
             <option value="Claimed">Claimed</option>
             <option value="Unclaimed">Unclaimed</option>
           </select>
@@ -256,7 +256,7 @@ const Table: React.FC = () => {
             onChange={(e) => setQualificationFilter(e.target.value)}
             className="p-2 border rounded-lg text-gray-700"
           >
-            <option value="All">Qualification</option>
+            <option value="All">All Qualification</option>
             <option value="Qualified">Qualified</option>
             <option value="Unqualified">Unqualified</option>
           </select>
