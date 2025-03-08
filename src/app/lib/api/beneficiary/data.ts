@@ -27,7 +27,7 @@ export const addBeneficiary = async (
       throw new Error("No barangay found.");
     }
 
-    // Check across all barangays for duplicate name and email
+    // Check across all barangays for duplicate name and mobileNumber
     for (const barangayDoc of barangaySnapshot.docs) {
       const brgy = barangayDoc.id; // Get the barangay name (document ID)
       const recipientsCollectionRef = collection(
@@ -42,14 +42,14 @@ export const addBeneficiary = async (
         where("lastName", "==", formData.lastName)
       );
 
-      // Query to check for duplicate email
-      const emailQuery = query(
+      // Query to check for duplicate mobileNumber
+      const numberQuery = query(
         recipientsCollectionRef,
-        where("email", "==", formData.email)
+        where("mobileNumber", "==", formData.mobileNumber)
       );
 
       const nameQuerySnapshot = await getDocs(nameQuery);
-      const emailQuerySnapshot = await getDocs(emailQuery);
+      const numberQuerySnapshot = await getDocs(numberQuery);
 
       if (!nameQuerySnapshot.empty) {
         throw new Error(
@@ -57,9 +57,9 @@ export const addBeneficiary = async (
         );
       }
 
-      if (!emailQuerySnapshot.empty) {
+      if (!numberQuerySnapshot.empty) {
         throw new Error(
-          `A beneficiary with the same email already exists in barangay ${brgy}.`
+          `A beneficiary with the same mobileNumber already exists in barangay ${brgy}.`
         );
       }
     }

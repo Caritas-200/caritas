@@ -65,7 +65,7 @@ export type BeneficiaryForm = {
   ethnicity: string;
   dateCreated: FirebaseTimestamp;
   religion: string;
-  email: string;
+  email?: string;
   familyMembers?: FamilyMember[];
   beneficiary4Ps: string;
   ownershipRentalType: string[];

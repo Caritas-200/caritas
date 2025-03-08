@@ -137,7 +137,8 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                 {BeneficiaryInputFields.filter(
                   (field) =>
                     field.name !== "houseNumber" &&
-                    field.name !== "calamityName"
+                    field.name !== "calamityName" &&
+                    field.name !== "email"
                 ).map((field) => (
                   <div key={field.name} className="flex flex-col">
                     <label className="mb-1 font-semibold text-gray-800">
@@ -167,7 +168,6 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                     ) : (
                       <input
                         name={field.name}
-                        type={field.name === "email" ? "email" : "text"}
                         value={(formData as any)[field.name]}
                         onChange={handleChange}
                         className={`p-2 border border-gray-300 rounded text-gray-700 ${
