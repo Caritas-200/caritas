@@ -250,9 +250,9 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
                       onChange={(e) => handleChange(index, e)}
                       className="w-full p-2 border rounded text-gray-700"
                       placeholder={placeholder}
-                      type={name === "age" ? "number" : "text"}
-                      min={name === "age" ? 10 : undefined}
-                      max={name === "age" ? 100 : undefined}
+                      type={name === "age" ? "text" : "text"}
+                      inputMode={name === "age" ? "numeric" : undefined}
+                      pattern={name === "age" ? "[0-9]*" : undefined}
                     />
                   )}
                 </div>
