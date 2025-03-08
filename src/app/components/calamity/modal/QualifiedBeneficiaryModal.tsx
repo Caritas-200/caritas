@@ -61,6 +61,8 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     healthCondition: selectedBeneficiary?.healthCondition || "",
   });
 
+  const [printOption, setPrintOption] = useState<string>("all");
+
   const closeModals = () => {
     setActiveModal(null);
   };
@@ -105,10 +107,27 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
     setCurrentPage(1);
   }, [searchTerm, beneficiaries]);
 
+  useEffect(() => {
+    let dataToFilter = beneficiaries;
+    if (printOption === "claimed") {
+      dataToFilter = beneficiaries.filter(
+        (beneficiary) => beneficiary.isClaimed
+      );
+    } else if (printOption === "unclaimed") {
+      dataToFilter = beneficiaries.filter(
+        (beneficiary) => !beneficiary.isClaimed
+      );
+    }
+    setFilteredData(dataToFilter);
+    setCurrentPage(1);
+  }, [printOption, beneficiaries]);
+
   const handleViewInfo = async (beneficiary: CalamityBeneficiary) => {
     if (beneficiary.brgyName && beneficiary.calamityName) {
       //fetch data from beneficiaries using barangay name as path
       const result = await fetchBeneficiaries(beneficiary.brgyName);
+
+      console.log(result);
 
       if (result.length > 0) {
         setSelectedBeneficiary(result[0]);
@@ -150,7 +169,18 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   };
 
   const handlePrint = async () => {
-    await printQualifiedBeneficiaries(calamityData, filteredData);
+    console.log("Filtered Data:", filteredData);
+
+    let dataToPrint = filteredData;
+    if (printOption === "claimed") {
+      dataToPrint = filteredData.filter((beneficiary) => beneficiary.isClaimed);
+    } else if (printOption === "unclaimed") {
+      dataToPrint = filteredData.filter(
+        (beneficiary) => !beneficiary.isClaimed
+      );
+    }
+
+    await printQualifiedBeneficiaries(calamityData, dataToPrint);
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -185,6 +215,15 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
             >
               <option value={5}>5</option>
               <option value={10}>10</option>
+            </select>
+            <select
+              value={printOption}
+              onChange={(e) => setPrintOption(e.target.value)}
+              className="p-2 border rounded-lg text-gray-700"
+            >
+              <option value="all">All</option>
+              <option value="claimed">Claimed</option>
+              <option value="unclaimed">Unclaimed</option>
             </select>
             <button
               className="bg-blue-500 text-white py-2 px-4 rounded-lg"
@@ -223,6 +262,9 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                   </th>
                   <th className="border border-border-color py-2 px-4 text-left">
                     Barangay
+                  </th>
+                  <th className="border border-border-color py-2 px-4 text-left">
+                    Status
                   </th>
 
                   <th className="border border-border-color py-2 px-4 text-left">
@@ -264,9 +306,19 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
 
                     <td className="border border-border-color py-2 px-4 whitespace-nowrap">
                       {beneficiary.isClaimed ? (
-                        <h1 className="text-green-500 font-bold uppercase">
+                        <h1 className="text-green-500 font-bold uppercase ">
                           Claimed
                         </h1>
+                      ) : (
+                        <h1 className="text-yellow-500 font-bold uppercase ">
+                          Unclaimed
+                        </h1>
+                      )}
+                    </td>
+
+                    <td className="border border-border-color py-2 px-4 whitespace-nowrap">
+                      {beneficiary.isClaimed ? (
+                        <h1 className="uppercase">N/A</h1>
                       ) : (
                         <>
                           <button

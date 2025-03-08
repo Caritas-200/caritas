@@ -116,11 +116,7 @@ export const fetchBeneficiariesByCalamity = async (
     );
 
     // Query recipients based on isQualified and isClaimed
-    const q = query(
-      recipientsCollectionRef,
-      where("isQualified", "==", true),
-      where("isClaimed", "==", false)
-    );
+    const q = query(recipientsCollectionRef, where("isQualified", "==", true));
 
     const recipientsSnapshot = await getDocs(q);
 

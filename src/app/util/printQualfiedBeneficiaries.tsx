@@ -7,26 +7,38 @@ export const printQualifiedBeneficiaries = async (
   calamityData: { name: string; calamityType: string },
   beneficiaries: CalamityBeneficiary[]
 ) => {
+  console.log("Original Beneficiaries:", beneficiaries);
+
   // Fetch additional fields for each beneficiary
   const enrichedBeneficiaries = await Promise.all(
     beneficiaries.map(async (beneficiary) => {
       if (beneficiary.brgyName) {
         const result = await fetchBeneficiaries(beneficiary.brgyName);
         if (result.length > 0) {
-          return { ...result[0], ...beneficiary };
+          const matchedBeneficiary = result.find(
+            (b) => b.id === beneficiary.id
+          );
+          if (matchedBeneficiary) {
+            return { ...matchedBeneficiary, ...beneficiary };
+          }
         }
       }
       return beneficiary;
     })
   );
 
+  console.log("Enriched Beneficiaries:", enrichedBeneficiaries);
+
   const printWindow = window.open("", "", "height=4200,width=2550");
   if (printWindow) {
-    printWindow.document.write(
+    printWindow.document.writeln(
       "<html><head><title>Print Qualified Beneficiaries</title>"
     );
-    printWindow.document.write("<style>");
-    printWindow.document.write(`
+    printWindow.document.writeln("<style>");
+    printWindow.document.writeln(`
+      @page {
+        size: landscape;
+      }
       body {
         font-family: Arial, sans-serif;
         margin: 20px;
@@ -44,49 +56,63 @@ export const printQualifiedBeneficiaries = async (
         background-color: #f2f2f2;
       }
     `);
-    printWindow.document.write("</style></head><body>");
-    printWindow.document.write(
+    printWindow.document.writeln("</style></head><body>");
+    printWindow.document.writeln(
       `<h2>Qualified Beneficiaries for ${
         calamityData.calamityType + " " + calamityData.name
       } </h2>`
     );
-    printWindow.document.write("<table>");
-    printWindow.document.write("<thead><tr>");
-    printWindow.document.write("<th>#</th>");
-    printWindow.document.write("<th>Name</th>");
-    printWindow.document.write("<th>Age</th>");
-    printWindow.document.write("<th>Mobile Number</th>");
-    printWindow.document.write("<th>Date Verified</th>");
-    printWindow.document.write("<th>Address</th>");
-    printWindow.document.write("</tr></thead><tbody>");
+    printWindow.document.writeln("<table>");
+    printWindow.document.writeln("<thead><tr>");
+    printWindow.document.writeln("<th>#</th>");
+    printWindow.document.writeln("<th>Name</th>");
+    printWindow.document.writeln("<th>Age</th>");
+    printWindow.document.writeln("<th>Mobile Number</th>");
+    printWindow.document.writeln("<th>Cost</th>");
+    printWindow.document.writeln("<th>Donation Type</th>");
+    printWindow.document.writeln("<th>Status</th>");
+    printWindow.document.writeln("<th>Date Claimed</th>");
+    printWindow.document.writeln("<th>Address</th>");
+    printWindow.document.writeln("</tr></thead><tbody>");
 
     enrichedBeneficiaries.forEach((beneficiary, index) => {
-      printWindow.document.write("<tr>");
-      printWindow.document.write(`<td>${index + 1}</td>`);
-      printWindow.document.write(
+      printWindow.document.writeln("<tr>");
+      printWindow.document.writeln(`<td>${index + 1}</td>`);
+      printWindow.document.writeln(
         `<td>${beneficiary.lastName}, ${beneficiary.firstName}</td>`
       );
-      printWindow.document.write(`<td>${beneficiary.age || "N/A"}</td>`);
-      printWindow.document.write(
+      printWindow.document.writeln(`<td>${beneficiary.age || "N/A"}</td>`);
+      printWindow.document.writeln(
         `<td>${beneficiary.mobileNumber || "N/A"}</td>`
       );
-      printWindow.document.write(
+      printWindow.document.writeln(
+        `<td>${beneficiary.cost ? beneficiary.cost : "N/A"}</td>`
+      );
+      printWindow.document.writeln(
         `<td>${
-          beneficiary.dateVerified
-            ? convertFirebaseTimestamp(beneficiary.dateVerified)
+          beneficiary.donationType ? beneficiary.donationType : "N/A"
+        }</td>`
+      );
+      printWindow.document.writeln(
+        `<td>${beneficiary.isClaimed ? "Claimed" : "Unclaimed"}</td>`
+      );
+      printWindow.document.writeln(
+        `<td>${
+          beneficiary.dateClaimed
+            ? convertFirebaseTimestamp(beneficiary.dateClaimed)
             : "N/A"
         }</td>`
       );
-      printWindow.document.write(
+      printWindow.document.writeln(
         `<td>${
           beneficiary.brgyName ? toSentenceCase(beneficiary.brgyName) : "N/A"
         }</td>`
       );
-      printWindow.document.write("</tr>");
+      printWindow.document.writeln("</tr>");
     });
 
-    printWindow.document.write("</tbody></table>");
-    printWindow.document.write("</body></html>");
+    printWindow.document.writeln("</tbody></table>");
+    printWindow.document.writeln("</body></html>");
     printWindow.document.close();
     printWindow.print();
   }

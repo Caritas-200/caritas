@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import classNames from "classnames";
 import SearchBar from "../SearchBar";
 import Pagination from "../Pagination";
 import {
@@ -32,7 +31,6 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
   const [selectedBeneficiaryId, setSelectedBeneficiaryId] = useState<
     string | null
   >(null);
-  const [calamityNameOptions, setCalamityNameOptions] = useState<string[]>([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedBeneficiaryInfo, setSelectedBeneficiaryInfo] =
     useState<BeneficiaryForm>();
