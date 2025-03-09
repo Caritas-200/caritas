@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Pagination from "../../Pagination";
-import SearchBar from "../../SearchBar";
 import { convertFirebaseTimestamp } from "@/app/util/firebaseTimestamp";
 import { toSentenceCase } from "@/app/util/toSentenceCase";
 import { CalamityBeneficiary } from "@/app/lib/definitions";
@@ -97,30 +96,31 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
   }, [isOpen, calamityData.name, calamityData.calamityType]);
 
   useEffect(() => {
-    const filtered = beneficiaries.filter((beneficiary) =>
-      [beneficiary.firstName, beneficiary.lastName]
-        .join(" ")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
-    );
-    setFilteredData(filtered);
-    setCurrentPage(1);
-  }, [searchTerm, beneficiaries]);
+    const filterData = () => {
+      let dataToFilter = beneficiaries;
 
-  useEffect(() => {
-    let dataToFilter = beneficiaries;
-    if (printOption === "claimed") {
-      dataToFilter = beneficiaries.filter(
-        (beneficiary) => beneficiary.isClaimed
+      if (printOption === "claimed") {
+        dataToFilter = beneficiaries.filter(
+          (beneficiary) => beneficiary.isClaimed
+        );
+      } else if (printOption === "unclaimed") {
+        dataToFilter = beneficiaries.filter(
+          (beneficiary) => !beneficiary.isClaimed
+        );
+      }
+
+      const filtered = dataToFilter.filter((beneficiary) =>
+        beneficiary.beneficiaryName
+          ?.toLowerCase()
+          .includes(searchTerm.toLowerCase())
       );
-    } else if (printOption === "unclaimed") {
-      dataToFilter = beneficiaries.filter(
-        (beneficiary) => !beneficiary.isClaimed
-      );
-    }
-    setFilteredData(dataToFilter);
-    setCurrentPage(1);
-  }, [printOption, beneficiaries]);
+
+      setFilteredData(filtered);
+      setCurrentPage(1);
+    };
+
+    filterData();
+  }, [searchTerm, printOption, beneficiaries]);
 
   const handleViewInfo = async (beneficiary: CalamityBeneficiary) => {
     if (beneficiary.brgyName && beneficiary.calamityName) {
@@ -205,7 +205,13 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
 
         <div className="flex flex-row justify-between mb-4">
           <div className="w-1/3">
-            <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search by name"
+              className="p-2 border rounded-lg w-full"
+            />
           </div>
           <div className="flex gap-4">
             <select
