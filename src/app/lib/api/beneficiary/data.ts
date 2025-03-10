@@ -9,6 +9,7 @@ import {
   getDoc,
   updateDoc,
   deleteDoc,
+  collectionGroup,
 } from "firebase/firestore";
 import { db, storage } from "@/app/services/firebaseConfig";
 import { BeneficiaryForm, UserData } from "@/app/lib/definitions";
@@ -19,49 +20,34 @@ export const addBeneficiary = async (
   brgyName: string
 ): Promise<string> => {
   try {
-    const barangayCollectionRef = collection(db, "barangay");
+    // Collection group query to check for duplicate firstName and lastName
+    const nameQuery = query(
+      collectionGroup(db, "recipients"),
+      where("firstName", "==", formData.firstName),
+      where("lastName", "==", formData.lastName)
+    );
 
-    // Fetch all barangay names
-    const barangaySnapshot = await getDocs(barangayCollectionRef);
-    if (barangaySnapshot.empty) {
-      throw new Error("No barangay found.");
+    // Collection group query to check for duplicate mobileNumber
+    const numberQuery = query(
+      collectionGroup(db, "recipients"),
+      where("mobileNumber", "==", formData.mobileNumber)
+    );
+
+    const [nameQuerySnapshot, numberQuerySnapshot] = await Promise.all([
+      getDocs(nameQuery),
+      getDocs(numberQuery),
+    ]);
+
+    if (!nameQuerySnapshot.empty) {
+      throw new Error(
+        `A beneficiary with the same name already exists in one of the barangays.`
+      );
     }
 
-    // Check across all barangays for duplicate name and mobileNumber
-    for (const barangayDoc of barangaySnapshot.docs) {
-      const brgy = barangayDoc.id; // Get the barangay name (document ID)
-      const recipientsCollectionRef = collection(
-        db,
-        `barangay/${brgy}/recipients`
+    if (!numberQuerySnapshot.empty) {
+      throw new Error(
+        `A beneficiary with the same mobileNumber already exists in one of the barangays.`
       );
-
-      // Query to check for duplicate firstName and lastName
-      const nameQuery = query(
-        recipientsCollectionRef,
-        where("firstName", "==", formData.firstName),
-        where("lastName", "==", formData.lastName)
-      );
-
-      // Query to check for duplicate mobileNumber
-      const numberQuery = query(
-        recipientsCollectionRef,
-        where("mobileNumber", "==", formData.mobileNumber)
-      );
-
-      const nameQuerySnapshot = await getDocs(nameQuery);
-      const numberQuerySnapshot = await getDocs(numberQuery);
-
-      if (!nameQuerySnapshot.empty) {
-        throw new Error(
-          `A beneficiary with the same name already exists in barangay ${brgy}.`
-        );
-      }
-
-      if (!numberQuerySnapshot.empty) {
-        throw new Error(
-          `A beneficiary with the same mobileNumber already exists in barangay ${brgy}.`
-        );
-      }
     }
 
     // Check if houseNumber is filled and check for house number duplication
