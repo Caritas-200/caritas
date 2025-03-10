@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Folder from "@/app/components/documentation/Folder";
-import Header from "@/app/components/Header";
-import LeftNav from "@/app/components/Nav";
 import { showLoading, hideLoading } from "@/app/components/loading";
 import {
   addFolder,
@@ -12,6 +10,11 @@ import {
   deleteFolder,
 } from "@/app/lib/api/documentation/data";
 import { MainLayout } from "@/app/layouts/MainLayout";
+import { formatFolderName } from "@/app/util/formatFolderName";
+import {
+  showSuccessNotification,
+  showErrorNotification,
+} from "@/app/util/notification";
 
 interface Folder {
   id: string;
@@ -38,25 +41,40 @@ const Documentation: React.FC = () => {
 
   // Handle adding new folder
   const handleAddFolder = async () => {
-    if (newFolderName.trim() === "") return;
+    if (newFolderName.trim() === "") {
+      showErrorNotification("Folder name cannot be empty.");
+      return;
+    }
+
+    const formattedName = formatFolderName(newFolderName);
 
     const newFolder: Folder = {
       id: (folders.length + 1).toString(),
-      name: newFolderName.toLowerCase(),
+      name: formattedName,
     };
 
-    // Add folder to db
-    await addFolder(newFolder.name, {
-      name: newFolder.name,
-    });
+    try {
+      // Add folder to db
+      await addFolder(newFolder.name, {
+        name: newFolder.name,
+      });
 
-    setFolders([...folders, newFolder]);
-    setNewFolderName(""); // Clear the input after adding
+      setFolders([...folders, newFolder]);
+      setNewFolderName(""); // Clear the input after adding
+      showSuccessNotification("Folder added successfully.");
+    } catch (error) {
+      showErrorNotification("Error adding folder. Please try again.");
+    }
   };
 
   const handleDeleteFolder = async (name: string) => {
-    await deleteFolder(name);
-    setFolders(folders.filter((folder) => folder.name !== name));
+    try {
+      await deleteFolder(name);
+      setFolders(folders.filter((folder) => folder.name !== name));
+      showSuccessNotification("Folder deleted successfully.");
+    } catch (error) {
+      showErrorNotification("Error deleting folder. Please try again.");
+    }
   };
 
   const handleFolderClick = (folderId: string) => {
@@ -123,8 +141,8 @@ const Documentation: React.FC = () => {
                   <Folder
                     key={folder.id}
                     name={folder.name}
-                    onDelete={() => handleDeleteFolder(folder.id)}
-                    onClick={() => handleFolderClick(folder.name)}
+                    onDelete={() => handleDeleteFolder(folder.name)}
+                    onClick={() => handleFolderClick(folder.id)}
                   />
                 ))}
               </div>

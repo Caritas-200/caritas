@@ -9,6 +9,11 @@ import {
   deleteBarangay,
 } from "@/app/lib/api/barangay/data";
 import { MainLayout } from "@/app/layouts/MainLayout";
+import { formatFolderName } from "@/app/util/formatFolderName";
+import {
+  showSuccessNotification,
+  showErrorNotification,
+} from "@/app/util/notification";
 
 interface Folder {
   id: string;
@@ -20,7 +25,7 @@ const BarangayList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [newFolderName, setNewFolderName] = useState<string>("");
 
-  //fetch barangays stored in db
+  // Fetch barangays stored in db
   useEffect(() => {
     const fetchBarangays = async () => {
       showLoading();
@@ -32,22 +37,32 @@ const BarangayList: React.FC = () => {
     fetchBarangays();
   }, []);
 
-  //handle adding new barangay folder
+  // Handle adding new barangay folder
   const handleAddFolder = async () => {
-    if (newFolderName.trim() === "") return;
+    if (newFolderName.trim() === "") {
+      showErrorNotification("Folder name cannot be empty.");
+      return;
+    }
+
+    const formattedName = formatFolderName(newFolderName);
 
     const newFolder: Folder = {
       id: (folders.length + 1).toString(),
-      name: newFolderName.toLowerCase(),
+      name: formattedName,
     };
 
-    //add barangay here to db
-    await addBarangay(newFolder.name, {
-      name: newFolder.name,
-    });
+    try {
+      // Add barangay to db
+      await addBarangay(newFolder.name, {
+        name: newFolder.name,
+      });
 
-    setFolders([...folders, newFolder]);
-    setNewFolderName(""); // Clear the input after adding
+      setFolders([...folders, newFolder]);
+      setNewFolderName(""); // Clear the input after adding
+      showSuccessNotification("Folder added successfully.");
+    } catch (error) {
+      showErrorNotification("Error adding folder. Please try again.");
+    }
   };
 
   const handleDeleteFolder = async (id: string) => {
@@ -73,21 +88,21 @@ const BarangayList: React.FC = () => {
   return (
     <MainLayout>
       <div className="flex border-opacity-50 flex-row flex-1 bg-bg-color">
-        <div className="p-4 w-full  ">
+        <div className="p-4 w-full">
           <h2 className="p-8 text-3xl font-bold mb-4 text-center">
             List of Barangays
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 border-b border-gray-200 mb-4">
-            <div className="mb-4 flex w-full justify-between    border overflow-hidden  rounded-lg shadow-inner">
+            <div className="mb-4 flex w-full justify-between border overflow-hidden rounded-lg shadow-inner">
               <input
                 type="text"
                 placeholder="Barangay name..."
-                className=" px-4 w-full shadow-inner outline-none"
+                className="px-4 w-full shadow-inner outline-none"
                 value={newFolderName}
                 onChange={(e) => setNewFolderName(e.target.value)}
               />
               <button
-                className="bg-blue-500 hover:bg-blue-600  -m-[1px] py-2 px-4  whitespace-nowrap"
+                className="bg-blue-500 hover:bg-blue-600 -m-[1px] py-2 px-4 whitespace-nowrap"
                 onClick={handleAddFolder}
               >
                 <span className="font-extrabold text-2xl text-white">＋</span>
@@ -97,7 +112,7 @@ const BarangayList: React.FC = () => {
               <input
                 type="text"
                 placeholder="Search for Barangay..."
-                className="w-full   p-2 border rounded-lg shadow-inner outline-none "
+                className="w-full p-2 border rounded-lg shadow-inner outline-none"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />

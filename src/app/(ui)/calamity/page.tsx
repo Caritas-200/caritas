@@ -10,6 +10,11 @@ import {
 } from "@/app/lib/api/calamity/data";
 import { MainLayout } from "@/app/layouts/MainLayout";
 import { calamityTypes } from "@/app/config/calamity";
+import { formatFolderName } from "@/app/util/formatFolderName";
+import {
+  showSuccessNotification,
+  showErrorNotification,
+} from "@/app/util/notification";
 
 interface Folder {
   id: string;
@@ -27,24 +32,34 @@ const Calamity: React.FC = () => {
 
   // Handle adding new calamity folder
   const handleAddFolder = async () => {
-    if (newFolderName.trim() === "" || newCalamityType === "") return;
+    if (newFolderName.trim() === "" || newCalamityType === "") {
+      showErrorNotification("Folder name and calamity type cannot be empty.");
+      return;
+    }
+
+    const formattedName = formatFolderName(newFolderName);
 
     const newFolder: Folder = {
       id: (folders.length + 1).toString(),
-      name: newFolderName,
+      name: formattedName,
       calamityType: newCalamityType,
     };
 
-    // Add calamity here to db
-    await addCalamity(newFolder.name, {
-      name: newFolder.name,
-      calamityType: newFolder.calamityType,
-    });
+    try {
+      // Add calamity to db
+      await addCalamity(newFolder.name, {
+        name: newFolder.name,
+        calamityType: newFolder.calamityType,
+      });
 
-    setFolders([...folders, newFolder]);
-    setNewFolderName("");
-    setNewCalamityType("");
-    setIsAddingFolder(false);
+      setFolders([...folders, newFolder]);
+      setNewFolderName("");
+      setNewCalamityType("");
+      setIsAddingFolder(false);
+      showSuccessNotification("Folder added successfully.");
+    } catch (error) {
+      showErrorNotification("Error adding folder. Please try again.");
+    }
   };
 
   const handleDeleteFolder = async (id: string) => {
