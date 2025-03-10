@@ -92,15 +92,7 @@ export const dropdownFields = [
   {
     name: "ethnicity",
     label: "Ethnicity ",
-    options: [
-      "Tagalog",
-      "Bisaya",
-      "Ilocano",
-      "Ilonggo",
-      "Cebuano",
-      "Bikol",
-      "Waray",
-    ],
+    options: ["Ati", "Bukidnon", "None"],
   },
   {
     name: "religion",
