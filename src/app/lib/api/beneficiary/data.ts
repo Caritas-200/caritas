@@ -20,23 +20,32 @@ export const addBeneficiary = async (
   brgyName: string
 ): Promise<string> => {
   try {
-    // Collection group query to check for duplicate firstName and lastName
+    // Collection group query to check for duplicate firstName and lastName across all barangays
     const nameQuery = query(
       collectionGroup(db, "recipients"),
       where("firstName", "==", formData.firstName),
       where("lastName", "==", formData.lastName)
     );
 
-    // Collection group query to check for duplicate mobileNumber
+    // Collection group query to check for duplicate mobileNumber across all barangays
     const numberQuery = query(
       collectionGroup(db, "recipients"),
       where("mobileNumber", "==", formData.mobileNumber)
     );
 
-    const [nameQuerySnapshot, numberQuerySnapshot] = await Promise.all([
-      getDocs(nameQuery),
-      getDocs(numberQuery),
-    ]);
+    // Query to check for duplicate firstName and lastName within the same barangay
+    const sameBarangayNameQuery = query(
+      collection(db, `barangay/${brgyName}/recipients`),
+      where("firstName", "==", formData.firstName),
+      where("lastName", "==", formData.lastName)
+    );
+
+    const [nameQuerySnapshot, numberQuerySnapshot, sameBarangayNameSnapshot] =
+      await Promise.all([
+        getDocs(nameQuery),
+        getDocs(numberQuery),
+        getDocs(sameBarangayNameQuery),
+      ]);
 
     if (!nameQuerySnapshot.empty) {
       throw new Error(
@@ -46,7 +55,13 @@ export const addBeneficiary = async (
 
     if (!numberQuerySnapshot.empty) {
       throw new Error(
-        `A beneficiary with the same mobileNumber already exists in one of the barangays.`
+        `A beneficiary with the same mobile number already exists in one of the barangays.`
+      );
+    }
+
+    if (!sameBarangayNameSnapshot.empty) {
+      throw new Error(
+        `A beneficiary with the same name already exists in this barangay.`
       );
     }
 
@@ -205,6 +220,7 @@ export const fetchBeneficiaryById = async (
     }
   }
 };
+
 export const updateBeneficiary = async (
   beneficiaryId: string, // ID of the beneficiary to update
   updatedFormData: BeneficiaryForm, // New data to update

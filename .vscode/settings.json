@@ -1,3 +1,4 @@
 {
-  "workbench.editor.defaultBinaryEditor": "default"
+  "workbench.editor.defaultBinaryEditor": "default",
+  "postman.settings.dotenv-detection-notification-visibility": false
 }
