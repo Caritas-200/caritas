@@ -19,6 +19,9 @@ const Recipient: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const tableRef = useRef<HTMLDivElement>(null);
 
+  // Decode the brgy name to handle spaces and special characters
+  const brgyName = decodeURIComponent(barangayName);
+
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -50,7 +53,7 @@ const Recipient: React.FC = () => {
         </div>
       </div>
       <h2 className="text-2xl font-bold mb-4">
-        List of Beneficiaries in Barangay {barangayName.toUpperCase()}
+        List of Beneficiaries in Barangay {brgyName.normalize().toUpperCase()}
       </h2>
 
       {/* Add a ref to this div */}
