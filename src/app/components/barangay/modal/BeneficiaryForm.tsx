@@ -190,7 +190,7 @@ const BeneficiaryModal: React.FC<ModalProps> = ({
                             : field.name === "firstName" ||
                               field.name === "middleName" ||
                               field.name === "lastName"
-                            ? "[A-Za-z ]*"
+                            ? "[A-Za-zÀ-ÿñÑ' ]*"
                             : undefined
                         }
                       />
