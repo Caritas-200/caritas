@@ -36,26 +36,26 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
     useState<BeneficiaryForm>();
 
   // Fetch data when the component mounts or brgyName changes
-  useEffect(() => {
-    const loadBeneficiaries = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchBeneficiaries(brgyName);
-        setBeneficiaries(data);
-        setFilteredData(data);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("Unknown error occurred while fetching beneficiaries.");
-        }
-      } finally {
-        setLoading(false);
+  const loadBeneficiaries = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchBeneficiaries(brgyName);
+      setBeneficiaries(data);
+      setFilteredData(data);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Unknown error occurred while fetching beneficiaries.");
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     loadBeneficiaries();
-  }, [brgyName]);
+  }, []);
 
   // Updated `useEffect` for filtering
   useEffect(() => {
@@ -182,6 +182,14 @@ const Table: React.FC<TableProps> = ({ brgyName }) => {
             </option>
             <option value="date">Sort by Date Created (Latest First)</option>
           </select>
+
+          {/* Refresh Button */}
+          <button
+            onClick={() => loadBeneficiaries()}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+          >
+            Refresh
+          </button>
         </div>
 
         {loading ? (

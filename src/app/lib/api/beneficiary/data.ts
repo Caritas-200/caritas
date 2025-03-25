@@ -141,46 +141,12 @@ export const updateBeneficiary = async (
       return { success: false, message: "Beneficiary does not exist." };
     }
 
-    // Collection group query to check for duplicate firstName and lastName across all barangays
-    const nameQuery = query(
-      collectionGroup(db, "recipients"),
-      where("firstName", "==", lowercasedFormData.firstName),
-      where("lastName", "==", lowercasedFormData.lastName)
-    );
-
-    // Collection group query to check for duplicate mobileNumber across all barangays
-    const numberQuery = query(
-      collectionGroup(db, "recipients"),
-      where("mobileNumber", "==", lowercasedFormData.mobileNumber)
-    );
-
-    const [nameQuerySnapshot, numberQuerySnapshot] = await Promise.all([
-      getDocs(nameQuery),
-      getDocs(numberQuery),
-    ]);
-
-    if (!nameQuerySnapshot.empty) {
-      return {
-        success: false,
-        message:
-          "A beneficiary with the same name already exists in one of the barangays.",
-      };
-    }
-
-    if (!numberQuerySnapshot.empty) {
-      return {
-        success: false,
-        message:
-          "A beneficiary with the same mobile number already exists in one of the barangays.",
-      };
-    }
-
     // Query to check for duplicate firstName and lastName within the same barangay
     const sameBarangayNameQuery = query(
-      collection(db, `barangay/${brgyName}/recipients`),
+      collection(db, `recipient`),
       where("firstName", "==", lowercasedFormData.firstName),
       where("lastName", "==", lowercasedFormData.lastName),
-      where("id", "!=", beneficiaryId) // Exclude the current beneficiary
+      where("id", "!=", beneficiaryId)
     );
 
     const sameBarangayNameSnapshot = await getDocs(sameBarangayNameQuery);
@@ -190,6 +156,23 @@ export const updateBeneficiary = async (
         success: false,
         message:
           "A beneficiary with the same name already exists in this barangay.",
+      };
+    }
+
+    // Collection group query to check for duplicate firstName and lastName across all barangays
+    const nameQuery = query(
+      collectionGroup(db, "recipients"),
+      where("firstName", "==", lowercasedFormData.firstName),
+      where("lastName", "==", lowercasedFormData.lastName)
+    );
+
+    const [nameQuerySnapshot] = await Promise.all([getDocs(nameQuery)]);
+
+    if (!nameQuerySnapshot.empty) {
+      return {
+        success: false,
+        message:
+          "A beneficiary with the same name already exists in one of the barangays.",
       };
     }
 
