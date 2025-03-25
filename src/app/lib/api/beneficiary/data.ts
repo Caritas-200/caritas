@@ -20,24 +20,33 @@ export const addBeneficiary = async (
   brgyName: string
 ): Promise<string> => {
   try {
+    // Convert relevant fields to lowercase for consistent storage
+    const lowercasedFormData = {
+      ...formData,
+      firstName: formData.firstName.toLowerCase(),
+      lastName: formData.lastName.toLowerCase(),
+      mobileNumber: formData.mobileNumber?.toLowerCase(),
+      houseNumber: formData.houseNumber?.toLowerCase(),
+    };
+
     // Collection group query to check for duplicate firstName and lastName across all barangays
     const nameQuery = query(
       collectionGroup(db, "recipients"),
-      where("firstName", "==", formData.firstName),
-      where("lastName", "==", formData.lastName)
+      where("firstName", "==", lowercasedFormData.firstName),
+      where("lastName", "==", lowercasedFormData.lastName)
     );
 
     // Collection group query to check for duplicate mobileNumber across all barangays
     const numberQuery = query(
       collectionGroup(db, "recipients"),
-      where("mobileNumber", "==", formData.mobileNumber)
+      where("mobileNumber", "==", lowercasedFormData.mobileNumber)
     );
 
     // Query to check for duplicate firstName and lastName within the same barangay
     const sameBarangayNameQuery = query(
       collection(db, `barangay/${brgyName}/recipients`),
-      where("firstName", "==", formData.firstName),
-      where("lastName", "==", formData.lastName)
+      where("firstName", "==", lowercasedFormData.firstName),
+      where("lastName", "==", lowercasedFormData.lastName)
     );
 
     const [nameQuerySnapshot, numberQuerySnapshot, sameBarangayNameSnapshot] =
@@ -66,10 +75,10 @@ export const addBeneficiary = async (
     }
 
     // Check if houseNumber is filled and check for house number duplication
-    if (formData.houseNumber) {
+    if (lowercasedFormData.houseNumber) {
       const houseNumberQuery = query(
         collection(db, `barangay/${brgyName}/recipients`),
-        where("houseNumber", "==", formData.houseNumber)
+        where("houseNumber", "==", lowercasedFormData.houseNumber)
       );
       const houseNumberSnapshot = await getDocs(houseNumberQuery);
       if (!houseNumberSnapshot.empty) {
@@ -84,7 +93,7 @@ export const addBeneficiary = async (
 
     // Include all form data including the ID and dateCreated
     const formDataWithId = {
-      ...formData,
+      ...lowercasedFormData,
       id: newBeneficiaryRef.id,
       dateCreated: Timestamp.now(),
     };
@@ -99,6 +108,108 @@ export const addBeneficiary = async (
       throw error;
     } else {
       throw new Error("Unknown error adding beneficiary");
+    }
+  }
+};
+
+export const updateBeneficiary = async (
+  beneficiaryId: string, // ID of the beneficiary to update
+  updatedFormData: BeneficiaryForm, // New data to update
+  brgyName: string // Barangay name
+): Promise<{ success: boolean; message: string }> => {
+  try {
+    // Convert relevant fields to lowercase for consistent storage
+    const lowercasedFormData = {
+      ...updatedFormData,
+      firstName: updatedFormData.firstName.toLowerCase(),
+      lastName: updatedFormData.lastName.toLowerCase(),
+      mobileNumber: updatedFormData.mobileNumber?.toLowerCase(),
+      houseNumber: updatedFormData.houseNumber?.toLowerCase(),
+    };
+
+    // Reference to the specific beneficiary document using the provided ID
+    const beneficiaryDocRef = doc(
+      db,
+      `barangay/${brgyName}/recipients`,
+      beneficiaryId
+    );
+
+    // Fetch the existing beneficiary data
+    const beneficiaryDoc = await getDoc(beneficiaryDocRef);
+
+    if (!beneficiaryDoc.exists()) {
+      return { success: false, message: "Beneficiary does not exist." };
+    }
+
+    // Collection group query to check for duplicate firstName and lastName across all barangays
+    const nameQuery = query(
+      collectionGroup(db, "recipients"),
+      where("firstName", "==", lowercasedFormData.firstName),
+      where("lastName", "==", lowercasedFormData.lastName)
+    );
+
+    // Collection group query to check for duplicate mobileNumber across all barangays
+    const numberQuery = query(
+      collectionGroup(db, "recipients"),
+      where("mobileNumber", "==", lowercasedFormData.mobileNumber)
+    );
+
+    const [nameQuerySnapshot, numberQuerySnapshot] = await Promise.all([
+      getDocs(nameQuery),
+      getDocs(numberQuery),
+    ]);
+
+    if (!nameQuerySnapshot.empty) {
+      return {
+        success: false,
+        message:
+          "A beneficiary with the same name already exists in one of the barangays.",
+      };
+    }
+
+    if (!numberQuerySnapshot.empty) {
+      return {
+        success: false,
+        message:
+          "A beneficiary with the same mobile number already exists in one of the barangays.",
+      };
+    }
+
+    // Query to check for duplicate firstName and lastName within the same barangay
+    const sameBarangayNameQuery = query(
+      collection(db, `barangay/${brgyName}/recipients`),
+      where("firstName", "==", lowercasedFormData.firstName),
+      where("lastName", "==", lowercasedFormData.lastName),
+      where("id", "!=", beneficiaryId) // Exclude the current beneficiary
+    );
+
+    const sameBarangayNameSnapshot = await getDocs(sameBarangayNameQuery);
+
+    if (!sameBarangayNameSnapshot.empty) {
+      return {
+        success: false,
+        message:
+          "A beneficiary with the same name already exists in this barangay.",
+      };
+    }
+
+    // Merge the existing id and dateCreated with the updated form data
+    const updatedBeneficiaryData = {
+      ...lowercasedFormData,
+      id: beneficiaryDoc.id, // Ensure the ID is not changed
+      dateCreated: beneficiaryDoc.data()?.dateCreated, // Ensure the creation date is not changed
+      dateUpdated: Timestamp.now(), // Add the dateUpdated field with the current timestamp
+    };
+
+    // Update the document with the new data
+    await setDoc(beneficiaryDocRef, updatedBeneficiaryData);
+
+    return { success: true, message: "Beneficiary updated successfully." };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return { success: false, message: error.message };
+    } else {
+      return { success: false, message: "Unknown error updating beneficiary" };
     }
   }
 };
@@ -217,50 +328,6 @@ export const fetchBeneficiaryById = async (
       throw error; // Re-throw the error to handle it in the UI
     } else {
       throw new Error("Unknown error fetching beneficiary");
-    }
-  }
-};
-
-export const updateBeneficiary = async (
-  beneficiaryId: string, // ID of the beneficiary to update
-  updatedFormData: BeneficiaryForm, // New data to update
-  brgyName: string // Barangay name
-): Promise<{ success: boolean; message: string }> => {
-  try {
-    // Reference to the specific beneficiary document using the provided ID
-    const beneficiaryDocRef = doc(
-      db,
-      `barangay/${brgyName}/recipients`,
-      beneficiaryId
-    );
-
-    // Fetch the existing beneficiary data
-    const beneficiaryDoc = await getDoc(beneficiaryDocRef);
-
-    if (!beneficiaryDoc.exists()) {
-      return { success: false, message: "Beneficiary does not exist." };
-    }
-
-    // Get the current data to ensure id and dateCreated are not changed
-    const currentData = beneficiaryDoc.data() as BeneficiaryForm;
-
-    // Merge the existing id and dateCreated with the updated form data
-    const updatedBeneficiaryData = {
-      ...updatedFormData,
-      id: currentData.id, // Ensure the ID is not changed
-      dateCreated: currentData.dateCreated, // Ensure the creation date is not changed
-      dateUpdated: Timestamp.now(), // Add the dateUpdated field with the current timestamp
-    };
-
-    // Update the document with the new data
-    await setDoc(beneficiaryDocRef, updatedBeneficiaryData);
-
-    return { success: true, message: "Beneficiary updated successfully." };
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      return { success: false, message: error.message };
-    } else {
-      return { success: false, message: "Unknown error updating beneficiary" };
     }
   }
 };

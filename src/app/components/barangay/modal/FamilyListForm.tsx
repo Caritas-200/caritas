@@ -144,7 +144,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
           brgyName
         );
 
-        if (result)
+        if (result.success)
           Swal.fire({
             icon: "success",
             title: "Success!",
@@ -156,7 +156,7 @@ const FamilyListModal: React.FC<FamilyModalProps> = ({
           Swal.fire({
             icon: "error",
             title: "Error!",
-            text: "Beneficiary update failed.",
+            text: result.message,
           }).then(() => {
             hideLoading();
           });
